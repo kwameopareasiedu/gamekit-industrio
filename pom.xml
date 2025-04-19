@@ -14,4 +14,11 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
   </properties>
 
+  <dependencies>
+    <dependency>
+      <groupId>dev.gamekit</groupId>
+      <artifactId>engine</artifactId>
+      <version>0.4.0-SNAPSHOT-1</version>
+    </dependency>
+  </dependencies>
 </project>
