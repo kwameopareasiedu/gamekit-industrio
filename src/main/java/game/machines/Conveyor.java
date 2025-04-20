@@ -8,16 +8,9 @@ public class Conveyor extends Machine {
   private static final BufferedImage ICON = IO.getResourceImage("conveyor.png");
   public static final Info INFO = new Info("Conveyor", ICON);
 
-  public Conveyor(
-    int row, int col,
-    Orientation orientation
-  ) {
-    super(
-      "Conveyor", row, col,
-      orientation,
-      new Port[]{ new Port() },
-      new Port[]{ new Port() }
-    );
+  public Conveyor(int gridIndex, Orientation orientation) {
+    super("Conveyor", gridIndex, orientation,
+      new Port[]{ new Port() }, new Port[]{ new Port() });
   }
 
   @Override
@@ -32,7 +25,5 @@ public class Conveyor extends Machine {
   }
 
   @Override
-  public BufferedImage getImage() {
-    return ICON;
-  }
+  public BufferedImage getImage() { return ICON; }
 }

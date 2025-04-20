@@ -4,10 +4,7 @@ import dev.gamekit.core.*;
 import dev.gamekit.utils.Position;
 import game.Constants;
 import game.Utils;
-import game.machines.Conveyor;
-import game.machines.Machine;
-import game.machines.Orientation;
-import game.machines.Producer;
+import game.machines.*;
 
 import java.awt.*;
 import java.util.ArrayList;
@@ -18,20 +15,21 @@ import static dev.gamekit.utils.Math.toInt;
 public class Factory extends Prop {
   private static final int TICK_RATE = 2;
   private static final double INV_TICK_RATE = 1.0 / TICK_RATE;
+  private static final Color GRID_COLOR = new Color(0x29c0c0c0, true);
 
   public final int size;
   public final int pixelSize;
   private final Stroke outlineRenderStroke;
   private final Stroke innerRenderStroke;
-  private final List<Machine> machines;
-  private final Machine[][] grid;
+  private final List<DroppableMachine> machines;
+  private final Machine[] grid;
 
   private long tickTime;
 
   public Factory() {
     super("Factory");
     size = Constants.GRID_SIZE;
-    grid = new Machine[size][size];
+    grid = new Machine[size * size];
     pixelSize = size * Constants.CELL_PIXEL_SIZE;
     outlineRenderStroke = new BasicStroke(
       2, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND,
@@ -57,14 +55,14 @@ public class Factory extends Prop {
 
   @Override
   protected void render() {
-    Renderer.setColor(Color.LIGHT_GRAY);
+    Renderer.setColor(GRID_COLOR);
     Renderer.setStroke(outlineRenderStroke);
     Renderer.drawRect(0, 0, pixelSize, pixelSize);
 
     for (int i = 1; i < size; i++) {
       int x = toInt(i * Constants.CELL_PIXEL_SIZE - 0.5 * pixelSize);
 
-      Renderer.setColor(Color.LIGHT_GRAY);
+      Renderer.setColor(GRID_COLOR);
       Renderer.setStroke(innerRenderStroke);
       Renderer.drawLineV(x, toInt(-0.5 * pixelSize), toInt(0.5 * pixelSize));
     }
@@ -72,30 +70,36 @@ public class Factory extends Prop {
     for (int i = 1; i < size; i++) {
       int y = toInt(i * Constants.CELL_PIXEL_SIZE - 0.5 * pixelSize);
 
-      Renderer.setColor(Color.LIGHT_GRAY);
+      Renderer.setColor(GRID_COLOR);
       Renderer.setStroke(innerRenderStroke);
       Renderer.drawLineH(toInt(-0.5 * pixelSize), toInt(0.5 * pixelSize), y);
     }
   }
 
-  public void createMachine(Machine.Info info, Orientation orientation) {
+  public boolean createMachine(Machine.Info info, Orientation orientation) {
     Position pos = Input.getMousePosition();
     Position worldPos = Camera.screenToWorldPosition(pos.x, pos.y);
-    Position indexPos = Utils.positionToIndex(worldPos);
-    System.out.printf("R:%d, C:%d\n", indexPos.y, indexPos.x);
+    int index = Utils.worldPositionToIndex(worldPos);
+    int row = Utils.indexToRow(index);
+    int col = Utils.indexToCol(index);
+    System.out.printf("R:%d, C:%d\n", row, col);
 
-    Machine machine = null;
+    if (grid[index] != null)
+      return false;
 
-    if (info == Conveyor.INFO) {
-      machine = new Conveyor(indexPos.y, indexPos.x, orientation);
-    } else if (info == Producer.INFO) {
-      machine = new Producer(indexPos.y, indexPos.x, orientation);
+    DroppableMachine machine = null;
+
+    if (info == Producer.INFO) {
+      machine = new Producer(index, orientation);
     }
 
     if (machine != null) {
       machines.add(machine);
+      grid[index] = machine;
       addChild(machine);
     }
+
+    return true;
   }
 
   public void connectMachines(List<Integer> draggedIndices) {

@@ -11,21 +11,19 @@ import java.util.ArrayList;
 import java.util.List;
 
 public abstract class Machine extends Prop {
-  public final int row;
-  public final int col;
+  public final int gridIndex;
   public final Orientation orientation;
   protected final Port[] inputs;
   protected final Port[] outputs;
   protected final List<Port> freeOutputs;
 
   public Machine(
-    String name, int row, int col,
+    String name, int gridIndex,
     Orientation orientation,
     Port[] inputs, Port[] outputs
   ) {
     super(name);
-    this.row = row;
-    this.col = col;
+    this.gridIndex = gridIndex;
     this.inputs = inputs;
     this.outputs = outputs;
     this.orientation = orientation;
@@ -60,11 +58,15 @@ public abstract class Machine extends Prop {
   @Override
   protected void render() {
     BufferedImage icon = getImage();
-    Position pos = Utils.indexToPosition(row, col);
+    Position pos = Utils.indexToWorldPosition(gridIndex);
 
     Renderer.withRotation(
       pos.x, pos.y, orientation.toDeg(),
-      () -> Renderer.drawImage(icon, pos.x, pos.y, Constants.CELL_PIXEL_SIZE, Constants.CELL_PIXEL_SIZE)
+      () -> Renderer.drawImage(
+        icon, pos.x, pos.y,
+        Constants.CELL_PIXEL_SIZE,
+        Constants.CELL_PIXEL_SIZE
+      )
     );
   }
 

@@ -66,7 +66,7 @@ public class Playground extends Scene implements StateManager {
 
   @Override
   protected void render() {
-    Renderer.setBackground(Color.WHITE);
+    Renderer.setBackground(Color.DARK_GRAY);
     Renderer.clear();
     renderState();
   }

@@ -48,8 +48,9 @@ public interface StateManager {
 //      case DEFAULT -> { }
 //      case PICK -> { }
       case PLACE -> {
-        factory.createMachine(machineInfo, orientation);
-        resetState();
+        if (factory.createMachine(machineInfo, orientation))
+          resetState();
+        else setState(State.PICK);
       }
       case ROTATE_CW -> {
         setOrientation(Orientation.cycle(orientation, 1));
@@ -91,6 +92,6 @@ public interface StateManager {
   }
 
   enum State {
-    DEFAULT, PICK, PLACE, ROTATE_CW, ROTATE_CCW, CLEAR
+    DEFAULT, CONNECT, PICK, PLACE, ROTATE_CW, ROTATE_CCW, CLEAR
   }
 }
