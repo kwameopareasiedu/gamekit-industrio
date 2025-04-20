@@ -1,11 +1,15 @@
 package game.components;
 
 public class Port {
-  public Machine machine;
+  public Port linked;
   public Item item;
 
   public Port() {
-    this.machine = null;
+    this.linked = null;
     this.item = null;
+  }
+
+  public boolean canSend() {
+    return linked != null && linked.item == null;
   }
 }

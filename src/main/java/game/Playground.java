@@ -26,7 +26,7 @@ import static dev.gamekit.ui.widgets.SizedParam.height;
 import static dev.gamekit.ui.widgets.SizedParam.width;
 
 public class Playground extends Scene {
-  private final BufferedImage mach1Icon = IO.getResourceImage("icons/mach1.png");
+  private final BufferedImage conveyorIcon = IO.getResourceImage("conveyor.png");
   private final BufferedImage mach2Icon = IO.getResourceImage("icons/mach2.png");
   private final BufferedImage mach3Icon = IO.getResourceImage("icons/mach3.png");
   private final Factory factory;
@@ -82,9 +82,9 @@ public class Playground extends Scene {
             Column.create(
               gapSize(12),
               children(
-                MachineButton.create(mach1Icon, (e) -> {
+                MachineButton.create(conveyorIcon, (e) -> {
                   if (e.type == MouseEvent.Type.CLICK) {
-                    clickedImage = mach1Icon;
+                    clickedImage = conveyorIcon;
                     action = Action.SELECT;
                   }
                 }),

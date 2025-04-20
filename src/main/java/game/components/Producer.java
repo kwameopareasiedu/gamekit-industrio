@@ -1,10 +1,6 @@
 package game.components;
 
 import dev.gamekit.core.IO;
-import dev.gamekit.core.Renderer;
-import dev.gamekit.utils.Position;
-import game.Constants;
-import game.Utils;
 
 import java.awt.image.BufferedImage;
 
@@ -21,23 +17,12 @@ public class Producer extends Machine {
   }
 
   @Override
-  public void input() {
+  public void performProcess() {
 
   }
 
   @Override
-  public void process() {
-
-  }
-
-  @Override
-  public void output() {
-
-  }
-
-  @Override
-  protected void render() {
-    Position pos = Utils.indexToPosition(row, col);
-    Renderer.drawImage(ICON, pos.x, pos.y, Constants.CELL_PIXEL_SIZE, Constants.CELL_PIXEL_SIZE);
+  protected BufferedImage getImage() {
+    return ICON;
   }
 }
