@@ -1,10 +1,15 @@
-package game.components;
+package game.factory;
 
-import dev.gamekit.core.*;
+import dev.gamekit.core.Application;
+import dev.gamekit.core.Prop;
+import dev.gamekit.core.Renderer;
 import dev.gamekit.utils.Position;
 import game.Constants;
 import game.Utils;
-import game.machines.*;
+import game.machines.DroppableMachine;
+import game.machines.Machine;
+import game.machines.Orientation;
+import game.machines.Producer;
 
 import java.awt.*;
 import java.util.ArrayList;
@@ -76,10 +81,8 @@ public class Factory extends Prop {
     }
   }
 
-  public boolean createMachine(Machine.Info info, Orientation orientation) {
-    Position pos = Input.getMousePosition();
-    Position worldPos = Camera.screenToWorldPosition(pos.x, pos.y);
-    int index = Utils.worldPositionToIndex(worldPos);
+  public boolean createMachine(Position position, Machine.Info info, Orientation orientation) {
+    int index = Utils.worldPositionToIndex(position);
     int row = Utils.indexToRow(index);
     int col = Utils.indexToCol(index);
     System.out.printf("R:%d, C:%d\n", row, col);
@@ -97,9 +100,15 @@ public class Factory extends Prop {
       machines.add(machine);
       grid[index] = machine;
       addChild(machine);
+      System.out.printf("Machine count:%d\n", machines.size());
     }
 
     return true;
+  }
+
+  public boolean isMachineAtPosition(Position position) {
+    int index = Utils.worldPositionToIndex(position);
+    return grid[index] != null;
   }
 
   public void connectMachines(List<Integer> draggedIndices) {
