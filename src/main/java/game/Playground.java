@@ -8,13 +8,11 @@ import dev.gamekit.ui.widgets.Button;
 import dev.gamekit.ui.widgets.Image;
 import dev.gamekit.ui.widgets.*;
 import dev.gamekit.utils.Position;
-import game.components.Grid;
-import game.components.Machine;
+import game.components.Factory;
+import game.enums.Action;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.util.ArrayList;
-import java.util.List;
 
 import static dev.gamekit.ui.widgets.AlignParam.horizontalAlignment;
 import static dev.gamekit.ui.widgets.ButtonParam.defaultBackground;
@@ -26,81 +24,50 @@ import static dev.gamekit.ui.widgets.PaddingParam.padding;
 import static dev.gamekit.ui.widgets.SingleChildParentParam.child;
 import static dev.gamekit.ui.widgets.SizedParam.height;
 import static dev.gamekit.ui.widgets.SizedParam.width;
-import static dev.gamekit.utils.Math.toInt;
 
 public class Playground extends Scene {
   private final BufferedImage mach1Icon = IO.getResourceImage("icons/mach1.png");
   private final BufferedImage mach2Icon = IO.getResourceImage("icons/mach2.png");
   private final BufferedImage mach3Icon = IO.getResourceImage("icons/mach3.png");
-  private final Grid grid;
-  private final List<Machine> machines;
+  private final Factory factory;
 
-  private ClickMode mode = ClickMode.NONE;
+  private Action action = Action.NONE;
   private BufferedImage clickedImage = null;
 
   public Playground() {
     super("Playground");
 
-    grid = new Grid(10);
-    machines = new ArrayList<>();
+    factory = new Factory();
   }
 
   @Override
-  protected void onStart() {
-    super.onStart();
-    add(grid);
+  protected void start() {
+    add(factory);
   }
 
   @Override
-  protected void onUpdate() {
-    super.onUpdate();
-
+  protected void update() {
     if (Input.isButtonClicked(Input.BUTTON_RMB)) {
-      mode = ClickMode.NONE;
+      action = Action.NONE;
       clickedImage = null;
+      factory.setAction(action);
     } else if (Input.isButtonClicked(Input.BUTTON_LMB)) {
-      if (mode == ClickMode.SELECT)
-        mode = ClickMode.PLACE;
-    }
-
-    //    for (int i = 0; i < grid.length; i++) {
-    //      Machine[] cells = grid[i];
-    //
-    //      for (int j = 0; j < cells.length; j++) {
-    //        int x = toInt((i + 0.5) * Constants.CELL_PX_SIZE - 0.5 * width);
-    //        int y = toInt((j + 0.5) * Constants.CELL_PX_SIZE - 0.5 * height);
-    //
-    //        Renderer.setColor(Color.GRAY);
-    //        Renderer.setStroke(renderStroke);
-    //        Renderer.drawRect(
-    //          x, -y, Constants.CELL_PX_SIZE,
-    //          Constants.CELL_PX_SIZE
-    //        );
-    //      }
-    //    }
-
-    switch (mode) {
-      case NONE -> clickedImage = null;
-      case PLACE -> {
-        Position pos = Input.getMousePosition();
-        Position worldPos = Camera.screenToWorldPosition(pos.x, pos.y);
-        int row = toInt(Math.floor((0.5 * grid.width + worldPos.x) / Constants.CELL_PX_SIZE));
-        int col = toInt(Math.floor((0.5 * grid.height + worldPos.y) / Constants.CELL_PX_SIZE));
-        System.out.printf("R:%d, C:%d\n", row, col);
-        mode = ClickMode.NONE;
+      if (action == Action.SELECT) {
+        action = Action.PLACE;
+        factory.setAction(action);
       }
     }
   }
 
   @Override
-  protected void onRender() {
+  protected void render() {
     Renderer.setBackground(Color.WHITE);
     Renderer.clear();
 
-    if (mode == ClickMode.SELECT) {
+    if (action == Action.SELECT) {
       Position pos = Input.getMousePosition();
       Position worldPos = Camera.screenToWorldPosition(pos.x, pos.y);
-      Renderer.drawImage(clickedImage, worldPos.x, worldPos.y, Constants.CELL_PX_SIZE, Constants.CELL_PX_SIZE);
+      Renderer.drawImage(clickedImage, worldPos.x, worldPos.y, Constants.CELL_PIXEL_SIZE, Constants.CELL_PIXEL_SIZE);
     }
   }
 
@@ -118,19 +85,19 @@ public class Playground extends Scene {
                 MachineButton.create(mach1Icon, (e) -> {
                   if (e.type == MouseEvent.Type.CLICK) {
                     clickedImage = mach1Icon;
-                    mode = ClickMode.SELECT;
+                    action = Action.SELECT;
                   }
                 }),
                 MachineButton.create(mach2Icon, (e) -> {
                   if (e.type == MouseEvent.Type.CLICK) {
                     clickedImage = mach2Icon;
-                    mode = ClickMode.SELECT;
+                    action = Action.SELECT;
                   }
                 }),
                 MachineButton.create(mach3Icon, (e) -> {
                   if (e.type == MouseEvent.Type.CLICK) {
                     clickedImage = mach3Icon;
-                    mode = ClickMode.SELECT;
+                    action = Action.SELECT;
                   }
                 })
               )
@@ -139,10 +106,6 @@ public class Playground extends Scene {
         )
       )
     );
-  }
-
-  private enum ClickMode {
-    NONE, SELECT, PLACE
   }
 
   private static class MachineButton extends Compose {

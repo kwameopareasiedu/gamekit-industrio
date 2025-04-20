@@ -1,37 +1,27 @@
 package game.components;
 
 import dev.gamekit.core.Prop;
-import dev.gamekit.core.Renderer;
-import dev.gamekit.utils.Position;
-import game.Constants;
-
-import java.awt.*;
 
 public abstract class Machine extends Prop {
-  private final Position position;
-  private final Machine[] in;
-  private final Machine[] out;
+  public final int row;
+  public final int col;
+  protected final Port[] inPorts;
+  protected final Port[] outPorts;
 
   public Machine(
-    String name,
-    Position position,
-    int inCount,
-    int outCount
+    String name, int row, int col,
+    Port[] inPorts, Port[] outPorts
   ) {
     super(name);
-    this.position = new Position(position);
-    this.in = new Machine[inCount];
-    this.out = new Machine[outCount];
+    this.row = row;
+    this.col = col;
+    this.inPorts = inPorts;
+    this.outPorts = outPorts;
   }
 
-  @Override
-  protected void onRender() {
-    super.onRender();
-    Renderer.setColor(Color.DARK_GRAY);
-    Renderer.fillRect(
-      position.x, position.y,
-      Constants.CELL_PX_SIZE,
-      Constants.CELL_PX_SIZE
-    );
-  }
+  public abstract void input();
+
+  public abstract void process();
+
+  public abstract void output();
 }
