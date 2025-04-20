@@ -1,38 +1,36 @@
 package game;
 
-import dev.gamekit.core.*;
+import dev.gamekit.core.Camera;
+import dev.gamekit.core.Input;
+import dev.gamekit.core.Renderer;
+import dev.gamekit.core.Scene;
 import dev.gamekit.ui.Spacing;
 import dev.gamekit.ui.enums.Alignment;
 import dev.gamekit.ui.events.MouseEvent;
-import dev.gamekit.ui.widgets.Button;
-import dev.gamekit.ui.widgets.Image;
-import dev.gamekit.ui.widgets.*;
+import dev.gamekit.ui.widgets.Align;
+import dev.gamekit.ui.widgets.Column;
+import dev.gamekit.ui.widgets.Padding;
+import dev.gamekit.ui.widgets.Widget;
 import dev.gamekit.utils.Position;
+import game.actions.Action;
+import game.actions.SelectAction;
+import game.components.Conveyor;
 import game.components.Factory;
-import game.enums.Action;
+import game.components.Producer;
+import game.ui.MachineButton;
 
 import java.awt.*;
-import java.awt.image.BufferedImage;
 
 import static dev.gamekit.ui.widgets.AlignParam.horizontalAlignment;
-import static dev.gamekit.ui.widgets.ButtonParam.defaultBackground;
-import static dev.gamekit.ui.widgets.ButtonParam.mouseListener;
 import static dev.gamekit.ui.widgets.FlexParam.gapSize;
-import static dev.gamekit.ui.widgets.ImageParam.image;
 import static dev.gamekit.ui.widgets.MultiChildParentParam.children;
 import static dev.gamekit.ui.widgets.PaddingParam.padding;
 import static dev.gamekit.ui.widgets.SingleChildParentParam.child;
-import static dev.gamekit.ui.widgets.SizedParam.height;
-import static dev.gamekit.ui.widgets.SizedParam.width;
 
 public class Playground extends Scene {
-  private final BufferedImage conveyorIcon = IO.getResourceImage("conveyor.png");
-  private final BufferedImage mach2Icon = IO.getResourceImage("icons/mach2.png");
-  private final BufferedImage mach3Icon = IO.getResourceImage("icons/mach3.png");
   private final Factory factory;
 
-  private Action action = Action.NONE;
-  private BufferedImage clickedImage = null;
+  private Action action = Action.NO_OP;
 
   public Playground() {
     super("Playground");
@@ -48,13 +46,11 @@ public class Playground extends Scene {
   @Override
   protected void update() {
     if (Input.isButtonClicked(Input.BUTTON_RMB)) {
-      action = Action.NONE;
-      clickedImage = null;
-      factory.setAction(action);
+      action = Action.NO_OP;
     } else if (Input.isButtonClicked(Input.BUTTON_LMB)) {
-      if (action == Action.SELECT) {
-        action = Action.PLACE;
-        factory.setAction(action);
+      if (action instanceof SelectAction selectAction) {
+        factory.createMachine(selectAction.info);
+        action = Action.NO_OP;
       }
     }
   }
@@ -64,10 +60,13 @@ public class Playground extends Scene {
     Renderer.setBackground(Color.WHITE);
     Renderer.clear();
 
-    if (action == Action.SELECT) {
+    if (action instanceof SelectAction selectAction) {
       Position pos = Input.getMousePosition();
       Position worldPos = Camera.screenToWorldPosition(pos.x, pos.y);
-      Renderer.drawImage(clickedImage, worldPos.x, worldPos.y, Constants.CELL_PIXEL_SIZE, Constants.CELL_PIXEL_SIZE);
+      Renderer.drawImage(
+        selectAction.info.icon(), worldPos.x, worldPos.y,
+        Constants.CELL_PIXEL_SIZE, Constants.CELL_PIXEL_SIZE
+      );
     }
   }
 
@@ -82,22 +81,14 @@ public class Playground extends Scene {
             Column.create(
               gapSize(12),
               children(
-                MachineButton.create(conveyorIcon, (e) -> {
+                MachineButton.create(Producer.INFO, (e) -> {
                   if (e.type == MouseEvent.Type.CLICK) {
-                    clickedImage = conveyorIcon;
-                    action = Action.SELECT;
+                    action = new SelectAction(Producer.INFO);
                   }
                 }),
-                MachineButton.create(mach2Icon, (e) -> {
+                MachineButton.create(Conveyor.INFO, (e) -> {
                   if (e.type == MouseEvent.Type.CLICK) {
-                    clickedImage = mach2Icon;
-                    action = Action.SELECT;
-                  }
-                }),
-                MachineButton.create(mach3Icon, (e) -> {
-                  if (e.type == MouseEvent.Type.CLICK) {
-                    clickedImage = mach3Icon;
-                    action = Action.SELECT;
+                    action = new SelectAction(Conveyor.INFO);
                   }
                 })
               )
@@ -106,39 +97,5 @@ public class Playground extends Scene {
         )
       )
     );
-  }
-
-  private static class MachineButton extends Compose {
-    protected MachineButton(BufferedImage image, MouseEvent.Listener mouseListener) {
-      super(
-        Sized.create(
-          width(64),
-          height(64),
-          child(
-            Button.create(
-              defaultBackground(null),
-              mouseListener(mouseListener),
-              child(
-                Image.create(
-                  image(image)
-                )
-              )
-            )
-          )
-        )
-      );
-    }
-
-    public static MachineButton create(
-      BufferedImage image,
-      MouseEvent.Listener mouseListener
-    ) {
-      return new MachineButton(image, mouseListener);
-    }
-
-    @Override
-    public boolean stateEquals(Widget widget) {
-      return widget instanceof MachineButton;
-    }
   }
 }

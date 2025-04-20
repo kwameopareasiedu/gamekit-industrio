@@ -5,10 +5,11 @@ import dev.gamekit.core.IO;
 import java.awt.image.BufferedImage;
 
 public class Producer extends Machine {
-  private static final BufferedImage ICON = IO.getResourceImage("icons/mach1.png");
+  private static final BufferedImage ICON = IO.getResourceImage("producer.png");
+  public static final Info INFO = new Info("Producer", ICON);
 
-  public Producer(String name, int row, int col) {
-    super(name, row, col, new Port[0], new Port[]{ new Port() });
+  public Producer(int row, int col) {
+    super("Producer", row, col, new Port[0], new Port[]{ new Port() });
   }
 
   @Override
@@ -22,7 +23,7 @@ public class Producer extends Machine {
   }
 
   @Override
-  protected BufferedImage getImage() {
+  public BufferedImage getImage() {
     return ICON;
   }
 }

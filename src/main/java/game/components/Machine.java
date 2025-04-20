@@ -46,13 +46,13 @@ public abstract class Machine extends Prop {
   public final void output() {
     for (Port port : outputs) {
       if (port.canSend()) {
-        port.linked.item = port.item;
+        port.out.item = port.item;
         port.item = null;
       }
     }
   }
 
-  protected abstract BufferedImage getImage();
+  public abstract BufferedImage getImage();
 
   @Override
   protected void render() {
@@ -60,4 +60,6 @@ public abstract class Machine extends Prop {
     Position pos = Utils.indexToPosition(row, col);
     Renderer.drawImage(icon, pos.x, pos.y, Constants.CELL_PIXEL_SIZE, Constants.CELL_PIXEL_SIZE);
   }
+
+  public record Info(String name, BufferedImage icon) { }
 }

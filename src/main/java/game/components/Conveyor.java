@@ -6,10 +6,11 @@ import java.awt.image.BufferedImage;
 
 public class Conveyor extends Machine {
   private static final BufferedImage ICON = IO.getResourceImage("conveyor.png");
+  public static final Info INFO = new Info("Conveyor", ICON);
 
-  public Conveyor(String name, int row, int col) {
+  public Conveyor(int row, int col) {
     super(
-      name, row, col,
+      "Conveyor", row, col,
       new Port[]{ new Port() },
       new Port[]{ new Port() }
     );
@@ -27,7 +28,7 @@ public class Conveyor extends Machine {
   }
 
   @Override
-  protected BufferedImage getImage() {
+  public BufferedImage getImage() {
     return ICON;
   }
 }

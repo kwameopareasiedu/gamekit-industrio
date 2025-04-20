@@ -4,7 +4,6 @@ import dev.gamekit.core.*;
 import dev.gamekit.utils.Position;
 import game.Constants;
 import game.Utils;
-import game.enums.Action;
 
 import java.awt.*;
 import java.util.ArrayList;
@@ -73,18 +72,23 @@ public class Factory extends Prop {
     }
   }
 
-  public void setAction(Action action) {
-    switch (action) {
-      case PLACE -> {
-        Position pos = Input.getMousePosition();
-        Position worldPos = Camera.screenToWorldPosition(pos.x, pos.y);
-        Position indexPos = Utils.positionToIndex(worldPos);
-        System.out.printf("R:%d, C:%d\n", indexPos.y, indexPos.x);
+  public void createMachine(Machine.Info info) {
+    Position pos = Input.getMousePosition();
+    Position worldPos = Camera.screenToWorldPosition(pos.x, pos.y);
+    Position indexPos = Utils.positionToIndex(worldPos);
+    System.out.printf("R:%d, C:%d\n", indexPos.y, indexPos.x);
 
-        Machine producer = new Conveyor("Producer", indexPos.y, indexPos.x);
-        machines.add(producer);
-        addChild(producer);
-      }
+    Machine machine = null;
+
+    if (info == Conveyor.INFO) {
+      machine = new Conveyor(indexPos.y, indexPos.x);
+    } else if (info == Producer.INFO) {
+      machine = new Producer(indexPos.y, indexPos.x);
+    }
+
+    if (machine != null) {
+      machines.add(machine);
+      addChild(machine);
     }
   }
 }
