@@ -1,4 +1,4 @@
-package game.components;
+package game.machines;
 
 import dev.gamekit.core.IO;
 
@@ -8,8 +8,15 @@ public class Producer extends Machine {
   private static final BufferedImage ICON = IO.getResourceImage("producer.png");
   public static final Info INFO = new Info("Producer", ICON);
 
-  public Producer(int row, int col) {
-    super("Producer", row, col, new Port[0], new Port[]{ new Port() });
+  public Producer(
+    int row, int col,
+    Orientation orientation
+  ) {
+    super(
+      "Producer", row, col,
+      orientation, new Port[0],
+      new Port[]{ new Port() }
+    );
   }
 
   @Override

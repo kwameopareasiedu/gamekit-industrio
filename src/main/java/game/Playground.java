@@ -1,7 +1,5 @@
 package game;
 
-import dev.gamekit.core.Camera;
-import dev.gamekit.core.Input;
 import dev.gamekit.core.Renderer;
 import dev.gamekit.core.Scene;
 import dev.gamekit.ui.Spacing;
@@ -11,12 +9,11 @@ import dev.gamekit.ui.widgets.Align;
 import dev.gamekit.ui.widgets.Column;
 import dev.gamekit.ui.widgets.Padding;
 import dev.gamekit.ui.widgets.Widget;
-import dev.gamekit.utils.Position;
-import game.actions.Action;
-import game.actions.SelectAction;
-import game.components.Conveyor;
 import game.components.Factory;
-import game.components.Producer;
+import game.machines.Conveyor;
+import game.machines.Machine;
+import game.machines.Orientation;
+import game.machines.Producer;
 import game.ui.MachineButton;
 
 import java.awt.*;
@@ -27,10 +24,12 @@ import static dev.gamekit.ui.widgets.MultiChildParentParam.children;
 import static dev.gamekit.ui.widgets.PaddingParam.padding;
 import static dev.gamekit.ui.widgets.SingleChildParentParam.child;
 
-public class Playground extends Scene {
+public class Playground extends Scene implements StateManager {
   private final Factory factory;
 
-  private Action action = Action.NO_OP;
+  private State state = State.DEFAULT;
+  private Orientation orientation = Orientation.UP;
+  private Machine.Info machineInfo;
 
   public Playground() {
     super("Playground");
@@ -39,35 +38,37 @@ public class Playground extends Scene {
   }
 
   @Override
-  protected void start() {
-    add(factory);
-  }
+  public Factory getFactory() { return factory; }
+
+  @Override
+  public State getState() { return state; }
+
+  @Override
+  public void setState(State state) { this.state = state; }
+
+  @Override
+  public Orientation getOrientation() { return orientation; }
+
+  @Override
+  public void setOrientation(Orientation orientation) { this.orientation = orientation; }
+
+  @Override
+  public Machine.Info getMachineInfo() { return machineInfo; }
+
+  @Override
+  protected void start() { add(factory); }
 
   @Override
   protected void update() {
-    if (Input.isButtonClicked(Input.BUTTON_RMB)) {
-      action = Action.NO_OP;
-    } else if (Input.isButtonClicked(Input.BUTTON_LMB)) {
-      if (action instanceof SelectAction selectAction) {
-        factory.createMachine(selectAction.info);
-        action = Action.NO_OP;
-      }
-    }
+    updateState();
+    applyState();
   }
 
   @Override
   protected void render() {
     Renderer.setBackground(Color.WHITE);
     Renderer.clear();
-
-    if (action instanceof SelectAction selectAction) {
-      Position pos = Input.getMousePosition();
-      Position worldPos = Camera.screenToWorldPosition(pos.x, pos.y);
-      Renderer.drawImage(
-        selectAction.info.icon(), worldPos.x, worldPos.y,
-        Constants.CELL_PIXEL_SIZE, Constants.CELL_PIXEL_SIZE
-      );
-    }
+    renderState();
   }
 
   @Override
@@ -83,12 +84,14 @@ public class Playground extends Scene {
               children(
                 MachineButton.create(Producer.INFO, (e) -> {
                   if (e.type == MouseEvent.Type.CLICK) {
-                    action = new SelectAction(Producer.INFO);
+                    machineInfo = Producer.INFO;
+                    state = State.PICK;
                   }
                 }),
                 MachineButton.create(Conveyor.INFO, (e) -> {
                   if (e.type == MouseEvent.Type.CLICK) {
-                    action = new SelectAction(Conveyor.INFO);
+                    machineInfo = Conveyor.INFO;
+                    state = State.PICK;
                   }
                 })
               )

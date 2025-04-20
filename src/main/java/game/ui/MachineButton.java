@@ -6,7 +6,7 @@ import dev.gamekit.ui.events.MouseEvent;
 import dev.gamekit.ui.widgets.*;
 import dev.gamekit.ui.widgets.Button;
 import dev.gamekit.ui.widgets.Image;
-import game.components.Machine;
+import game.machines.Machine;
 
 import java.awt.*;
 

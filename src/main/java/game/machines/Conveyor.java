@@ -1,4 +1,4 @@
-package game.components;
+package game.machines;
 
 import dev.gamekit.core.IO;
 
@@ -8,9 +8,13 @@ public class Conveyor extends Machine {
   private static final BufferedImage ICON = IO.getResourceImage("conveyor.png");
   public static final Info INFO = new Info("Conveyor", ICON);
 
-  public Conveyor(int row, int col) {
+  public Conveyor(
+    int row, int col,
+    Orientation orientation
+  ) {
     super(
       "Conveyor", row, col,
+      orientation,
       new Port[]{ new Port() },
       new Port[]{ new Port() }
     );

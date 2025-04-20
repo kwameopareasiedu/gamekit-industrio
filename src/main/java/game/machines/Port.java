@@ -1,4 +1,6 @@
-package game.components;
+package game.machines;
+
+import game.components.Item;
 
 public class Port {
   public Port out;

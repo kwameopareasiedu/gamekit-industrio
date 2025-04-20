@@ -4,6 +4,10 @@ import dev.gamekit.core.*;
 import dev.gamekit.utils.Position;
 import game.Constants;
 import game.Utils;
+import game.machines.Conveyor;
+import game.machines.Machine;
+import game.machines.Orientation;
+import game.machines.Producer;
 
 import java.awt.*;
 import java.util.ArrayList;
@@ -20,12 +24,14 @@ public class Factory extends Prop {
   private final Stroke outlineRenderStroke;
   private final Stroke innerRenderStroke;
   private final List<Machine> machines;
+  private final Machine[][] grid;
 
   private long tickTime;
 
   public Factory() {
     super("Factory");
     size = Constants.GRID_SIZE;
+    grid = new Machine[size][size];
     pixelSize = size * Constants.CELL_PIXEL_SIZE;
     outlineRenderStroke = new BasicStroke(
       2, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND,
@@ -72,7 +78,7 @@ public class Factory extends Prop {
     }
   }
 
-  public void createMachine(Machine.Info info) {
+  public void createMachine(Machine.Info info, Orientation orientation) {
     Position pos = Input.getMousePosition();
     Position worldPos = Camera.screenToWorldPosition(pos.x, pos.y);
     Position indexPos = Utils.positionToIndex(worldPos);
@@ -81,14 +87,18 @@ public class Factory extends Prop {
     Machine machine = null;
 
     if (info == Conveyor.INFO) {
-      machine = new Conveyor(indexPos.y, indexPos.x);
+      machine = new Conveyor(indexPos.y, indexPos.x, orientation);
     } else if (info == Producer.INFO) {
-      machine = new Producer(indexPos.y, indexPos.x);
+      machine = new Producer(indexPos.y, indexPos.x, orientation);
     }
 
     if (machine != null) {
       machines.add(machine);
       addChild(machine);
     }
+  }
+
+  public void connectMachines(List<Integer> draggedIndices) {
+
   }
 }

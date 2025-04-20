@@ -1,4 +1,4 @@
-package game.components;
+package game.machines;
 
 import dev.gamekit.core.Prop;
 import dev.gamekit.core.Renderer;
@@ -13,12 +13,14 @@ import java.util.List;
 public abstract class Machine extends Prop {
   public final int row;
   public final int col;
+  public final Orientation orientation;
   protected final Port[] inputs;
   protected final Port[] outputs;
   protected final List<Port> freeOutputs;
 
   public Machine(
     String name, int row, int col,
+    Orientation orientation,
     Port[] inputs, Port[] outputs
   ) {
     super(name);
@@ -26,6 +28,7 @@ public abstract class Machine extends Prop {
     this.col = col;
     this.inputs = inputs;
     this.outputs = outputs;
+    this.orientation = orientation;
     this.freeOutputs = new ArrayList<>();
   }
 
@@ -58,7 +61,11 @@ public abstract class Machine extends Prop {
   protected void render() {
     BufferedImage icon = getImage();
     Position pos = Utils.indexToPosition(row, col);
-    Renderer.drawImage(icon, pos.x, pos.y, Constants.CELL_PIXEL_SIZE, Constants.CELL_PIXEL_SIZE);
+
+    Renderer.withRotation(
+      pos.x, pos.y, orientation.toDeg(),
+      () -> Renderer.drawImage(icon, pos.x, pos.y, Constants.CELL_PIXEL_SIZE, Constants.CELL_PIXEL_SIZE)
+    );
   }
 
   public record Info(String name, BufferedImage icon) { }
