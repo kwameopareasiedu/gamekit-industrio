@@ -6,10 +6,10 @@ import dev.gamekit.core.Renderer;
 import dev.gamekit.utils.Position;
 import game.Constants;
 import game.Utils;
-import game.machines.DroppableMachine;
+import game.machines.Direction;
+import game.machines.Extractor;
+import game.machines.Hub;
 import game.machines.Machine;
-import game.machines.Orientation;
-import game.machines.Producer;
 
 import java.awt.*;
 import java.util.ArrayList;
@@ -20,14 +20,15 @@ import static dev.gamekit.utils.Math.toInt;
 public class Factory extends Prop {
   private static final int TICK_RATE = 2;
   private static final double INV_TICK_RATE = 1.0 / TICK_RATE;
-  private static final Color GRID_COLOR = new Color(0x29c0c0c0, true);
+  private static final Color GRID_COLOR = new Color(0x1f000000, true);
 
   public final int size;
   public final int pixelSize;
   private final Stroke outlineRenderStroke;
   private final Stroke innerRenderStroke;
-  private final List<DroppableMachine> machines;
+  private final List<Machine> machines;
   private final Machine[] grid;
+  private final Hub hub;
 
   private long tickTime;
 
@@ -36,15 +37,37 @@ public class Factory extends Prop {
     size = Constants.GRID_SIZE;
     grid = new Machine[size * size];
     pixelSize = size * Constants.CELL_PIXEL_SIZE;
+
     outlineRenderStroke = new BasicStroke(
-      2, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND,
+      2, BasicStroke.CAP_ROUND,
+      BasicStroke.JOIN_ROUND,
       0, new float[]{ 10 }, 5
     );
+
     innerRenderStroke = new BasicStroke(
-      2, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND,
+      2, BasicStroke.CAP_ROUND,
+      BasicStroke.JOIN_ROUND,
       0, new float[]{ 10 }, 5
     );
+
     machines = new ArrayList<>();
+
+    hub = new Hub(
+      (size * size) / 2,
+      Direction.UP,
+      (cargo) -> {
+        // TODO: Consume cargo
+      }
+    );
+  }
+
+  @Override
+  protected void start() {
+    super.start();
+
+    machines.add(hub);
+    grid[hub.gridIndex] = hub;
+    addChild(hub);
   }
 
   @Override
@@ -81,7 +104,7 @@ public class Factory extends Prop {
     }
   }
 
-  public boolean createMachine(Position position, Machine.Info info, Orientation orientation) {
+  public boolean createMachine(Position position, Machine.Info info, Direction direction) {
     int index = Utils.worldPositionToIndex(position);
     int row = Utils.indexToRow(index);
     int col = Utils.indexToCol(index);
@@ -90,10 +113,10 @@ public class Factory extends Prop {
     if (grid[index] != null)
       return false;
 
-    DroppableMachine machine = null;
+    Machine machine = null;
 
-    if (info == Producer.INFO) {
-      machine = new Producer(index, orientation);
+    if (info == Extractor.INFO) {
+      machine = new Extractor(index, direction);
     }
 
     if (machine != null) {
@@ -111,7 +134,16 @@ public class Factory extends Prop {
     return grid[index] != null;
   }
 
-  public void connectMachines(List<Integer> draggedIndices) {
+  public void connectMachines(List<Integer> pathIndices) {
+    int machine1GridIndex = pathIndices.get(0);
+    int machine2GridIndex = pathIndices.get(pathIndices.size() - 1);
 
+    if (grid[machine1GridIndex] == null || grid[machine2GridIndex] == null)
+      return;
+
+    for (int val : pathIndices)
+      System.out.printf("%d \t", val);
+
+    System.out.println();
   }
 }

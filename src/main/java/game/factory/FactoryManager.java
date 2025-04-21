@@ -9,8 +9,9 @@ import dev.gamekit.ui.events.MouseEvent;
 import dev.gamekit.ui.widgets.*;
 import dev.gamekit.utils.Position;
 import game.Constants;
-import game.machines.Orientation;
-import game.machines.Producer;
+import game.Utils;
+import game.machines.Direction;
+import game.machines.Extractor;
 import game.ui.MachineButton;
 
 public interface FactoryManager {
@@ -24,13 +25,11 @@ public interface FactoryManager {
 
     if (Input.isButtonClicked(Input.BUTTON_RMB)) {
       state.action = FactoryAction.CLEAR;
-    } else if (Input.isButtonPressed(Input.BUTTON_LMB) && state.action == FactoryAction.DEFAULT) {
-      Position mousePos = Input.getMousePosition();
-      Position worldPos = Camera.screenToWorldPosition(mousePos.x, mousePos.y);
-      if (factory.isMachineAtPosition(worldPos))
-        state.action = FactoryAction.CONNECT;
-    } else if (Input.isButtonReleased(Input.BUTTON_LMB) && state.action == FactoryAction.CONNECT) {
-      state.action = FactoryAction.DEFAULT;
+    } else if (Input.isButtonDown(Input.BUTTON_LMB) && state.action == FactoryAction.DEFAULT) {
+      if (factory.isMachineAtPosition(getMouseWorldPosition()))
+        state.action = FactoryAction.FIND_PATH;
+    } else if (Input.isButtonReleased(Input.BUTTON_LMB) && state.action == FactoryAction.FIND_PATH) {
+      state.action = FactoryAction.CONNECT;
     } else if (Input.isButtonClicked(Input.BUTTON_LMB) && state.action == FactoryAction.PICK) {
       state.action = FactoryAction.PLACE;
     } else if (Input.isKeyReleased(Input.KEY_R) && state.action == FactoryAction.PICK) {
@@ -46,22 +45,35 @@ public interface FactoryManager {
 
     switch (state.action) {
       case PLACE -> {
-        Position mousePos = Input.getMousePosition();
-        Position worldPos = Camera.screenToWorldPosition(mousePos.x, mousePos.y);
+        Position pos = getMouseWorldPosition();
 
-        if (factory.createMachine(worldPos, state.machineInfo, state.orientation))
+        if (factory.createMachine(pos, state.machineInfo, state.direction))
           state.action = FactoryAction.CLEAR;
         else state.action = FactoryAction.PICK;
       }
+      case FIND_PATH -> {
+        Position pos = getMouseWorldPosition();
+        int gridIndex = Utils.worldPositionToIndex(pos);
+        int idx = state.pathIndices.indexOf(gridIndex);
+
+        if (idx != -1) {
+          state.pathIndices.subList(
+            idx, state.pathIndices.size()
+          ).clear();
+        }
+
+        state.pathIndices.add(gridIndex);
+      }
       case CONNECT -> {
-        System.out.println("Connecting");
+        factory.connectMachines(state.pathIndices);
+        state.action = FactoryAction.CLEAR;
       }
       case ROTATE_CW -> {
-        state.orientation = Orientation.cycle(state.orientation, 1);
+        state.direction = Direction.cycle(state.direction, 1);
         state.action = FactoryAction.PICK;
       }
       case ROTATE_CCW -> {
-        state.orientation = Orientation.cycle(state.orientation, -1);
+        state.direction = Direction.cycle(state.direction, -1);
         state.action = FactoryAction.PICK;
       }
       case CLEAR -> state.reset();
@@ -72,10 +84,10 @@ public interface FactoryManager {
     FactoryManagerState state = getState();
 
     if (state.action == FactoryAction.PICK) {
-      Position mousePos = Input.getMousePosition();
-      Position worldPos = Camera.screenToWorldPosition(mousePos.x, mousePos.y);
+      Position worldPos = getMouseWorldPosition();
+
       Renderer.withRotation(
-        worldPos.x, worldPos.y, state.orientation.toDeg(),
+        worldPos.x, worldPos.y, state.direction.getAngle(),
         () ->
           Renderer.drawImage(
             state.machineInfo.icon(), worldPos.x, worldPos.y,
@@ -97,9 +109,9 @@ public interface FactoryManager {
             Column.create(
               ColumnParam.gapSize(12),
               ColumnParam.children(
-                MachineButton.create(Producer.INFO, (e) -> {
+                MachineButton.create(Extractor.INFO, (e) -> {
                   if (e.type == MouseEvent.Type.CLICK) {
-                    state.machineInfo = Producer.INFO;
+                    state.machineInfo = Extractor.INFO;
                     state.action = FactoryAction.PICK;
                   }
                 })
@@ -109,5 +121,10 @@ public interface FactoryManager {
         )
       )
     );
+  }
+
+  private Position getMouseWorldPosition() {
+    Position mousePos = Input.getMousePosition();
+    return Camera.screenToWorldPosition(mousePos.x, mousePos.y);
   }
 }

@@ -2,18 +2,18 @@ package game.machines;
 
 import dev.gamekit.utils.Math;
 
-public enum Orientation {
+public enum Direction {
   UP, RIGHT, DOWN, LEFT;
 
-  private static final Orientation[] VALUES = new Orientation[]{
+  private static final Direction[] VALUES = new Direction[]{
     UP, RIGHT, DOWN, LEFT
   };
 
-  public static Orientation cycle(Orientation value, int offset) {
+  public static Direction cycle(Direction dir, int offset) {
     int index = -1;
 
     for (int i = 0; i < VALUES.length; i++) {
-      if (VALUES[i] == value) {
+      if (VALUES[i] == dir) {
         index = i;
         break;
       }
@@ -23,7 +23,7 @@ public enum Orientation {
     return VALUES[newIndex];
   }
 
-  public double toDeg() {
+  public double getAngle() {
     return switch (this) {
       case UP -> 0;
       case RIGHT -> 90;

@@ -10,6 +10,7 @@ import game.factory.FactoryManagerState;
 import java.awt.*;
 
 public class Playground extends Scene implements FactoryManager {
+  private static final Color BG_COLOR = new Color(0xffc0c0c0, true);
   private final Factory factory;
   private final FactoryManagerState factoryManagerState;
 
@@ -26,7 +27,9 @@ public class Playground extends Scene implements FactoryManager {
   public FactoryManagerState getState() { return factoryManagerState; }
 
   @Override
-  protected void start() { add(factory); }
+  protected void start() {
+    add(factory);
+  }
 
   @Override
   protected void update() {
@@ -36,7 +39,7 @@ public class Playground extends Scene implements FactoryManager {
 
   @Override
   protected void render() {
-    Renderer.setBackground(Color.DARK_GRAY);
+    Renderer.setBackground(BG_COLOR);
     Renderer.clear();
     renderState();
   }

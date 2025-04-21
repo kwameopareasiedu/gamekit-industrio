@@ -6,21 +6,20 @@ import java.awt.image.BufferedImage;
 
 public class Conveyor extends Machine {
   private static final BufferedImage ICON = IO.getResourceImage("conveyor.png");
-  public static final Info INFO = new Info("Conveyor", ICON);
 
-  public Conveyor(int gridIndex, Orientation orientation) {
-    super("Conveyor", gridIndex, orientation,
-      new Port[]{ new Port() }, new Port[]{ new Port() });
+  public Conveyor(int gridIndex, Direction direction) {
+    super("Conveyor", gridIndex, direction,
+      null, new Port(Port.Type.OUT), null, new Port(Port.Type.IN));
   }
 
   @Override
-  protected void performProcess() {
-    Port inputPort = inputs[0];
-    Port outputPort = freeOutputs.get(0);
+  public void process() {
+    Port inputPort = inputs.get(0);
+    Port outputPort = outputs.get(0);
 
-    if (outputPort.item == null) {
-      outputPort.item = inputPort.item;
-      inputPort.item = null;
+    if (outputPort.cargo == null) {
+      outputPort.cargo = inputPort.cargo;
+      inputPort.cargo = null;
     }
   }
 

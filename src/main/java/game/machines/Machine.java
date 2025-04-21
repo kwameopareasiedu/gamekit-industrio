@@ -12,43 +12,81 @@ import java.util.List;
 
 public abstract class Machine extends Prop {
   public final int gridIndex;
-  public final Orientation orientation;
-  protected final Port[] inputs;
-  protected final Port[] outputs;
-  protected final List<Port> freeOutputs;
+  public final Direction direction;
+  protected final Port topPort;
+  protected final Port rightPort;
+  protected final Port bottomPort;
+  protected final Port leftPort;
+  protected final List<Port> inputs;
+  protected final List<Port> outputs;
 
   public Machine(
-    String name, int gridIndex,
-    Orientation orientation,
-    Port[] inputs, Port[] outputs
+    String name,
+    int gridIndex,
+    Direction direction,
+    Port topPort,
+    Port rightPort,
+    Port bottomPort,
+    Port leftPort
   ) {
     super(name);
     this.gridIndex = gridIndex;
-    this.inputs = inputs;
-    this.outputs = outputs;
-    this.orientation = orientation;
-    this.freeOutputs = new ArrayList<>();
-  }
+    this.direction = direction;
 
-  public final void process() {
-    freeOutputs.clear();
+    this.topPort = switch (direction) {
+      case UP -> topPort;
+      case RIGHT -> leftPort;
+      case DOWN -> bottomPort;
+      case LEFT -> rightPort;
+    };
 
-    for (Port port : outputs) {
-      if (port.item == null)
-        freeOutputs.add(port);
+    this.rightPort = switch (direction) {
+      case UP -> rightPort;
+      case RIGHT -> topPort;
+      case DOWN -> leftPort;
+      case LEFT -> bottomPort;
+    };
+
+    this.bottomPort = switch (direction) {
+      case UP -> bottomPort;
+      case RIGHT -> rightPort;
+      case DOWN -> topPort;
+      case LEFT -> leftPort;
+    };
+
+    this.leftPort = switch (direction) {
+      case UP -> leftPort;
+      case RIGHT -> bottomPort;
+      case DOWN -> rightPort;
+      case LEFT -> topPort;
+    };
+
+    inputs = new ArrayList<>();
+    outputs = new ArrayList<>();
+
+    List<Port> tempList = new ArrayList<>();
+    tempList.add(this.topPort);
+    tempList.add(this.rightPort);
+    tempList.add(this.bottomPort);
+    tempList.add(this.leftPort);
+
+    for (Port p : tempList) {
+      if (p == null) continue;
+
+      switch (p.type) {
+        case IN -> inputs.add(p);
+        case OUT -> outputs.add(p);
+      }
     }
-
-    if (!freeOutputs.isEmpty())
-      performProcess();
   }
 
-  protected abstract void performProcess();
+  public abstract void process();
 
   public final void output() {
-    for (Port port : outputs) {
-      if (port.canSend()) {
-        port.out.item = port.item;
-        port.item = null;
+    for (Port p : outputs) {
+      if (p.linked != null && p.linked.cargo == null) {
+        p.linked.cargo = p.cargo;
+        p.cargo = null;
       }
     }
   }
@@ -61,7 +99,7 @@ public abstract class Machine extends Prop {
     Position pos = Utils.indexToWorldPosition(gridIndex);
 
     Renderer.withRotation(
-      pos.x, pos.y, orientation.toDeg(),
+      pos.x, pos.y, direction.getAngle(),
       () -> Renderer.drawImage(
         icon, pos.x, pos.y,
         Constants.CELL_PIXEL_SIZE,

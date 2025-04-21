@@ -1,17 +1,19 @@
 package game.machines;
 
-import game.components.Item;
+import game.components.Cargo;
 
 public class Port {
-  public Port out;
-  public Item item;
+  public final Type type;
+  public Port linked;
+  public Cargo cargo;
 
-  public Port() {
-    this.out = null;
-    this.item = null;
+  public Port(Type type) {
+    this.type = type;
+    this.linked = null;
+    this.cargo = null;
   }
 
-  public boolean canSend() {
-    return out != null && out.item == null;
+  public enum Type {
+    IN, OUT
   }
 }
