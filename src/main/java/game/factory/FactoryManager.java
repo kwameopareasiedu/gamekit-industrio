@@ -25,7 +25,7 @@ public interface FactoryManager {
 
     if (Input.isButtonClicked(Input.BUTTON_RMB)) {
       state.action = FactoryAction.CLEAR;
-    } else if (Input.isButtonDown(Input.BUTTON_LMB) && state.action == FactoryAction.DEFAULT) {
+    } else if (Input.isButtonDown(Input.BUTTON_LMB) &&state.action == FactoryAction.DEFAULT) {
       if (factory.isMachineAtPosition(getMouseWorldPosition()))
         state.action = FactoryAction.FIND_PATH;
     } else if (Input.isButtonReleased(Input.BUTTON_LMB) && state.action == FactoryAction.FIND_PATH) {

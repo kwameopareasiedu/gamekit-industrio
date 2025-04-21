@@ -13,10 +13,10 @@ import java.util.List;
 public abstract class Machine extends Prop {
   public final int gridIndex;
   public final Direction direction;
-  protected final Port topPort;
-  protected final Port rightPort;
-  protected final Port bottomPort;
-  protected final Port leftPort;
+  public final Port topPort;
+  public final Port rightPort;
+  public final Port bottomPort;
+  public final Port leftPort;
   protected final List<Port> inputs;
   protected final List<Port> outputs;
 

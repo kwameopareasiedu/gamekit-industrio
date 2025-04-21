@@ -6,10 +6,7 @@ import dev.gamekit.core.Renderer;
 import dev.gamekit.utils.Position;
 import game.Constants;
 import game.Utils;
-import game.machines.Direction;
-import game.machines.Extractor;
-import game.machines.Hub;
-import game.machines.Machine;
+import game.machines.*;
 
 import java.awt.*;
 import java.util.ArrayList;
@@ -37,37 +34,20 @@ public class Factory extends Prop {
     size = Constants.GRID_SIZE;
     grid = new Machine[size * size];
     pixelSize = size * Constants.CELL_PIXEL_SIZE;
-
-    outlineRenderStroke = new BasicStroke(
-      2, BasicStroke.CAP_ROUND,
-      BasicStroke.JOIN_ROUND,
-      0, new float[]{ 10 }, 5
-    );
-
-    innerRenderStroke = new BasicStroke(
-      2, BasicStroke.CAP_ROUND,
-      BasicStroke.JOIN_ROUND,
-      0, new float[]{ 10 }, 5
-    );
-
+    outlineRenderStroke =
+      new BasicStroke(2, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND, 0, new float[]{ 10 }, 5);
+    innerRenderStroke =
+      new BasicStroke(2, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND, 0, new float[]{ 10 }, 5);
+    hub = new Hub((size * size) / 2, Direction.UP, (cargo) -> {
+      // TODO: Consume cargo
+    });
     machines = new ArrayList<>();
-
-    hub = new Hub(
-      (size * size) / 2,
-      Direction.UP,
-      (cargo) -> {
-        // TODO: Consume cargo
-      }
-    );
   }
 
   @Override
   protected void start() {
     super.start();
-
-    machines.add(hub);
-    grid[hub.gridIndex] = hub;
-    addChild(hub);
+    addMachine(hub.gridIndex, hub);
   }
 
   @Override
@@ -115,16 +95,11 @@ public class Factory extends Prop {
 
     Machine machine = null;
 
-    if (info == Extractor.INFO) {
+    if (info == Extractor.INFO)
       machine = new Extractor(index, direction);
-    }
 
-    if (machine != null) {
-      machines.add(machine);
-      grid[index] = machine;
-      addChild(machine);
-      System.out.printf("Machine count:%d\n", machines.size());
-    }
+    if (machine != null)
+      addMachine(index, machine);
 
     return true;
   }
@@ -137,13 +112,61 @@ public class Factory extends Prop {
   public void connectMachines(List<Integer> pathIndices) {
     int machine1GridIndex = pathIndices.get(0);
     int machine2GridIndex = pathIndices.get(pathIndices.size() - 1);
+    Machine sourceMachine = grid[machine1GridIndex];
+    Machine targetMachine = grid[machine2GridIndex];
 
-    if (grid[machine1GridIndex] == null || grid[machine2GridIndex] == null)
+    if (sourceMachine == null ||
+      targetMachine == null ||
+      sourceMachine instanceof Conveyor ||
+      targetMachine instanceof Conveyor)
       return;
 
-    for (int val : pathIndices)
-      System.out.printf("%d \t", val);
+    // Return if there is a machine in this path
+    for (int i = 1; i < pathIndices.size() - 1; i++) {
+      int index = pathIndices.get(i);
+      Machine machine = grid[index];
+      if (machine != null) return;
+    }
 
-    System.out.println();
+    // Create oriented conveyors on the path
+    for (int i = 1; i < pathIndices.size() - 1; i++) {
+      int previousIndex = pathIndices.get(i - 1);
+      int currentIndex = pathIndices.get(i);
+      int diff = currentIndex - previousIndex;
+      Direction direction = switch (diff) {
+        case 1 -> Direction.RIGHT;
+        case -1 -> Direction.LEFT;
+        case Constants.GRID_SIZE -> Direction.UP;
+        case -Constants.GRID_SIZE -> Direction.DOWN;
+        default -> null;
+      };
+
+      if (direction == null)
+        continue;
+
+      if (i == 1) {
+        boolean draggedFromOutputPort = switch (direction) {
+          case UP -> sourceMachine.topPort != null &&
+            sourceMachine.topPort.type == Port.Type.OUT;
+          case RIGHT -> sourceMachine.rightPort != null &&
+            sourceMachine.rightPort.type == Port.Type.OUT;
+          case DOWN -> sourceMachine.bottomPort != null &&
+            sourceMachine.bottomPort.type == Port.Type.OUT;
+          case LEFT -> sourceMachine.leftPort != null &&
+            sourceMachine.leftPort.type == Port.Type.OUT;
+        };
+
+        if (!draggedFromOutputPort)
+          return;
+      }
+
+      addMachine(currentIndex, new Conveyor(currentIndex, direction));
+    }
+  }
+
+  private void addMachine(int index, Machine machine) {
+    machines.add(machine);
+    grid[index] = machine;
+    addChild(machine);
   }
 }
