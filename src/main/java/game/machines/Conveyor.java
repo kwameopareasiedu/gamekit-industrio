@@ -17,9 +17,9 @@ public class Conveyor extends Machine {
     Port inputPort = inputs.get(0);
     Port outputPort = outputs.get(0);
 
-    if (outputPort.cargo == null) {
-      outputPort.cargo = inputPort.cargo;
-      inputPort.cargo = null;
+    if (outputPort.item == null) {
+      outputPort.item = inputPort.item;
+      inputPort.item = null;
     }
   }
 

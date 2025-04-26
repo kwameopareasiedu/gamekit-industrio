@@ -1,6 +1,6 @@
-package game.factory;
+package game.world;
 
-public enum FactoryAction {
+public enum WorldAction {
   DEFAULT,
   FIND_PATH,
   PICK,

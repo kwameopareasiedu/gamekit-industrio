@@ -1,4 +1,4 @@
-package game.factory;
+package game.world;
 
 import dev.gamekit.core.Application;
 import dev.gamekit.core.Prop;
@@ -14,31 +14,31 @@ import java.util.List;
 
 import static dev.gamekit.utils.Math.toInt;
 
-public class Factory extends Prop {
+public class World extends Prop {
   private static final int TICK_RATE = 2;
   private static final double INV_TICK_RATE = 1.0 / TICK_RATE;
   private static final Color GRID_COLOR = new Color(0x1f000000, true);
 
-  public final int size;
   public final int pixelSize;
-  private final Stroke outlineRenderStroke;
-  private final Stroke innerRenderStroke;
+  private final Stroke outerGridStroke;
+  private final Stroke innerGridStroke;
   private final List<Machine> machines;
   private final Machine[] grid;
   private final Hub hub;
 
   private long tickTime;
 
-  public Factory() {
-    super("Factory");
-    size = Constants.GRID_SIZE;
-    grid = new Machine[size * size];
-    pixelSize = size * Constants.CELL_PIXEL_SIZE;
-    outlineRenderStroke =
-      new BasicStroke(2, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND, 0, new float[]{ 10 }, 5);
-    innerRenderStroke =
-      new BasicStroke(2, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND, 0, new float[]{ 10 }, 5);
-    hub = new Hub((size * size) / 2, Direction.UP, (cargo) -> {
+  public World() {
+    super("World");
+    grid = new Machine[Constants.GRID_SIZE * Constants.GRID_SIZE];
+    pixelSize = Constants.GRID_SIZE * Constants.CELL_PIXEL_SIZE;
+    outerGridStroke = new BasicStroke(
+      2, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND, 0, new float[]{ 10 }, 5
+    );
+    innerGridStroke = new BasicStroke(
+      2, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND, 0, new float[]{ 10 }, 5
+    );
+    hub = new Hub((Constants.GRID_SIZE * Constants.GRID_SIZE) / 2, Direction.UP, (cargo) -> {
       // TODO: Consume cargo
     });
     machines = new ArrayList<>();
@@ -64,22 +64,22 @@ public class Factory extends Prop {
   @Override
   protected void render() {
     Renderer.setColor(GRID_COLOR);
-    Renderer.setStroke(outlineRenderStroke);
+    Renderer.setStroke(outerGridStroke);
     Renderer.drawRect(0, 0, pixelSize, pixelSize);
 
-    for (int i = 1; i < size; i++) {
+    for (int i = 1; i < Constants.GRID_SIZE; i++) {
       int x = toInt(i * Constants.CELL_PIXEL_SIZE - 0.5 * pixelSize);
 
       Renderer.setColor(GRID_COLOR);
-      Renderer.setStroke(innerRenderStroke);
+      Renderer.setStroke(innerGridStroke);
       Renderer.drawLineV(x, toInt(-0.5 * pixelSize), toInt(0.5 * pixelSize));
     }
 
-    for (int i = 1; i < size; i++) {
+    for (int i = 1; i < Constants.GRID_SIZE; i++) {
       int y = toInt(i * Constants.CELL_PIXEL_SIZE - 0.5 * pixelSize);
 
       Renderer.setColor(GRID_COLOR);
-      Renderer.setStroke(innerRenderStroke);
+      Renderer.setStroke(innerGridStroke);
       Renderer.drawLineH(toInt(-0.5 * pixelSize), toInt(0.5 * pixelSize), y);
     }
   }

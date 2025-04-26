@@ -1,16 +1,16 @@
 package game.machines;
 
-import game.components.Cargo;
+import game.items.Item;
 
 public class Port {
   public final Type type;
   public Port linked;
-  public Cargo cargo;
+  public Item item;
 
   public Port(Type type) {
     this.type = type;
     this.linked = null;
-    this.cargo = null;
+    this.item = null;
   }
 
   public enum Type {

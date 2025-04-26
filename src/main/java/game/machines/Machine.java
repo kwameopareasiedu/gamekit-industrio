@@ -84,9 +84,9 @@ public abstract class Machine extends Prop {
 
   public final void output() {
     for (Port p : outputs) {
-      if (p.linked != null && p.linked.cargo == null) {
-        p.linked.cargo = p.cargo;
-        p.cargo = null;
+      if (p.linked != null && p.linked.item == null) {
+        p.linked.item = p.item;
+        p.item = null;
       }
     }
   }
