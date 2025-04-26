@@ -9,8 +9,9 @@ import java.util.List;
 public class WorldManagerState {
   final List<Integer> pathIndices = new ArrayList<>();
   final double navSpeed = 10;
-  final double invNavSpeed = 1 / navSpeed;
+  final double navLerpSpeed = 0.05;
   final double zoomSpeed = 0.1;
+  final double zoomLerpSpeed = 0.05;
   final double minZoom = 1;
   final double maxZoom = 3;
 

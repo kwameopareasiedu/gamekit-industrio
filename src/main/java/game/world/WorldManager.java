@@ -54,9 +54,9 @@ public interface WorldManager {
       );
     }
 
-    state.panX = lerp(state.panX, state.desiredX, state.invNavSpeed);
-    state.panY = lerp(state.panY, state.desiredY, state.invNavSpeed);
-    state.zoom = lerp(state.zoom, state.desiredZoom, state.zoomSpeed);
+    state.panX = lerp(state.panX, state.desiredX, state.navLerpSpeed);
+    state.panY = lerp(state.panY, state.desiredY, state.navLerpSpeed);
+    state.zoom = lerp(state.zoom, state.desiredZoom, state.zoomLerpSpeed);
 
     if (Input.isButtonReleased(Input.BUTTON_RMB)) {
       state.action = WorldAction.CLEAR;
@@ -78,7 +78,10 @@ public interface WorldManager {
     World world = getWorld();
     WorldManagerState state = getState();
 
-    Camera.lookAt(state.panX, state.panY);
+    Camera.lookAt(
+      state.panX * state.zoom,
+      state.panY * state.zoom
+    );
     Camera.setZoom(state.zoom);
 
     switch (state.action) {

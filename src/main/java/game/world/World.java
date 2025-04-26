@@ -7,6 +7,8 @@ import dev.gamekit.utils.Position;
 import game.Constants;
 import game.Utils;
 import game.machines.*;
+import game.resources.Deposit;
+import game.resources.Resource;
 
 import java.awt.*;
 import java.util.ArrayList;
@@ -17,27 +19,27 @@ import static dev.gamekit.utils.Math.toInt;
 public class World extends Prop {
   private static final int TICK_RATE = 2;
   private static final double INV_TICK_RATE = 1.0 / TICK_RATE;
-  private static final Color GRID_COLOR = new Color(0x1f000000, true);
+  private static final Color GRID_COLOR = new Color(0x2f000000, true);
+  private static final Stroke OUTER_GRID_STROKE = new BasicStroke(
+    1, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND, 0, new float[]{ 10 }, 5
+  );
+  private static final Stroke INNER_GRID_STROKE = new BasicStroke(
+    1, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND, 0, new float[]{ 10 }, 5
+  );
 
   public final int pixelSize;
-  private final Stroke outerGridStroke;
-  private final Stroke innerGridStroke;
   private final List<Machine> machines;
-  private final Machine[] grid;
+  private final Deposit[] depositGrid;
+  private final Machine[] machineGrid;
   private final Hub hub;
 
   private long tickTime;
 
   public World() {
     super("World");
-    grid = new Machine[Constants.GRID_SIZE * Constants.GRID_SIZE];
     pixelSize = Constants.GRID_SIZE * Constants.CELL_PIXEL_SIZE;
-    outerGridStroke = new BasicStroke(
-      2, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND, 0, new float[]{ 10 }, 5
-    );
-    innerGridStroke = new BasicStroke(
-      2, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND, 0, new float[]{ 10 }, 5
-    );
+    machineGrid = new Machine[Constants.GRID_SIZE * Constants.GRID_SIZE];
+    depositGrid = new Deposit[Constants.GRID_SIZE * Constants.GRID_SIZE];
     hub = new Hub((Constants.GRID_SIZE * Constants.GRID_SIZE) / 2, Direction.UP, (cargo) -> {
       // TODO: Consume cargo
     });
@@ -48,11 +50,15 @@ public class World extends Prop {
   protected void start() {
     super.start();
     addMachine(hub.gridIndex, hub);
+    addResourceDeposit(new Deposit(Resource.Type.ROCK, 0, 0));
+    addResourceDeposit(new Deposit(Resource.Type.ROCK, 1, 0));
+    addResourceDeposit(new Deposit(Resource.Type.ROCK, 1, 1));
+    addResourceDeposit(new Deposit(Resource.Type.ROCK, 2, 1));
   }
 
   @Override
   protected void update() {
-    tickTime += Application.FRAME_TIME;
+    tickTime += Application.FRAME_TIME_MS;
 
     if (tickTime >= INV_TICK_RATE) {
       tickTime = 0;
@@ -64,14 +70,14 @@ public class World extends Prop {
   @Override
   protected void render() {
     Renderer.setColor(GRID_COLOR);
-    Renderer.setStroke(outerGridStroke);
+    Renderer.setStroke(OUTER_GRID_STROKE);
     Renderer.drawRect(0, 0, pixelSize, pixelSize);
 
     for (int i = 1; i < Constants.GRID_SIZE; i++) {
       int x = toInt(i * Constants.CELL_PIXEL_SIZE - 0.5 * pixelSize);
 
       Renderer.setColor(GRID_COLOR);
-      Renderer.setStroke(innerGridStroke);
+      Renderer.setStroke(INNER_GRID_STROKE);
       Renderer.drawLineV(x, toInt(-0.5 * pixelSize), toInt(0.5 * pixelSize));
     }
 
@@ -79,7 +85,7 @@ public class World extends Prop {
       int y = toInt(i * Constants.CELL_PIXEL_SIZE - 0.5 * pixelSize);
 
       Renderer.setColor(GRID_COLOR);
-      Renderer.setStroke(innerGridStroke);
+      Renderer.setStroke(INNER_GRID_STROKE);
       Renderer.drawLineH(toInt(-0.5 * pixelSize), toInt(0.5 * pixelSize), y);
     }
   }
@@ -90,7 +96,7 @@ public class World extends Prop {
     int col = Utils.indexToCol(index);
     System.out.printf("R:%d, C:%d\n", row, col);
 
-    if (grid[index] != null)
+    if (machineGrid[index] != null)
       return false;
 
     Machine machine = null;
@@ -106,14 +112,14 @@ public class World extends Prop {
 
   public boolean isMachineAtPosition(Position position) {
     int index = Utils.worldPositionToIndex(position);
-    return grid[index] != null;
+    return machineGrid[index] != null;
   }
 
   public void connectMachines(List<Integer> pathIndices) {
     int machine1GridIndex = pathIndices.get(0);
     int machine2GridIndex = pathIndices.get(pathIndices.size() - 1);
-    Machine sourceMachine = grid[machine1GridIndex];
-    Machine targetMachine = grid[machine2GridIndex];
+    Machine sourceMachine = machineGrid[machine1GridIndex];
+    Machine targetMachine = machineGrid[machine2GridIndex];
 
     if (sourceMachine == null ||
       targetMachine == null ||
@@ -124,7 +130,7 @@ public class World extends Prop {
     // Return if there is a machine in this path
     for (int i = 1; i < pathIndices.size() - 1; i++) {
       int index = pathIndices.get(i);
-      Machine machine = grid[index];
+      Machine machine = machineGrid[index];
       if (machine != null) return;
     }
 
@@ -164,9 +170,15 @@ public class World extends Prop {
     }
   }
 
+  private void addResourceDeposit(Deposit deposit) {
+    int index = Utils.rowColToIndex(deposit.row, deposit.col);
+    depositGrid[index] = deposit;
+    addChild(deposit);
+  }
+
   private void addMachine(int index, Machine machine) {
     machines.add(machine);
-    grid[index] = machine;
+    machineGrid[index] = machine;
     addChild(machine);
   }
 }
