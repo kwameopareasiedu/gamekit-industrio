@@ -17,8 +17,7 @@ import java.util.List;
 import static dev.gamekit.utils.Math.toInt;
 
 public class World extends Prop {
-  private static final int TICK_RATE = 2;
-  private static final double INV_TICK_RATE = 1.0 / TICK_RATE;
+  private static final int TICK_INTERVAL = 2000;
   private static final Color GRID_COLOR = new Color(0x2f000000, true);
   private static final Stroke OUTER_GRID_STROKE = new BasicStroke(
     1, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND, 0, new float[]{ 10 }, 5
@@ -28,6 +27,9 @@ public class World extends Prop {
   );
 
   public final int pixelSize;
+  private final Prop machineContainer;
+  private final Prop depositContainer;
+  private final Prop resourceContainer;
   private final List<Machine> machines;
   private final Deposit[] depositGrid;
   private final Machine[] machineGrid;
@@ -43,24 +45,31 @@ public class World extends Prop {
     hub = new Hub((Constants.GRID_SIZE * Constants.GRID_SIZE) / 2, Direction.UP, (cargo) -> {
       // TODO: Consume cargo
     });
+    machineContainer = new Prop("Machines") { };
+    depositContainer = new Prop("Deposits") { };
+    resourceContainer = new Prop("Resources") { };
     machines = new ArrayList<>();
   }
 
   @Override
   protected void start() {
     super.start();
-    addMachine(hub.gridIndex, hub);
-    addResourceDeposit(new Deposit(Resource.Type.ROCK, 0, 0));
-    addResourceDeposit(new Deposit(Resource.Type.ROCK, 1, 0));
-    addResourceDeposit(new Deposit(Resource.Type.ROCK, 1, 1));
-    addResourceDeposit(new Deposit(Resource.Type.ROCK, 2, 1));
+    addChild(depositContainer);
+    addChild(machineContainer);
+    addChild(resourceContainer);
+
+    addMachine(hub);
+    addDeposit(Deposit.create(Resource.Type.ROCK, 0, 0));
+    addDeposit(Deposit.create(Resource.Type.ROCK, 1, 0));
+    addDeposit(Deposit.create(Resource.Type.ROCK, 1, 1));
+    addDeposit(Deposit.create(Resource.Type.ROCK, 2, 1));
   }
 
   @Override
   protected void update() {
     tickTime += Application.FRAME_TIME_MS;
 
-    if (tickTime >= INV_TICK_RATE) {
+    if (tickTime >= TICK_INTERVAL) {
       tickTime = 0;
       machines.forEach(Machine::output);
       machines.forEach(Machine::process);
@@ -101,11 +110,17 @@ public class World extends Prop {
 
     Machine machine = null;
 
-    if (info == Extractor.INFO)
-      machine = new Extractor(index, direction);
+    if (info == Extractor.INFO) {
+      Deposit deposit = depositGrid[index];
+
+      if (deposit == null)
+        return false;
+
+      machine = new Extractor(index, direction, deposit);
+    }
 
     if (machine != null)
-      addMachine(index, machine);
+      addMachine(machine);
 
     return true;
   }
@@ -123,6 +138,7 @@ public class World extends Prop {
 
     if (sourceMachine == null ||
       targetMachine == null ||
+      sourceMachine == targetMachine ||
       sourceMachine instanceof Conveyor ||
       targetMachine instanceof Conveyor)
       return;
@@ -148,7 +164,7 @@ public class World extends Prop {
       };
 
       if (direction == null)
-        continue;
+        return;
 
       if (i == 1) {
         boolean draggedFromOutputPort = switch (direction) {
@@ -166,19 +182,18 @@ public class World extends Prop {
           return;
       }
 
-      addMachine(currentIndex, new Conveyor(currentIndex, direction));
+      addMachine(new Conveyor(currentIndex, direction));
     }
   }
 
-  private void addResourceDeposit(Deposit deposit) {
-    int index = Utils.rowColToIndex(deposit.row, deposit.col);
-    depositGrid[index] = deposit;
-    addChild(deposit);
+  private void addDeposit(Deposit deposit) {
+    depositGrid[deposit.index] = deposit;
+    depositContainer.addChild(deposit);
   }
 
-  private void addMachine(int index, Machine machine) {
+  private void addMachine(Machine machine) {
     machines.add(machine);
-    machineGrid[index] = machine;
-    addChild(machine);
+    machineGrid[machine.index] = machine;
+    machineContainer.addChild(machine);
   }
 }

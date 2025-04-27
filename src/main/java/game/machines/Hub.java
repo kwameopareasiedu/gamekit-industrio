@@ -1,7 +1,7 @@
 package game.machines;
 
 import dev.gamekit.core.IO;
-import game.items.Item;
+import game.resources.Resource;
 
 import java.awt.image.BufferedImage;
 
@@ -20,8 +20,8 @@ public class Hub extends Machine {
   @Override
   public void process() {
     for (Port port : inputs) {
-      if (port.item != null) {
-        notifier.onCargoReceived(port.item);
+      if (port.payload != null) {
+        notifier.onPayloadReceived(port.payload);
       }
     }
   }
@@ -30,6 +30,6 @@ public class Hub extends Machine {
   public BufferedImage getImage() { return ICON; }
 
   public interface Notifier {
-    void onCargoReceived(Item item);
+    void onPayloadReceived(Resource resource);
   }
 }

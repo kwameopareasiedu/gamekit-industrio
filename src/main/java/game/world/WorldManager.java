@@ -68,9 +68,7 @@ public interface WorldManager {
     } else if (Input.isButtonReleased(Input.BUTTON_LMB) && state.action == WorldAction.PICK) {
       state.action = WorldAction.PLACE;
     } else if (Input.isKeyReleased(Input.KEY_R) && state.action == WorldAction.PICK) {
-      state.action = WorldAction.ROTATE_CW;
-    } else if (Input.isKeyReleased(Input.KEY_E) && state.action == WorldAction.PICK) {
-      state.action = WorldAction.ROTATE_CCW;
+      state.action = WorldAction.ROTATE;
     }
   }
 
@@ -109,12 +107,8 @@ public interface WorldManager {
         world.connectMachines(state.pathIndices);
         state.action = WorldAction.CLEAR;
       }
-      case ROTATE_CW -> {
+      case ROTATE -> {
         state.direction = Direction.cycle(state.direction, 1);
-        state.action = WorldAction.PICK;
-      }
-      case ROTATE_CCW -> {
-        state.direction = Direction.cycle(state.direction, -1);
         state.action = WorldAction.PICK;
       }
       case CLEAR -> state.reset();

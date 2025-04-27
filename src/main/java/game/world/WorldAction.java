@@ -5,8 +5,7 @@ public enum WorldAction {
   FIND_PATH,
   PICK,
   PLACE,
-  ROTATE_CW,
-  ROTATE_CCW,
+  ROTATE,
   CONNECT,
   CLEAR
 }

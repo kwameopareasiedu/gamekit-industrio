@@ -1,5 +1,6 @@
 package game.ui;
 
+import dev.gamekit.ui.Spacing;
 import dev.gamekit.ui.enums.Alignment;
 import dev.gamekit.ui.enums.CrossAxisAlignment;
 import dev.gamekit.ui.events.MouseEvent;
@@ -18,7 +19,7 @@ public class MachineButton extends Compose {
         Sized.create(
           Sized.options().width(64).height(64),
           Button.create(
-            Button.options().mouseListener(mouseListener),
+            Button.options().mouseListener(mouseListener).padding(new Spacing(0)),
             Image.create(
               machineInfo.icon()
             )

@@ -11,7 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public abstract class Machine extends Prop {
-  public final int gridIndex;
+  public final int index;
   public final Direction direction;
   public final Port topPort;
   public final Port rightPort;
@@ -22,7 +22,7 @@ public abstract class Machine extends Prop {
 
   public Machine(
     String name,
-    int gridIndex,
+    int index,
     Direction direction,
     Port topPort,
     Port rightPort,
@@ -30,7 +30,7 @@ public abstract class Machine extends Prop {
     Port leftPort
   ) {
     super(name);
-    this.gridIndex = gridIndex;
+    this.index = index;
     this.direction = direction;
 
     this.topPort = switch (direction) {
@@ -84,9 +84,9 @@ public abstract class Machine extends Prop {
 
   public final void output() {
     for (Port p : outputs) {
-      if (p.linked != null && p.linked.item == null) {
-        p.linked.item = p.item;
-        p.item = null;
+      if (p.linked != null && p.linked.payload == null) {
+        p.linked.payload = p.payload;
+        p.payload = null;
       }
     }
   }
@@ -96,7 +96,7 @@ public abstract class Machine extends Prop {
   @Override
   protected void render() {
     BufferedImage icon = getImage();
-    Position pos = Utils.indexToWorldPosition(gridIndex);
+    Position pos = Utils.indexToWorldPosition(index);
 
     Renderer.withRotation(
       pos.x, pos.y, direction.getAngle(),

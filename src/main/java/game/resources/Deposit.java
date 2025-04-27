@@ -9,20 +9,22 @@ import game.Utils;
 
 import java.awt.image.BufferedImage;
 
+import static dev.gamekit.utils.Math.toInt;
+
 public final class Deposit extends Prop {
   private static final BufferedImage ROCK_DEPOSIT_IMAGE = IO.getResourceImage("rock-deposit.png");
 
   public final Resource.Type type;
-  public final int row;
-  public final int col;
   public final int index;
 
   public Deposit(Resource.Type type, int row, int col) {
     super(String.format("%s deposit", type));
     this.type = type;
-    this.row = row;
-    this.col = col;
     this.index = Utils.rowColToIndex(row, col);
+  }
+
+  public static Deposit create(Resource.Type type, int row, int col) {
+    return new Deposit(type, row, col);
   }
 
   public Resource extract(int row, int col) {
@@ -44,8 +46,8 @@ public final class Deposit extends Prop {
 
     Renderer.drawImage(
       image, pos.x, pos.y,
-      Constants.CELL_PIXEL_SIZE,
-      Constants.CELL_PIXEL_SIZE
+      toInt(0.6 * Constants.CELL_PIXEL_SIZE),
+      toInt(0.6 * Constants.CELL_PIXEL_SIZE)
     );
   }
 }

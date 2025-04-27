@@ -11,8 +11,8 @@ import java.awt.*;
 
 public class Playground extends Scene implements WorldManager {
   private static final Color BG_COLOR = new Color(0xffc0c0c0, true);
-  private final World world;
   private final WorldManagerState worldManagerState;
+  private final World world;
 
   public Playground() {
     super("Playground");
@@ -21,10 +21,14 @@ public class Playground extends Scene implements WorldManager {
   }
 
   @Override
-  public World getWorld() { return world; }
+  public World getWorld() {
+    return world;
+  }
 
   @Override
-  public WorldManagerState getState() { return worldManagerState; }
+  public WorldManagerState getState() {
+    return worldManagerState;
+  }
 
   @Override
   protected void start() {
