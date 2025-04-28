@@ -3,36 +3,36 @@ package game;
 import dev.gamekit.core.Renderer;
 import dev.gamekit.core.Scene;
 import dev.gamekit.ui.widgets.Widget;
-import game.world.World;
-import game.world.WorldManager;
-import game.world.WorldManagerState;
+import game.factory.Factory;
+import game.factory.FactoryManager;
+import game.factory.FactoryManagerState;
 
 import java.awt.*;
 
-public class Playground extends Scene implements WorldManager {
+public class Playground extends Scene implements FactoryManager {
   private static final Color BG_COLOR = new Color(0xffc0c0c0, true);
-  private final WorldManagerState worldManagerState;
-  private final World world;
+  private final FactoryManagerState factoryManagerState;
+  private final Factory factory;
 
   public Playground() {
     super("Playground");
-    world = new World();
-    worldManagerState = new WorldManagerState();
+    factory = new Factory();
+    factoryManagerState = new FactoryManagerState();
   }
 
   @Override
-  public World getWorld() {
-    return world;
+  public Factory getFactory() {
+    return factory;
   }
 
   @Override
-  public WorldManagerState getState() {
-    return worldManagerState;
+  public FactoryManagerState getState() {
+    return factoryManagerState;
   }
 
   @Override
   protected void start() {
-    addChild(world);
+    addChild(factory);
   }
 
   @Override

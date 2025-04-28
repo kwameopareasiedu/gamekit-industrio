@@ -1,4 +1,4 @@
-package game.world;
+package game.factory;
 
 import game.machines.Direction;
 import game.machines.Machine;
@@ -6,7 +6,7 @@ import game.machines.Machine;
 import java.util.ArrayList;
 import java.util.List;
 
-public class WorldManagerState {
+public class FactoryManagerState {
   final List<Integer> pathIndices = new ArrayList<>();
   final double navSpeed = 10;
   final double navLerpSpeed = 0.05;
@@ -15,7 +15,7 @@ public class WorldManagerState {
   final double minZoom = 1;
   final double maxZoom = 3;
 
-  WorldAction action = WorldAction.DEFAULT;
+  FactoryAction action = FactoryAction.DEFAULT;
   Direction direction = Direction.UP;
   Machine.Info machineInfo;
   double desiredX = 0;
@@ -27,7 +27,7 @@ public class WorldManagerState {
 
   public void reset() {
     pathIndices.clear();
-    action = WorldAction.DEFAULT;
+    action = FactoryAction.DEFAULT;
     direction = Direction.UP;
     machineInfo = null;
   }

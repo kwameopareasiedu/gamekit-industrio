@@ -4,14 +4,14 @@ import dev.gamekit.core.Application;
 import dev.gamekit.core.IO;
 import game.resources.Deposit;
 import game.resources.Resource;
-import game.world.World;
+import game.factory.Factory;
 
 import java.awt.image.BufferedImage;
 
 public class Extractor extends Machine {
   private static final BufferedImage IMAGE = IO.getResourceImage("extractor.png");
   public static final Info INFO = new Info("Extractor", IMAGE);
-  public static long TIMER_MS = 2000;
+  public static long TIMER_MS = 750;
   private final Deposit deposit;
   private long timerMs = TIMER_MS;
 
@@ -31,7 +31,7 @@ public class Extractor extends Machine {
       if (outputPort.item == null) {
         Resource res = deposit.extract();
         outputPort.item = res;
-        World.getResources().addChild(res);
+        Factory.getResources().addChild(res);
       }
 
       timerMs = TIMER_MS;

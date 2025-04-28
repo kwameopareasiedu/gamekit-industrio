@@ -52,6 +52,7 @@ public class Port {
     };
   }
 
+  @SuppressWarnings("BooleanMethodIsAlwaysInverted")
   public boolean moveItem() {
     if (bounds.contains(item.position.x, item.position.y)) {
       switch (type) {

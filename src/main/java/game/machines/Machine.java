@@ -5,7 +5,7 @@ import dev.gamekit.core.Renderer;
 import dev.gamekit.utils.Position;
 import game.Constants;
 import game.Utils;
-import game.world.World;
+import game.factory.Factory;
 
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
@@ -66,35 +66,6 @@ public abstract class Machine extends Prop {
       case LEFT -> Port.create(topPortType, Direction.LEFT, pos);
     };
 
-
-//    this.topBounds = new Bounds(
-//      (int) (pos.x - 0.5 * Constants.CELL_PIXEL_SIZE),
-//      pos.y,
-//      Constants.CELL_PIXEL_SIZE,
-//      (int) (0.5 * Constants.CELL_PIXEL_SIZE)
-//    );
-//
-//    this.rightBounds = new Bounds(
-//      pos.x,
-//      (int) (pos.y + 0.5 * Constants.CELL_PIXEL_SIZE),
-//      (int) (0.5 * Constants.CELL_PIXEL_SIZE),
-//      Constants.CELL_PIXEL_SIZE
-//    );
-//
-//    this.bottomBounds = new Bounds(
-//      (int) (pos.x - 0.5 * Constants.CELL_PIXEL_SIZE),
-//      (int) (pos.y - 0.5 * Constants.CELL_PIXEL_SIZE),
-//      Constants.CELL_PIXEL_SIZE,
-//      (int) (0.5 * Constants.CELL_PIXEL_SIZE)
-//    );
-//
-//    this.leftBounds = new Bounds(
-//      (int) (pos.x - 0.5 * Constants.CELL_PIXEL_SIZE),
-//      (int) (pos.y + 0.5 * Constants.CELL_PIXEL_SIZE),
-//      (int) (0.5 * Constants.CELL_PIXEL_SIZE),
-//      Constants.CELL_PIXEL_SIZE
-//    );
-
     inputs = new ArrayList<>();
     outputs = new ArrayList<>();
 
@@ -120,7 +91,7 @@ public abstract class Machine extends Prop {
       if (topPort.isOutput()) {
         if (!topPort.moveItem()) {
           int topIndex = index + Constants.GRID_SIZE;
-          Machine topMachine = World.getMachine(topIndex);
+          Machine topMachine = Factory.getMachine(topIndex);
 
           if (topMachine != null &&
             topMachine.bottomPort != null &&

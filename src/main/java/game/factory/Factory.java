@@ -1,4 +1,4 @@
-package game.world;
+package game.factory;
 
 import dev.gamekit.core.Application;
 import dev.gamekit.core.Prop;
@@ -11,13 +11,11 @@ import game.resources.Deposit;
 import game.resources.Resource;
 
 import java.awt.*;
-import java.util.ArrayList;
-import java.util.List;
 
 import static dev.gamekit.utils.Math.toInt;
 
-public class World extends Prop {
-  private static final int TICK_INTERVAL = 2000;
+public class Factory extends Prop {
+  private static final int TICK_INTERVAL = 250;
   private static final Color GRID_COLOR = new Color(0x2f000000, true);
   private static final Stroke OUTER_GRID_STROKE = new BasicStroke(
     1, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND, 0, new float[]{ 10 }, 5
@@ -25,21 +23,20 @@ public class World extends Prop {
   private static final Stroke INNER_GRID_STROKE = new BasicStroke(
     1, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND, 0, new float[]{ 10 }, 5
   );
-  private static World instance;
+  private static Factory instance;
 
   public final int pixelSize;
   private final Prop machineContainer;
   private final Prop depositContainer;
   private final Prop resourceContainer;
-  private final List<Machine> machines;
   private final Deposit[] depositGrid;
   private final Machine[] machineGrid;
   private final Hub hub;
 
   private long tickTime;
 
-  public World() {
-    super("World");
+  public Factory() {
+    super("Factory");
     pixelSize = Constants.GRID_SIZE * Constants.CELL_PIXEL_SIZE;
     machineGrid = new Machine[Constants.GRID_SIZE * Constants.GRID_SIZE];
     depositGrid = new Deposit[Constants.GRID_SIZE * Constants.GRID_SIZE];
@@ -49,8 +46,7 @@ public class World extends Prop {
     machineContainer = new Prop("Machines") { };
     depositContainer = new Prop("Deposits") { };
     resourceContainer = new Prop("Resources") { };
-    machines = new ArrayList<>();
-    World.instance = this;
+    Factory.instance = this;
   }
 
   public static Prop getResources() {
@@ -137,74 +133,12 @@ public class World extends Prop {
     return true;
   }
 
-  public boolean isMachineAtPosition(Position position) {
-    int index = Utils.worldPositionToIndex(position);
-    return machineGrid[index] != null;
-  }
-
-  public void connectMachines(List<Integer> pathIndices) {
-    int machine1GridIndex = pathIndices.get(0);
-    int machine2GridIndex = pathIndices.get(pathIndices.size() - 1);
-    Machine sourceMachine = machineGrid[machine1GridIndex];
-    Machine targetMachine = machineGrid[machine2GridIndex];
-
-    if (sourceMachine == null ||
-      targetMachine == null ||
-      sourceMachine == targetMachine ||
-      sourceMachine instanceof Conveyor ||
-      targetMachine instanceof Conveyor)
-      return;
-
-    // Return if there is a machine in this path
-    for (int i = 1; i < pathIndices.size() - 1; i++) {
-      int index = pathIndices.get(i);
-      Machine machine = machineGrid[index];
-      if (machine != null) return;
-    }
-
-    // Create oriented conveyors on the path
-    for (int i = 1; i < pathIndices.size() - 1; i++) {
-      int previousIndex = pathIndices.get(i - 1);
-      int currentIndex = pathIndices.get(i);
-      int diff = currentIndex - previousIndex;
-      Direction direction = switch (diff) {
-        case 1 -> Direction.RIGHT;
-        case -1 -> Direction.LEFT;
-        case Constants.GRID_SIZE -> Direction.UP;
-        case -Constants.GRID_SIZE -> Direction.DOWN;
-        default -> null;
-      };
-
-      if (direction == null)
-        return;
-
-      if (i == 1) {
-        boolean draggedFromOutputPort = switch (direction) {
-          case UP -> sourceMachine.topPort != null &&
-            sourceMachine.topPort.type == Port.Type.OUT;
-          case RIGHT -> sourceMachine.rightPort != null &&
-            sourceMachine.rightPort.type == Port.Type.OUT;
-          case DOWN -> sourceMachine.bottomPort != null &&
-            sourceMachine.bottomPort.type == Port.Type.OUT;
-          case LEFT -> sourceMachine.leftPort != null &&
-            sourceMachine.leftPort.type == Port.Type.OUT;
-        };
-
-        if (!draggedFromOutputPort)
-          return;
-      }
-
-      addMachine(new Conveyor(currentIndex, direction));
-    }
-  }
-
   private void addDeposit(Deposit deposit) {
     depositGrid[deposit.index] = deposit;
     depositContainer.addChild(deposit);
   }
 
   private void addMachine(Machine machine) {
-    machines.add(machine);
     machineGrid[machine.index] = machine;
     machineContainer.addChild(machine);
   }
