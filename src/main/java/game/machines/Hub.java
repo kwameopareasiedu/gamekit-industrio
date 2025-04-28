@@ -11,20 +11,18 @@ public class Hub extends Machine {
   private final Notifier notifier;
 
   public Hub(int gridIndex, Direction direction, Notifier notifier) {
-    super("Hub", gridIndex, direction,
-      new Port(Port.Type.IN), new Port(Port.Type.IN),
-      new Port(Port.Type.IN), new Port(Port.Type.IN));
+    super("Hub", gridIndex, direction, Port.Type.IN, Port.Type.IN, Port.Type.IN, Port.Type.IN);
     this.notifier = notifier;
   }
 
-  @Override
-  public void process() {
-    for (Port port : inputs) {
-      if (port.payload != null) {
-        notifier.onPayloadReceived(port.payload);
-      }
-    }
-  }
+//  @Override
+//  public void process() {
+//    for (Port port : inputs) {
+//      if (port.item != null) {
+//        notifier.onPayloadReceived(port.item);
+//      }
+//    }
+//  }
 
   @Override
   public BufferedImage getImage() { return ICON; }

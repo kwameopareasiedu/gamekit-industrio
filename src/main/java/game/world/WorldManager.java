@@ -14,6 +14,7 @@ import dev.gamekit.ui.widgets.Widget;
 import dev.gamekit.utils.Position;
 import game.Constants;
 import game.Utils;
+import game.machines.Conveyor;
 import game.machines.Direction;
 import game.machines.Extractor;
 import game.ui.MachineButton;
@@ -31,15 +32,15 @@ public interface WorldManager {
     WorldManagerState state = getState();
 
     if (Input.isKeyPressed(Input.KEY_D)) {
-      state.desiredX += state.navSpeed;
+      state.desiredX += state.navSpeed / state.zoom;
     } else if (Input.isKeyPressed(Input.KEY_A)) {
-      state.desiredX -= state.navSpeed;
+      state.desiredX -= state.navSpeed / state.zoom;
     }
 
     if (Input.isKeyPressed(Input.KEY_W)) {
-      state.desiredY += state.navSpeed;
+      state.desiredY += state.navSpeed / state.zoom;
     } else if (Input.isKeyPressed(Input.KEY_S)) {
-      state.desiredY -= state.navSpeed;
+      state.desiredY -= state.navSpeed / state.zoom;
     }
 
     if (Input.isKeyPressed(Input.KEY_E)) {
@@ -125,7 +126,7 @@ public interface WorldManager {
         worldPos.x, worldPos.y, state.direction.getAngle(),
         () ->
           Renderer.drawImage(
-            state.machineInfo.icon(), worldPos.x, worldPos.y,
+            state.machineInfo.image(), worldPos.x, worldPos.y,
             Constants.CELL_PIXEL_SIZE, Constants.CELL_PIXEL_SIZE
           )
       );
@@ -145,6 +146,14 @@ public interface WorldManager {
             if (e.type == MouseEvent.Type.CLICK) {
               Application.getInstance().scheduleTask(() -> {
                 state.machineInfo = Extractor.INFO;
+                state.action = WorldAction.PICK;
+              });
+            }
+          }),
+          MachineButton.create(Conveyor.INFO, (e) -> {
+            if (e.type == MouseEvent.Type.CLICK) {
+              Application.getInstance().scheduleTask(() -> {
+                state.machineInfo = Conveyor.INFO;
                 state.action = WorldAction.PICK;
               });
             }

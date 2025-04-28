@@ -25,6 +25,7 @@ public class World extends Prop {
   private static final Stroke INNER_GRID_STROKE = new BasicStroke(
     1, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND, 0, new float[]{ 10 }, 5
   );
+  private static World instance;
 
   public final int pixelSize;
   private final Prop machineContainer;
@@ -49,6 +50,15 @@ public class World extends Prop {
     depositContainer = new Prop("Deposits") { };
     resourceContainer = new Prop("Resources") { };
     machines = new ArrayList<>();
+    World.instance = this;
+  }
+
+  public static Prop getResources() {
+    return instance.resourceContainer;
+  }
+
+  public static Machine getMachine(int index) {
+    return instance.machineGrid[index];
   }
 
   @Override
@@ -59,10 +69,10 @@ public class World extends Prop {
     addChild(resourceContainer);
 
     addMachine(hub);
-    addDeposit(Deposit.create(Resource.Type.ROCK, 0, 0));
-    addDeposit(Deposit.create(Resource.Type.ROCK, 1, 0));
-    addDeposit(Deposit.create(Resource.Type.ROCK, 1, 1));
-    addDeposit(Deposit.create(Resource.Type.ROCK, 2, 1));
+    addDeposit(Deposit.create(Resource.Type.ROCK, 10, 10));
+    addDeposit(Deposit.create(Resource.Type.ROCK, 11, 10));
+    addDeposit(Deposit.create(Resource.Type.ROCK, 11, 11));
+    addDeposit(Deposit.create(Resource.Type.ROCK, 12, 11));
   }
 
   @Override
@@ -71,8 +81,8 @@ public class World extends Prop {
 
     if (tickTime >= TICK_INTERVAL) {
       tickTime = 0;
-      machines.forEach(Machine::output);
-      machines.forEach(Machine::process);
+//      machines.forEach(Machine::output);
+//      machines.forEach(Machine::process);
     }
   }
 
@@ -117,6 +127,8 @@ public class World extends Prop {
         return false;
 
       machine = new Extractor(index, direction, deposit);
+    } else if (info == Conveyor.INFO) {
+      machine = new Conveyor(index, direction);
     }
 
     if (machine != null)

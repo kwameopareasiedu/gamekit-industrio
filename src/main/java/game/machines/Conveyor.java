@@ -5,24 +5,13 @@ import dev.gamekit.core.IO;
 import java.awt.image.BufferedImage;
 
 public class Conveyor extends Machine {
-  private static final BufferedImage ICON = IO.getResourceImage("conveyor.png");
+  private static final BufferedImage IMAGE = IO.getResourceImage("conveyor.png");
+  public static final Info INFO = new Info("Conveyor", IMAGE);
 
   public Conveyor(int gridIndex, Direction direction) {
-    super("Conveyor", gridIndex, direction,
-      null, new Port(Port.Type.OUT), null, new Port(Port.Type.IN));
+    super("Conveyor", gridIndex, direction, Port.Type.OUT, null, Port.Type.IN, null);
   }
 
   @Override
-  public void process() {
-    Port inputPort = inputs.get(0);
-    Port outputPort = outputs.get(0);
-
-    if (outputPort.payload == null) {
-      outputPort.payload = inputPort.payload;
-      inputPort.payload = null;
-    }
-  }
-
-  @Override
-  public BufferedImage getImage() { return ICON; }
+  public BufferedImage getImage() { return IMAGE; }
 }

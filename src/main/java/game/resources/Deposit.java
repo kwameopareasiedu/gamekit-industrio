@@ -27,9 +27,9 @@ public final class Deposit extends Prop {
     return new Deposit(type, row, col);
   }
 
-  public Resource extract(int row, int col) {
+  public Resource extract() {
     return switch (type) {
-      case ROCK -> new Resource(Resource.Type.ROCK, row, col);
+      case ROCK -> new Resource(Resource.Type.ROCK, index);
     };
   }
 
