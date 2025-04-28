@@ -2,10 +2,12 @@ package game.machines;
 
 import dev.gamekit.core.Prop;
 import dev.gamekit.core.Renderer;
+import dev.gamekit.utils.Bounds;
 import dev.gamekit.utils.Position;
 import game.Constants;
 import game.Utils;
 import game.factory.Factory;
+import game.resources.Resource;
 
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
@@ -15,15 +17,15 @@ public abstract class Machine extends Prop {
   public static double RESOURCE_MOVE_SPEED = 0.5;
 
   public final int index;
-  public final Direction direction;
-  public final Port topPort;
-  public final Port rightPort;
-  public final Port bottomPort;
-  public final Port leftPort;
+  protected final Direction direction;
+  protected final Port topPort;
+  protected final Port rightPort;
+  protected final Port bottomPort;
+  protected final Port leftPort;
   protected final List<Port> inputs;
   protected final List<Port> outputs;
 
-  public Machine(
+  protected Machine(
     String name,
     int index,
     Direction direction,
@@ -122,19 +124,6 @@ public abstract class Machine extends Prop {
     if (leftPort != null) {
 
     }
-
-
-//    position.x += switch (direction) {
-//      case RIGHT -> MOVE_SPEED;
-//      case LEFT -> -MOVE_SPEED;
-//      default -> 0;
-//    };
-//
-//    position.y += switch (direction) {
-//      case UP -> MOVE_SPEED;
-//      case DOWN -> -MOVE_SPEED;
-//      default -> 0;
-//    };
   }
 
   public abstract BufferedImage getImage();
@@ -155,4 +144,96 @@ public abstract class Machine extends Prop {
   }
 
   public record Info(String name, BufferedImage image) { }
+
+  protected static class Port {
+    public final Type type;
+    public final Direction direction;
+    public Resource item;
+
+    public final Bounds bounds;
+
+    public static Port create(Type type, Direction direction, Position machinePos) {
+      if (type == null || direction == null || machinePos == null)
+        return null;
+
+      return new Port(type, direction, machinePos);
+    }
+
+    private Port(Type type, Direction direction, Position machinePos) {
+      this.type = type;
+      this.direction = direction;
+      this.item = null;
+
+      bounds = switch (direction) {
+        case UP -> new Bounds(
+          (int) (machinePos.x - 0.5 * Constants.CELL_PIXEL_SIZE),
+          machinePos.y,
+          Constants.CELL_PIXEL_SIZE,
+          (int) (0.5 * Constants.CELL_PIXEL_SIZE)
+        );
+        case RIGHT -> new Bounds(
+          machinePos.x,
+          (int) (machinePos.y + 0.5 * Constants.CELL_PIXEL_SIZE),
+          (int) (0.5 * Constants.CELL_PIXEL_SIZE),
+          Constants.CELL_PIXEL_SIZE
+        );
+        case DOWN -> new Bounds(
+          (int) (machinePos.x - 0.5 * Constants.CELL_PIXEL_SIZE),
+          (int) (machinePos.y - 0.5 * Constants.CELL_PIXEL_SIZE),
+          Constants.CELL_PIXEL_SIZE,
+          (int) (0.5 * Constants.CELL_PIXEL_SIZE)
+        );
+        case LEFT -> new Bounds(
+          (int) (machinePos.x - 0.5 * Constants.CELL_PIXEL_SIZE),
+          (int) (machinePos.y + 0.5 * Constants.CELL_PIXEL_SIZE),
+          (int) (0.5 * Constants.CELL_PIXEL_SIZE),
+          Constants.CELL_PIXEL_SIZE
+        );
+      };
+    }
+
+    @SuppressWarnings("BooleanMethodIsAlwaysInverted")
+    public boolean moveItem() {
+      if (bounds.contains(item.position.x, item.position.y)) {
+        switch (type) {
+          case IN -> {
+            switch (direction) {
+              case UP -> item.position.y -= RESOURCE_MOVE_SPEED;
+              case RIGHT -> item.position.x -= RESOURCE_MOVE_SPEED;
+              case DOWN -> item.position.y += RESOURCE_MOVE_SPEED;
+              case LEFT -> item.position.x += RESOURCE_MOVE_SPEED;
+            }
+          }
+          case OUT -> {
+            switch (direction) {
+              case UP -> item.position.y += RESOURCE_MOVE_SPEED;
+              case RIGHT -> item.position.x += RESOURCE_MOVE_SPEED;
+              case DOWN -> item.position.y -= RESOURCE_MOVE_SPEED;
+              case LEFT -> item.position.x -= RESOURCE_MOVE_SPEED;
+            }
+          }
+        }
+
+        return true;
+      }
+
+      return false;
+    }
+
+    public boolean isInput() {
+      return type == Type.IN;
+    }
+
+    public boolean isOutput() {
+      return type == Type.OUT;
+    }
+
+    public boolean hasItem() {
+      return item != null;
+    }
+
+    public enum Type {
+      IN, OUT
+    }
+  }
 }

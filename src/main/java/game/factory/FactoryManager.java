@@ -22,6 +22,9 @@ import static dev.gamekit.utils.Math.clamp;
 import static dev.gamekit.utils.Math.lerp;
 
 public interface FactoryManager {
+  double MIN_BOUND = -0.5 * Constants.GRID_SIZE * Constants.CELL_PIXEL_SIZE;
+  double MAX_BOUND = 0.5 * Constants.GRID_SIZE * Constants.CELL_PIXEL_SIZE;
+
   Factory getFactory();
 
   FactoryManagerState getState();
@@ -30,15 +33,15 @@ public interface FactoryManager {
     FactoryManagerState state = getState();
 
     if (Input.isKeyPressed(Input.KEY_D)) {
-      state.desiredX += state.navSpeed / state.zoom;
+      state.desiredX = clamp(state.desiredX + state.navSpeed / state.zoom, MIN_BOUND, MAX_BOUND);
     } else if (Input.isKeyPressed(Input.KEY_A)) {
-      state.desiredX -= state.navSpeed / state.zoom;
+      state.desiredX = clamp(state.desiredX - state.navSpeed / state.zoom, MIN_BOUND, MAX_BOUND);
     }
 
     if (Input.isKeyPressed(Input.KEY_W)) {
-      state.desiredY += state.navSpeed / state.zoom;
+      state.desiredY = clamp(state.desiredY + state.navSpeed / state.zoom, MIN_BOUND, MAX_BOUND);
     } else if (Input.isKeyPressed(Input.KEY_S)) {
-      state.desiredY -= state.navSpeed / state.zoom;
+      state.desiredY = clamp(state.desiredY - state.navSpeed / state.zoom, MIN_BOUND, MAX_BOUND);
     }
 
     if (Input.isKeyPressed(Input.KEY_E)) {
@@ -57,7 +60,7 @@ public interface FactoryManager {
     state.panY = lerp(state.panY, state.desiredY, state.navLerpSpeed);
     state.zoom = lerp(state.zoom, state.desiredZoom, state.zoomLerpSpeed);
 
-    if (Input.isButtonReleased(Input.BUTTON_RMB)) {
+    if (Input.isButtonReleased(Input.BUTTON_RMB) || Input.isKeyPressed(Input.KEY_ESCAPE)) {
       state.action = FactoryAction.CLEAR;
     } else if (Input.isButtonReleased(Input.BUTTON_LMB) && state.action == FactoryAction.PICK) {
       state.action = FactoryAction.PLACE;
@@ -79,10 +82,8 @@ public interface FactoryManager {
     switch (state.action) {
       case PLACE -> {
         Position pos = getMouseWorldPosition();
-
-        if (factory.createMachine(pos, state.machineInfo, state.direction))
-          state.action = FactoryAction.CLEAR;
-        else state.action = FactoryAction.PICK;
+        factory.createMachine(pos, state.machineInfo, state.direction);
+        state.action = FactoryAction.PICK;
       }
       case ROTATE -> {
         state.direction = Direction.cycle(state.direction, 1);
