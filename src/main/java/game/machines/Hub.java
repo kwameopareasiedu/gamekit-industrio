@@ -15,14 +15,20 @@ public class Hub extends Machine {
     this.notifier = notifier;
   }
 
-//  @Override
-//  public void process() {
-//    for (Port port : inputs) {
-//      if (port.item != null) {
-//        notifier.onPayloadReceived(port.item);
-//      }
-//    }
-//  }
+  @Override
+  protected void update() {
+    super.update();
+
+    for (Port in : inputs) {
+      if (in.hasResource() && !in.isResourceInBounds()) {
+        notifier.onPayloadReceived(in.resource);
+        in.resource = null;
+      }
+    }
+  }
+
+  @Override
+  public void tick() { }
 
   @Override
   public BufferedImage getImage() { return ICON; }

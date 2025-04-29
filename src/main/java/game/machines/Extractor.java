@@ -1,19 +1,19 @@
 package game.machines;
 
-import dev.gamekit.core.Application;
 import dev.gamekit.core.IO;
+import game.factory.Factory;
 import game.resources.Deposit;
 import game.resources.Resource;
-import game.factory.Factory;
 
 import java.awt.image.BufferedImage;
 
 public class Extractor extends Machine {
   private static final BufferedImage IMAGE = IO.getResourceImage("extractor.png");
   public static final Info INFO = new Info("Extractor", IMAGE);
-  public static long TIMER_MS = 750;
+  public static int TICKS_FOR_EXTRACTION = 7;
+
   private final Deposit deposit;
-  private long timerMs = TIMER_MS;
+  private int tickCounter = TICKS_FOR_EXTRACTION;
 
   public Extractor(int index, Direction direction, Deposit deposit) {
     super("Extractor", index, direction, Port.Type.OUT, null, null, null);
@@ -21,20 +21,19 @@ public class Extractor extends Machine {
   }
 
   @Override
-  public void update() {
-    super.update();
-    timerMs -= Application.FRAME_TIME_MS;
+  public void tick() {
+    tickCounter -= 1;
 
-    if (timerMs <= 0) {
+    if (tickCounter <= 0) {
       Port outputPort = outputs.get(0);
 
-      if (outputPort.item == null) {
+      if (!outputPort.hasResource()) {
         Resource res = deposit.extract();
-        outputPort.item = res;
-        Factory.getResources().addChild(res);
+        outputPort.resource = res;
+        Factory.addResource(res);
       }
 
-      timerMs = TIMER_MS;
+      tickCounter = TICKS_FOR_EXTRACTION;
     }
   }
 

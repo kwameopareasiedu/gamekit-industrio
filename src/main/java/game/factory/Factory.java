@@ -11,11 +11,12 @@ import game.resources.Deposit;
 import game.resources.Resource;
 
 import java.awt.*;
+import java.util.ArrayList;
 
 import static dev.gamekit.utils.Math.toInt;
 
 public class Factory extends Prop {
-  private static final int TICK_INTERVAL = 250;
+  private static final int TICK_INTERVAL = 100;
   private static final Color GRID_COLOR = new Color(0x2f000000, true);
   private static final Stroke OUTER_GRID_STROKE = new BasicStroke(
     1, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND, 0, new float[]{ 10 }, 5
@@ -32,6 +33,7 @@ public class Factory extends Prop {
   private final Deposit[] depositGrid;
   private final Machine[] machineGrid;
   private final Hub hub;
+  private final ArrayList<Machine> machines;
 
   private long tickTime;
 
@@ -40,20 +42,22 @@ public class Factory extends Prop {
     pixelSize = Constants.GRID_SIZE * Constants.CELL_PIXEL_SIZE;
     machineGrid = new Machine[Constants.GRID_SIZE * Constants.GRID_SIZE];
     depositGrid = new Deposit[Constants.GRID_SIZE * Constants.GRID_SIZE];
-    hub = new Hub((Constants.GRID_SIZE * Constants.GRID_SIZE) / 2, Direction.UP, (cargo) -> {
-      // TODO: Consume cargo
+    hub = new Hub((Constants.GRID_SIZE * Constants.GRID_SIZE) / 2, Direction.UP, (resource) -> {
+      instance.resourceContainer.removeChild(resource);
+      logger.debug("Consumed {}", resource.type);
     });
     machineContainer = new Prop("Machines") { };
     depositContainer = new Prop("Deposits") { };
     resourceContainer = new Prop("Resources") { };
+    machines = new ArrayList<>();
     Factory.instance = this;
   }
 
-  public static Prop getResources() {
-    return instance.resourceContainer;
+  public static void addResource(Resource item) {
+    instance.resourceContainer.addChild(item);
   }
 
-  public static Machine getMachine(int index) {
+  public static Machine getMachineAt(int index) {
     return instance.machineGrid[index];
   }
 
@@ -77,8 +81,7 @@ public class Factory extends Prop {
 
     if (tickTime >= TICK_INTERVAL) {
       tickTime = 0;
-//      machines.forEach(Machine::output);
-//      machines.forEach(Machine::process);
+      machines.forEach(Machine::tick);
     }
   }
 
@@ -141,5 +144,6 @@ public class Factory extends Prop {
   private void addMachine(Machine machine) {
     machineGrid[machine.index] = machine;
     machineContainer.addChild(machine);
+    machines.add(machine);
   }
 }

@@ -2,20 +2,16 @@ package game.machines;
 
 import dev.gamekit.core.Prop;
 import dev.gamekit.core.Renderer;
-import dev.gamekit.utils.Bounds;
 import dev.gamekit.utils.Position;
 import game.Constants;
 import game.Utils;
 import game.factory.Factory;
-import game.resources.Resource;
 
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.List;
 
 public abstract class Machine extends Prop {
-  public static double RESOURCE_MOVE_SPEED = 0.5;
-
   public final int index;
   protected final Direction direction;
   protected final Port topPort;
@@ -38,34 +34,32 @@ public abstract class Machine extends Prop {
     this.index = index;
     this.direction = direction;
 
-    Position pos = Utils.indexToWorldPosition(index);
-
     this.topPort = switch (direction) {
-      case UP -> Port.create(topPortType, Direction.UP, pos);
-      case RIGHT -> Port.create(leftPortType, Direction.UP, pos);
-      case DOWN -> Port.create(bottomPortType, Direction.UP, pos);
-      case LEFT -> Port.create(rightPortType, Direction.UP, pos);
+      case UP -> Port.create(topPortType, Direction.UP, this);
+      case RIGHT -> Port.create(leftPortType, Direction.UP, this);
+      case DOWN -> Port.create(bottomPortType, Direction.UP, this);
+      case LEFT -> Port.create(rightPortType, Direction.UP, this);
     };
 
     this.rightPort = switch (direction) {
-      case UP -> Port.create(rightPortType, Direction.RIGHT, pos);
-      case RIGHT -> Port.create(topPortType, Direction.RIGHT, pos);
-      case DOWN -> Port.create(leftPortType, Direction.RIGHT, pos);
-      case LEFT -> Port.create(bottomPortType, Direction.RIGHT, pos);
+      case UP -> Port.create(rightPortType, Direction.RIGHT, this);
+      case RIGHT -> Port.create(topPortType, Direction.RIGHT, this);
+      case DOWN -> Port.create(leftPortType, Direction.RIGHT, this);
+      case LEFT -> Port.create(bottomPortType, Direction.RIGHT, this);
     };
 
     this.bottomPort = switch (direction) {
-      case UP -> Port.create(bottomPortType, Direction.DOWN, pos);
-      case RIGHT -> Port.create(rightPortType, Direction.DOWN, pos);
-      case DOWN -> Port.create(topPortType, Direction.DOWN, pos);
-      case LEFT -> Port.create(leftPortType, Direction.DOWN, pos);
+      case UP -> Port.create(bottomPortType, Direction.DOWN, this);
+      case RIGHT -> Port.create(rightPortType, Direction.DOWN, this);
+      case DOWN -> Port.create(topPortType, Direction.DOWN, this);
+      case LEFT -> Port.create(leftPortType, Direction.DOWN, this);
     };
 
     this.leftPort = switch (direction) {
-      case UP -> Port.create(leftPortType, Direction.LEFT, pos);
-      case RIGHT -> Port.create(bottomPortType, Direction.LEFT, pos);
-      case DOWN -> Port.create(rightPortType, Direction.LEFT, pos);
-      case LEFT -> Port.create(topPortType, Direction.LEFT, pos);
+      case UP -> Port.create(leftPortType, Direction.LEFT, this);
+      case RIGHT -> Port.create(bottomPortType, Direction.LEFT, this);
+      case DOWN -> Port.create(rightPortType, Direction.LEFT, this);
+      case LEFT -> Port.create(topPortType, Direction.LEFT, this);
     };
 
     inputs = new ArrayList<>();
@@ -89,44 +83,15 @@ public abstract class Machine extends Prop {
 
   @Override
   protected void update() {
-    if (topPort != null && topPort.hasItem()) {
-      if (topPort.isOutput()) {
-        if (!topPort.moveItem()) {
-          int topIndex = index + Constants.GRID_SIZE;
-          Machine topMachine = Factory.getMachine(topIndex);
-
-          if (topMachine != null &&
-            topMachine.bottomPort != null &&
-            topMachine.bottomPort.isInput() &&
-            !topMachine.bottomPort.hasItem()) {
-            topMachine.bottomPort.item = topPort.item;
-            topPort.item = null;
-          }
-        }
-      }
-    }
-
-    if (rightPort != null) {
-
-    }
-
-    if (bottomPort != null && bottomPort.hasItem()) {
-      if (bottomPort.type == Port.Type.IN) {
-        if (!bottomPort.moveItem()) {
-          if (topPort != null && topPort.item == null) {
-            topPort.item = bottomPort.item;
-            bottomPort.item = null;
-          }
-        }
-      }
-    }
-
-    if (leftPort != null) {
-
-    }
+    updatePort(topPort);
+    updatePort(rightPort);
+    updatePort(bottomPort);
+    updatePort(leftPort);
   }
 
   public abstract BufferedImage getImage();
+
+  public abstract void tick();
 
   @Override
   protected void render() {
@@ -143,97 +108,40 @@ public abstract class Machine extends Prop {
     );
   }
 
-  public record Info(String name, BufferedImage image) { }
+  private void updatePort(Port port) {
+    if (port != null && port.hasResource()) {
+      if (port.isOutput() && !port.moveResource()) {
+        //noinspection ExtractMethodRecommender
+        int adjacentMachineOffset =
+          port == topPort ? Constants.GRID_SIZE
+            : port == rightPort ? 1
+            : port == bottomPort ? -Constants.GRID_SIZE
+            : port == leftPort ? -1
+            : 0;
 
-  protected static class Port {
-    public final Type type;
-    public final Direction direction;
-    public Resource item;
+        int topIndex = index + adjacentMachineOffset;
+        // TODO: If this machine is at an edge or corner,
+        //  naively adding adjacentMachineOffset will cause it
+        //  to grab the machine at first or last column of the
+        //  lower or upper row of the grid, which is wrong.
+        //  Fix this later
+        Machine adjacentMachine = Factory.getMachineAt(topIndex);
 
-    public final Bounds bounds;
+        if (adjacentMachine != null) {
+          Port adjacentPort = port == topPort ? adjacentMachine.bottomPort
+            : port == rightPort ? adjacentMachine.leftPort
+            : port == bottomPort ? adjacentMachine.topPort
+            : port == leftPort ? adjacentMachine.rightPort
+            : null;
 
-    public static Port create(Type type, Direction direction, Position machinePos) {
-      if (type == null || direction == null || machinePos == null)
-        return null;
-
-      return new Port(type, direction, machinePos);
-    }
-
-    private Port(Type type, Direction direction, Position machinePos) {
-      this.type = type;
-      this.direction = direction;
-      this.item = null;
-
-      bounds = switch (direction) {
-        case UP -> new Bounds(
-          (int) (machinePos.x - 0.5 * Constants.CELL_PIXEL_SIZE),
-          machinePos.y,
-          Constants.CELL_PIXEL_SIZE,
-          (int) (0.5 * Constants.CELL_PIXEL_SIZE)
-        );
-        case RIGHT -> new Bounds(
-          machinePos.x,
-          (int) (machinePos.y + 0.5 * Constants.CELL_PIXEL_SIZE),
-          (int) (0.5 * Constants.CELL_PIXEL_SIZE),
-          Constants.CELL_PIXEL_SIZE
-        );
-        case DOWN -> new Bounds(
-          (int) (machinePos.x - 0.5 * Constants.CELL_PIXEL_SIZE),
-          (int) (machinePos.y - 0.5 * Constants.CELL_PIXEL_SIZE),
-          Constants.CELL_PIXEL_SIZE,
-          (int) (0.5 * Constants.CELL_PIXEL_SIZE)
-        );
-        case LEFT -> new Bounds(
-          (int) (machinePos.x - 0.5 * Constants.CELL_PIXEL_SIZE),
-          (int) (machinePos.y + 0.5 * Constants.CELL_PIXEL_SIZE),
-          (int) (0.5 * Constants.CELL_PIXEL_SIZE),
-          Constants.CELL_PIXEL_SIZE
-        );
-      };
-    }
-
-    @SuppressWarnings("BooleanMethodIsAlwaysInverted")
-    public boolean moveItem() {
-      if (bounds.contains(item.position.x, item.position.y)) {
-        switch (type) {
-          case IN -> {
-            switch (direction) {
-              case UP -> item.position.y -= RESOURCE_MOVE_SPEED;
-              case RIGHT -> item.position.x -= RESOURCE_MOVE_SPEED;
-              case DOWN -> item.position.y += RESOURCE_MOVE_SPEED;
-              case LEFT -> item.position.x += RESOURCE_MOVE_SPEED;
-            }
-          }
-          case OUT -> {
-            switch (direction) {
-              case UP -> item.position.y += RESOURCE_MOVE_SPEED;
-              case RIGHT -> item.position.x += RESOURCE_MOVE_SPEED;
-              case DOWN -> item.position.y -= RESOURCE_MOVE_SPEED;
-              case LEFT -> item.position.x -= RESOURCE_MOVE_SPEED;
-            }
-          }
+          if (adjacentPort != null && adjacentPort.isInput() && !adjacentPort.hasResource())
+            port.transferResourceTo(adjacentPort);
         }
-
-        return true;
+      } else if (port.isInput()) {
+        port.moveResource();
       }
-
-      return false;
-    }
-
-    public boolean isInput() {
-      return type == Type.IN;
-    }
-
-    public boolean isOutput() {
-      return type == Type.OUT;
-    }
-
-    public boolean hasItem() {
-      return item != null;
-    }
-
-    public enum Type {
-      IN, OUT
     }
   }
+
+  public record Info(String name, BufferedImage image) { }
 }
