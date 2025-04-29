@@ -7,7 +7,7 @@ import game.resources.Resource;
 
 import java.awt.image.BufferedImage;
 
-public class Extractor extends Machine {
+public final class Extractor extends Machine {
   private static final BufferedImage IMAGE = IO.getResourceImage("extractor.png");
   public static final Info INFO = new Info("Extractor", IMAGE);
   public static int TICKS_FOR_EXTRACTION = 7;
@@ -15,7 +15,13 @@ public class Extractor extends Machine {
   private final Deposit deposit;
   private int tickCounter = TICKS_FOR_EXTRACTION;
 
-  public Extractor(int index, Direction direction, Deposit deposit) {
+  public static Extractor create(int index, Direction direction, Deposit deposit) {
+    if (direction == null || deposit == null)
+      return null;
+    return new Extractor(index, direction, deposit);
+  }
+
+  private Extractor(int index, Direction direction, Deposit deposit) {
     super("Extractor", index, direction, Port.Type.OUT, null, null, null);
     this.deposit = deposit;
   }

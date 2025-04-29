@@ -5,5 +5,6 @@ public enum FactoryAction {
   PICK,
   PLACE,
   ROTATE,
+  DELETE,
   CLEAR
 }

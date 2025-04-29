@@ -42,7 +42,7 @@ public class Factory extends Prop {
     pixelSize = Constants.GRID_SIZE * Constants.CELL_PIXEL_SIZE;
     machineGrid = new Machine[Constants.GRID_SIZE * Constants.GRID_SIZE];
     depositGrid = new Deposit[Constants.GRID_SIZE * Constants.GRID_SIZE];
-    hub = new Hub((Constants.GRID_SIZE * Constants.GRID_SIZE) / 2, Direction.UP, (resource) -> {
+    hub = Hub.create((Constants.GRID_SIZE * Constants.GRID_SIZE) / 2, Direction.UP, (resource) -> {
       instance.resourceContainer.removeChild(resource);
       logger.debug("Consumed {}", resource.type);
     });
@@ -55,6 +55,10 @@ public class Factory extends Prop {
 
   public static void addResource(Resource item) {
     instance.resourceContainer.addChild(item);
+  }
+
+  public static void removeResource(Resource item) {
+    instance.resourceContainer.removeChild(item);
   }
 
   public static Machine getMachineAt(int index) {
@@ -108,32 +112,37 @@ public class Factory extends Prop {
     }
   }
 
-  public boolean createMachine(Position position, Machine.Info info, Direction direction) {
+  public void createMachine(Position position, Machine.Info info, Direction direction) {
     int index = Utils.worldPositionToIndex(position);
     int row = Utils.indexToRow(index);
     int col = Utils.indexToCol(index);
     System.out.printf("R:%d, C:%d\n", row, col);
 
     if (machineGrid[index] != null)
-      return false;
+      removeMachine(position);
 
     Machine machine = null;
 
     if (info == Extractor.INFO) {
-      Deposit deposit = depositGrid[index];
-
-      if (deposit == null)
-        return false;
-
-      machine = new Extractor(index, direction, deposit);
+      machine = Extractor.create(index, direction, depositGrid[index]);
     } else if (info == Conveyor.INFO) {
-      machine = new Conveyor(index, direction);
+      machine = Conveyor.create(index, direction);
     }
 
     if (machine != null)
       addMachine(machine);
+  }
 
-    return true;
+  public void removeMachine(Position position) {
+    int index = Utils.worldPositionToIndex(position);
+    Machine machine = machineGrid[index];
+
+    if (machine == null)
+      return;
+
+    machines.remove(machine);
+    machineContainer.removeChild(machine);
+    machineGrid[index] = null;
   }
 
   private void addDeposit(Deposit deposit) {

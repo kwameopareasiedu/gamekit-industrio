@@ -91,7 +91,7 @@ public abstract class Machine extends Prop {
 
   public abstract BufferedImage getImage();
 
-  public abstract void tick();
+  public void tick() { }
 
   @Override
   protected void render() {
@@ -106,6 +106,19 @@ public abstract class Machine extends Prop {
         Constants.CELL_PIXEL_SIZE
       )
     );
+  }
+
+  @Override
+  protected void dispose() {
+    for (Port port : inputs) {
+      if (port.resource != null)
+        Factory.removeResource(port.resource);
+    }
+
+    for (Port port : outputs) {
+      if (port.resource != null)
+        Factory.removeResource(port.resource);
+    }
   }
 
   private void updatePort(Port port) {

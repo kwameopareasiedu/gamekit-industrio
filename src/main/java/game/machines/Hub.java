@@ -5,13 +5,19 @@ import game.resources.Resource;
 
 import java.awt.image.BufferedImage;
 
-public class Hub extends Machine {
+public final class Hub extends Machine {
   private static final BufferedImage ICON = IO.getResourceImage("hub.png");
 
   private final Notifier notifier;
 
-  public Hub(int gridIndex, Direction direction, Notifier notifier) {
-    super("Hub", gridIndex, direction, Port.Type.IN, Port.Type.IN, Port.Type.IN, Port.Type.IN);
+  public static Hub create(int index, Direction direction, Notifier notifier) {
+    if (direction == null || notifier == null)
+      return null;
+    return new Hub(index, direction, notifier);
+  }
+
+  private Hub(int index, Direction direction, Notifier notifier) {
+    super("Hub", index, direction, Port.Type.IN, Port.Type.IN, Port.Type.IN, Port.Type.IN);
     this.notifier = notifier;
   }
 
@@ -21,19 +27,16 @@ public class Hub extends Machine {
 
     for (Port in : inputs) {
       if (in.hasResource() && !in.isResourceInBounds()) {
-        notifier.onPayloadReceived(in.resource);
+        notifier.notify(in.resource);
         in.resource = null;
       }
     }
   }
 
   @Override
-  public void tick() { }
-
-  @Override
   public BufferedImage getImage() { return ICON; }
 
   public interface Notifier {
-    void onPayloadReceived(Resource resource);
+    void notify(Resource resource);
   }
 }

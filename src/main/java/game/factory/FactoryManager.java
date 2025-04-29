@@ -60,8 +60,11 @@ public interface FactoryManager {
     state.panY = lerp(state.panY, state.desiredY, state.navLerpSpeed);
     state.zoom = lerp(state.zoom, state.desiredZoom, state.zoomLerpSpeed);
 
-    if (Input.isButtonReleased(Input.BUTTON_RMB) || Input.isKeyPressed(Input.KEY_ESCAPE)) {
+    if (state.action == FactoryAction.PICK &&
+      (Input.isButtonReleased(Input.BUTTON_RMB) || Input.isKeyPressed(Input.KEY_ESCAPE))) {
       state.action = FactoryAction.CLEAR;
+    } else if (Input.isButtonReleased(Input.BUTTON_RMB)) {
+      state.action = FactoryAction.DELETE;
     } else if (Input.isButtonReleased(Input.BUTTON_LMB) && state.action == FactoryAction.PICK) {
       state.action = FactoryAction.PLACE;
     } else if (Input.isKeyReleased(Input.KEY_R) && state.action == FactoryAction.PICK) {
@@ -88,6 +91,11 @@ public interface FactoryManager {
       case ROTATE -> {
         state.direction = Direction.cycle(state.direction, 1);
         state.action = FactoryAction.PICK;
+      }
+      case DELETE -> {
+        Position pos = getMouseWorldPosition();
+        factory.removeMachine(pos);
+        state.action = FactoryAction.CLEAR;
       }
       case CLEAR -> state.reset();
     }
