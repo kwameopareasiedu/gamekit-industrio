@@ -19,7 +19,9 @@ public class MachineButton extends Compose {
         Sized.create(
           Sized.options().width(64).height(64),
           Button.create(
-            Button.options().mouseListener(mouseListener).padding(new Spacing(0)),
+            Button.options()
+              .mouseListener(mouseListener)
+              .padding(new Spacing(0)),
             Image.create(
               machineInfo.image()
             )

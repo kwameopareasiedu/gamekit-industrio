@@ -1,7 +1,11 @@
 package game;
 
+import dev.gamekit.core.IO;
 import dev.gamekit.core.Scene;
-import dev.gamekit.ui.widgets.Widget;
+import dev.gamekit.ui.Spacing;
+import dev.gamekit.ui.enums.Alignment;
+import dev.gamekit.ui.widgets.Panel;
+import dev.gamekit.ui.widgets.*;
 import game.factory.Factory;
 import game.factory.FactoryManager;
 import game.factory.FactoryManagerState;
@@ -9,8 +13,10 @@ import game.resources.Shade;
 import game.resources.Source;
 
 import java.awt.*;
+import java.awt.image.BufferedImage;
 
 public class Playground extends Scene implements FactoryManager {
+  private static final BufferedImage PANEL_BG = IO.getResourceImage("panel.png");
   private static final Color CLEAR_COLOR = new Color(0xe1e1e1);
   private final FactoryManagerState factoryManagerState;
   private final Factory factory;
@@ -21,7 +27,7 @@ public class Playground extends Scene implements FactoryManager {
     Factory.GRID_SIZE = 7;
 
     factory = new Factory(
-      new Source[] {
+      new Source[]{
         Source.create(Shade.Type.WHITE_CIRCLE, 0, 0),
         Source.create(Shade.Type.BLACK_CIRCLE, 6, 6)
       }
@@ -63,6 +69,21 @@ public class Playground extends Scene implements FactoryManager {
 
   @Override
   public Widget createUI() {
-    return renderUI();
+    return Stack.create(
+      Align.create(
+        Align.options().horizontalAlignment(Alignment.START),
+        Padding.create(
+          Padding.options().padding(new Spacing(128, 0, 0, 48)),
+          Sized.create(
+            Sized.options().width(256).height(128),
+            Panel.create(
+              Panel.options().background(PANEL_BG).padding(new Spacing(68, 28, 28, 64)),
+              Text.create("Hello World")
+            )
+          )
+        )
+      ),
+      renderUI()
+    );
   }
 }

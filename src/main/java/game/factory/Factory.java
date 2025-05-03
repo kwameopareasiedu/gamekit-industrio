@@ -66,6 +66,9 @@ public class Factory extends Prop {
   }
 
   public static Machine getMachineAt(int index) {
+    if (index < 0 || index >= instance.machineGrid.length)
+      return null;
+
     return instance.machineGrid[index];
   }
 
@@ -128,8 +131,8 @@ public class Factory extends Prop {
 
     if (info == Extractor.INFO) {
       machine = Extractor.create(index, direction, sourceGrid[index]);
-    } else if (info == Conveyor.INFO) {
-      machine = Conveyor.create(index, direction);
+    } else if (info == Belt.INFO) {
+      machine = Belt.create(index, direction);
     }
 
     if (machine != null)

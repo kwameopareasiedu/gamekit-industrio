@@ -6,13 +6,14 @@ import dev.gamekit.core.Input;
 import dev.gamekit.core.Renderer;
 import dev.gamekit.ui.Spacing;
 import dev.gamekit.ui.enums.Alignment;
+import dev.gamekit.ui.enums.CrossAxisAlignment;
 import dev.gamekit.ui.events.MouseEvent;
 import dev.gamekit.ui.widgets.Align;
 import dev.gamekit.ui.widgets.Column;
 import dev.gamekit.ui.widgets.Padding;
 import dev.gamekit.ui.widgets.Widget;
 import dev.gamekit.utils.Position;
-import game.machines.Conveyor;
+import game.machines.Belt;
 import game.machines.Direction;
 import game.machines.Extractor;
 import game.ui.MachineButton;
@@ -131,7 +132,7 @@ public interface FactoryManager {
       Padding.create(
         Padding.options().padding(new Spacing(24, 48)),
         Column.create(
-          Column.options().gapSize(12),
+          Column.options().gapSize(12).crossAxisAlignment(CrossAxisAlignment.CENTER),
           MachineButton.create(Extractor.INFO, (e) -> {
             if (e.type == MouseEvent.Type.CLICK) {
               Application.getInstance().scheduleTask(() -> {
@@ -140,10 +141,10 @@ public interface FactoryManager {
               });
             }
           }),
-          MachineButton.create(Conveyor.INFO, (e) -> {
+          MachineButton.create(Belt.INFO, (e) -> {
             if (e.type == MouseEvent.Type.CLICK) {
               Application.getInstance().scheduleTask(() -> {
-                state.machineInfo = Conveyor.INFO;
+                state.machineInfo = Belt.INFO;
                 state.action = FactoryAction.PICK;
               });
             }
