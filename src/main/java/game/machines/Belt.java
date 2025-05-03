@@ -47,6 +47,7 @@ public final class Belt extends Machine {
     if (in.hasResource() && !in.isResourceInBounds() && !out.hasResource()) {
       in.item.pos.set(position);
       in.transferResourceTo(out);
+      inputIndex = cycle(inputIndex + 1, 0, inputs.size() - 1);
     }
 
     inputIndex = cycle(inputIndex + 1, 0, inputs.size() - 1);
@@ -64,35 +65,31 @@ public final class Belt extends Machine {
     Belt bottomBelt = bottomMachine instanceof Belt ? (Belt) bottomMachine : null;
     Belt leftBelt = leftMachine instanceof Belt ? (Belt) leftMachine : null;
 
-    return switch (direction) {
+    int spriteIndex = 0;
+
+    switch (direction) {
       case UP -> {
-        int spriteIndex = 0;
         if (bottomBelt != null && bottomBelt.direction == Direction.UP) spriteIndex += 1;
         if (leftBelt != null && leftBelt.direction == Direction.RIGHT) spriteIndex += 2;
         if (rightBelt != null && rightBelt.direction == Direction.LEFT) spriteIndex += 4;
-        yield SPRITES[Math.max(0, spriteIndex - 1)];
       }
       case RIGHT -> {
-        int spriteIndex = 0;
         if (leftBelt != null && leftBelt.direction == Direction.RIGHT) spriteIndex += 1;
         if (topBelt != null && topBelt.direction == Direction.DOWN) spriteIndex += 2;
         if (bottomBelt != null && bottomBelt.direction == Direction.UP) spriteIndex += 4;
-        yield SPRITES[Math.max(0, spriteIndex - 1)];
       }
       case DOWN -> {
-        int spriteIndex = 0;
         if (topBelt != null && topBelt.direction == Direction.DOWN) spriteIndex += 1;
         if (rightBelt != null && rightBelt.direction == Direction.LEFT) spriteIndex += 2;
         if (leftBelt != null && leftBelt.direction == Direction.RIGHT) spriteIndex += 4;
-        yield SPRITES[Math.max(0, spriteIndex - 1)];
       }
       case LEFT -> {
-        int spriteIndex = 0;
         if (rightBelt != null && rightBelt.direction == Direction.LEFT) spriteIndex += 1;
         if (bottomBelt != null && bottomBelt.direction == Direction.UP) spriteIndex += 2;
         if (topBelt != null && topBelt.direction == Direction.DOWN) spriteIndex += 4;
-        yield SPRITES[Math.max(0, spriteIndex - 1)];
       }
-    };
+    }
+
+    return SPRITES[Math.max(0, spriteIndex - 1)];
   }
 }
