@@ -35,7 +35,7 @@ public final class Conveyor extends Machine {
     Port out = outputs.get(0);
 
     if (in.hasResource() && !in.isResourceInBounds() && !out.hasResource()) {
-      in.resource.position.set(position);
+      in.item.pos.set(position);
       in.transferResourceTo(out);
     }
 

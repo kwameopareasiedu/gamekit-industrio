@@ -2,8 +2,8 @@ package game.machines;
 
 import dev.gamekit.core.IO;
 import game.factory.Factory;
-import game.resources.Deposit;
-import game.resources.Resource;
+import game.resources.Source;
+import game.resources.Shade;
 
 import java.awt.image.BufferedImage;
 
@@ -12,18 +12,18 @@ public final class Extractor extends Machine {
   public static final Info INFO = new Info("Extractor", IMAGE);
   public static int TICKS_FOR_EXTRACTION = 7;
 
-  private final Deposit deposit;
+  private final Source source;
   private int tickCounter = TICKS_FOR_EXTRACTION;
 
-  public static Extractor create(int index, Direction direction, Deposit deposit) {
-    if (direction == null || deposit == null)
+  public static Extractor create(int index, Direction direction, Source source) {
+    if (direction == null || source == null)
       return null;
-    return new Extractor(index, direction, deposit);
+    return new Extractor(index, direction, source);
   }
 
-  private Extractor(int index, Direction direction, Deposit deposit) {
+  private Extractor(int index, Direction direction, Source source) {
     super("Extractor", index, direction, Port.Type.OUT, null, null, null);
-    this.deposit = deposit;
+    this.source = source;
   }
 
   @Override
@@ -34,8 +34,8 @@ public final class Extractor extends Machine {
       Port outputPort = outputs.get(0);
 
       if (!outputPort.hasResource()) {
-        Resource res = deposit.extract();
-        outputPort.resource = res;
+        Shade res = source.extract();
+        outputPort.item = res;
         Factory.addResource(res);
       }
 

@@ -3,7 +3,6 @@ package game.machines;
 import dev.gamekit.core.Prop;
 import dev.gamekit.core.Renderer;
 import dev.gamekit.utils.Position;
-import game.Constants;
 import game.Utils;
 import game.factory.Factory;
 
@@ -102,8 +101,8 @@ public abstract class Machine extends Prop {
       pos.x, pos.y, direction.getAngle(),
       () -> Renderer.drawImage(
         icon, pos.x, pos.y,
-        Constants.CELL_PIXEL_SIZE,
-        Constants.CELL_PIXEL_SIZE
+        Factory.CELL_PIXEL_SIZE,
+        Factory.CELL_PIXEL_SIZE
       )
     );
   }
@@ -111,13 +110,13 @@ public abstract class Machine extends Prop {
   @Override
   protected void dispose() {
     for (Port port : inputs) {
-      if (port.resource != null)
-        Factory.removeResource(port.resource);
+      if (port.item != null)
+        Factory.removeItem(port.item);
     }
 
     for (Port port : outputs) {
-      if (port.resource != null)
-        Factory.removeResource(port.resource);
+      if (port.item != null)
+        Factory.removeItem(port.item);
     }
   }
 
@@ -126,9 +125,9 @@ public abstract class Machine extends Prop {
       if (port.isOutput() && !port.moveResource()) {
         //noinspection ExtractMethodRecommender
         int adjacentMachineOffset =
-          port == topPort ? Constants.GRID_SIZE
+          port == topPort ? Factory.GRID_SIZE
             : port == rightPort ? 1
-            : port == bottomPort ? -Constants.GRID_SIZE
+            : port == bottomPort ? -Factory.GRID_SIZE
             : port == leftPort ? -1
             : 0;
 

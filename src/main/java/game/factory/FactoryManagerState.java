@@ -10,8 +10,7 @@ public class FactoryManagerState {
   final List<Integer> pathIndices = new ArrayList<>();
   final double navSpeed = 10;
   final double navLerpSpeed = 0.05;
-  final double zoomSpeed = 0.1;
-  final double zoomLerpSpeed = 0.05;
+  final double zoomSpeed = 0.01;
   final double minZoom = 1;
   final double maxZoom = 3;
 
@@ -20,7 +19,6 @@ public class FactoryManagerState {
   Machine.Info machineInfo;
   double desiredX = 0;
   double desiredY = 0;
-  double desiredZoom = minZoom;
   double panX = 0;
   double panY = 0;
   double zoom = minZoom;

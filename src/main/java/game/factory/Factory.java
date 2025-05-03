@@ -4,11 +4,10 @@ import dev.gamekit.core.Application;
 import dev.gamekit.core.Prop;
 import dev.gamekit.core.Renderer;
 import dev.gamekit.utils.Position;
-import game.Constants;
 import game.Utils;
 import game.machines.*;
-import game.resources.Deposit;
-import game.resources.Resource;
+import game.resources.Shade;
+import game.resources.Source;
 
 import java.awt.*;
 import java.util.ArrayList;
@@ -16,7 +15,9 @@ import java.util.ArrayList;
 import static dev.gamekit.utils.Math.toInt;
 
 public class Factory extends Prop {
-  private static final int TICK_INTERVAL = 100;
+  public static int GRID_SIZE = 11;
+  public static final int CELL_PIXEL_SIZE = 60;
+  private static final int TICK_INTERVAL_MS = 100;
   private static final Color GRID_COLOR = new Color(0x2f000000, true);
   private static final Stroke OUTER_GRID_STROKE = new BasicStroke(
     1, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND, 0, new float[]{ 10 }, 5
@@ -28,37 +29,40 @@ public class Factory extends Prop {
 
   public final int pixelSize;
   private final Prop machineContainer;
-  private final Prop depositContainer;
-  private final Prop resourceContainer;
-  private final Deposit[] depositGrid;
+  private final Prop sourceContainer;
+  private final Prop itemContainer;
+  private final Source[] sourceGrid;
   private final Machine[] machineGrid;
+  private final Source[] initialSources;
   private final Hub hub;
   private final ArrayList<Machine> machines;
 
   private long tickTime;
 
-  public Factory() {
+  public Factory(Source[] initialSources) {
     super("Factory");
-    pixelSize = Constants.GRID_SIZE * Constants.CELL_PIXEL_SIZE;
-    machineGrid = new Machine[Constants.GRID_SIZE * Constants.GRID_SIZE];
-    depositGrid = new Deposit[Constants.GRID_SIZE * Constants.GRID_SIZE];
-    hub = Hub.create((Constants.GRID_SIZE * Constants.GRID_SIZE) / 2, Direction.UP, (resource) -> {
-      instance.resourceContainer.removeChild(resource);
+
+    this.initialSources = initialSources;
+    pixelSize = GRID_SIZE * CELL_PIXEL_SIZE;
+    machineGrid = new Machine[GRID_SIZE * GRID_SIZE];
+    sourceGrid = new Source[GRID_SIZE * GRID_SIZE];
+    hub = Hub.create((GRID_SIZE * GRID_SIZE) / 2, Direction.UP, (resource) -> {
+      instance.itemContainer.removeChild(resource);
       logger.debug("Consumed {}", resource.type);
     });
     machineContainer = new Prop("Machines") { };
-    depositContainer = new Prop("Deposits") { };
-    resourceContainer = new Prop("Resources") { };
+    sourceContainer = new Prop("Sources") { };
+    itemContainer = new Prop("Items") { };
     machines = new ArrayList<>();
     Factory.instance = this;
   }
 
-  public static void addResource(Resource item) {
-    instance.resourceContainer.addChild(item);
+  public static void addResource(Shade item) {
+    instance.itemContainer.addChild(item);
   }
 
-  public static void removeResource(Resource item) {
-    instance.resourceContainer.removeChild(item);
+  public static void removeItem(Shade item) {
+    instance.itemContainer.removeChild(item);
   }
 
   public static Machine getMachineAt(int index) {
@@ -68,22 +72,21 @@ public class Factory extends Prop {
   @Override
   protected void start() {
     super.start();
-    addChild(depositContainer);
+    addChild(sourceContainer);
     addChild(machineContainer);
-    addChild(resourceContainer);
+    addChild(itemContainer);
 
     addMachine(hub);
-    addDeposit(Deposit.create(Resource.Type.ROCK, 10, 10));
-    addDeposit(Deposit.create(Resource.Type.ROCK, 11, 10));
-    addDeposit(Deposit.create(Resource.Type.ROCK, 11, 11));
-    addDeposit(Deposit.create(Resource.Type.ROCK, 12, 11));
+
+    for (Source source : initialSources)
+      addSource(source);
   }
 
   @Override
   protected void update() {
     tickTime += Application.FRAME_TIME_MS;
 
-    if (tickTime >= TICK_INTERVAL) {
+    if (tickTime >= TICK_INTERVAL_MS) {
       tickTime = 0;
       machines.forEach(Machine::tick);
     }
@@ -95,16 +98,16 @@ public class Factory extends Prop {
     Renderer.setStroke(OUTER_GRID_STROKE);
     Renderer.drawRect(0, 0, pixelSize, pixelSize);
 
-    for (int i = 1; i < Constants.GRID_SIZE; i++) {
-      int x = toInt(i * Constants.CELL_PIXEL_SIZE - 0.5 * pixelSize);
+    for (int i = 1; i < GRID_SIZE; i++) {
+      int x = toInt(i * CELL_PIXEL_SIZE - 0.5 * pixelSize);
 
       Renderer.setColor(GRID_COLOR);
       Renderer.setStroke(INNER_GRID_STROKE);
       Renderer.drawLineV(x, toInt(-0.5 * pixelSize), toInt(0.5 * pixelSize));
     }
 
-    for (int i = 1; i < Constants.GRID_SIZE; i++) {
-      int y = toInt(i * Constants.CELL_PIXEL_SIZE - 0.5 * pixelSize);
+    for (int i = 1; i < GRID_SIZE; i++) {
+      int y = toInt(i * CELL_PIXEL_SIZE - 0.5 * pixelSize);
 
       Renderer.setColor(GRID_COLOR);
       Renderer.setStroke(INNER_GRID_STROKE);
@@ -124,7 +127,7 @@ public class Factory extends Prop {
     Machine machine = null;
 
     if (info == Extractor.INFO) {
-      machine = Extractor.create(index, direction, depositGrid[index]);
+      machine = Extractor.create(index, direction, sourceGrid[index]);
     } else if (info == Conveyor.INFO) {
       machine = Conveyor.create(index, direction);
     }
@@ -145,9 +148,9 @@ public class Factory extends Prop {
     machineGrid[index] = null;
   }
 
-  private void addDeposit(Deposit deposit) {
-    depositGrid[deposit.index] = deposit;
-    depositContainer.addChild(deposit);
+  private void addSource(Source source) {
+    sourceGrid[source.index] = source;
+    sourceContainer.addChild(source);
   }
 
   private void addMachine(Machine machine) {

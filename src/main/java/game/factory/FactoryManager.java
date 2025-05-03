@@ -12,22 +12,25 @@ import dev.gamekit.ui.widgets.Column;
 import dev.gamekit.ui.widgets.Padding;
 import dev.gamekit.ui.widgets.Widget;
 import dev.gamekit.utils.Position;
-import game.Constants;
 import game.machines.Conveyor;
 import game.machines.Direction;
 import game.machines.Extractor;
 import game.ui.MachineButton;
 
+import java.awt.*;
+
 import static dev.gamekit.utils.Math.clamp;
 import static dev.gamekit.utils.Math.lerp;
 
 public interface FactoryManager {
-  double MIN_BOUND = -0.5 * Constants.GRID_SIZE * Constants.CELL_PIXEL_SIZE;
-  double MAX_BOUND = 0.5 * Constants.GRID_SIZE * Constants.CELL_PIXEL_SIZE;
+  double MIN_BOUND = -0.5 * Factory.GRID_SIZE * Factory.CELL_PIXEL_SIZE;
+  double MAX_BOUND = 0.5 * Factory.GRID_SIZE * Factory.CELL_PIXEL_SIZE;
 
   Factory getFactory();
 
   FactoryManagerState getState();
+
+  Color getClearColor();
 
   default void updateState() {
     FactoryManagerState state = getState();
@@ -45,20 +48,19 @@ public interface FactoryManager {
     }
 
     if (Input.isKeyPressed(Input.KEY_E)) {
-      state.desiredZoom = clamp(
-        state.desiredZoom + state.zoomSpeed,
+      state.zoom = clamp(
+        state.zoom + state.zoomSpeed,
         state.minZoom, state.maxZoom
       );
     } else if (Input.isKeyPressed(Input.KEY_Q)) {
-      state.desiredZoom = clamp(
-        state.desiredZoom - state.zoomSpeed,
+      state.zoom = clamp(
+        state.zoom - state.zoomSpeed,
         state.minZoom, state.maxZoom
       );
     }
 
     state.panX = lerp(state.panX, state.desiredX, state.navLerpSpeed);
     state.panY = lerp(state.panY, state.desiredY, state.navLerpSpeed);
-    state.zoom = lerp(state.zoom, state.desiredZoom, state.zoomLerpSpeed);
 
     if (state.action == FactoryAction.PICK &&
       (Input.isButtonReleased(Input.BUTTON_RMB) || Input.isKeyPressed(Input.KEY_ESCAPE))) {
@@ -104,6 +106,9 @@ public interface FactoryManager {
   default void renderState() {
     FactoryManagerState state = getState();
 
+    Renderer.setBackground(getClearColor());
+    Renderer.clear();
+
     if (state.action == FactoryAction.PICK) {
       Position mousePos = getMouseWorldPosition();
 
@@ -112,7 +117,7 @@ public interface FactoryManager {
         () ->
           Renderer.drawImage(
             state.machineInfo.image(), mousePos.x, mousePos.y,
-            Constants.CELL_PIXEL_SIZE, Constants.CELL_PIXEL_SIZE
+            Factory.CELL_PIXEL_SIZE, Factory.CELL_PIXEL_SIZE
           )
       );
     }

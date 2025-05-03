@@ -2,15 +2,15 @@ package game.machines;
 
 import dev.gamekit.utils.Bounds;
 import dev.gamekit.utils.Position;
-import game.Constants;
 import game.Utils;
-import game.resources.Resource;
+import game.factory.Factory;
+import game.resources.Shade;
 
 public class Port {
-  public static double MOVE_SPEED = 0.5;
+  public static double MOVE_SPEED = 0.75;
 
   public final Type type;
-  public Resource resource;
+  public Shade item;
 
   private final Direction direction;
   private final Bounds bounds;
@@ -25,34 +25,34 @@ public class Port {
   private Port(Type type, Direction direction, Machine machine) {
     this.type = type;
     this.direction = direction;
-    this.resource = null;
+    this.item = null;
 
     Position pos = Utils.indexToWorldPosition(machine.index);
 
     bounds = switch (direction) {
       case UP -> new Bounds(
-        pos.x - 0.5 * Constants.CELL_PIXEL_SIZE,
+        pos.x - 0.5 * Factory.CELL_PIXEL_SIZE,
         pos.y,
-        Constants.CELL_PIXEL_SIZE,
-        0.5 * Constants.CELL_PIXEL_SIZE
+        Factory.CELL_PIXEL_SIZE,
+        0.5 * Factory.CELL_PIXEL_SIZE
       );
       case RIGHT -> new Bounds(
         pos.x,
-        pos.y - 0.5 * Constants.CELL_PIXEL_SIZE,
-        0.5 * Constants.CELL_PIXEL_SIZE,
-        Constants.CELL_PIXEL_SIZE
+        pos.y - 0.5 * Factory.CELL_PIXEL_SIZE,
+        0.5 * Factory.CELL_PIXEL_SIZE,
+        Factory.CELL_PIXEL_SIZE
       );
       case DOWN -> new Bounds(
-        pos.x - 0.5 * Constants.CELL_PIXEL_SIZE,
-        pos.y - 0.5 * Constants.CELL_PIXEL_SIZE,
-        Constants.CELL_PIXEL_SIZE,
-        0.5 * Constants.CELL_PIXEL_SIZE
+        pos.x - 0.5 * Factory.CELL_PIXEL_SIZE,
+        pos.y - 0.5 * Factory.CELL_PIXEL_SIZE,
+        Factory.CELL_PIXEL_SIZE,
+        0.5 * Factory.CELL_PIXEL_SIZE
       );
       case LEFT -> new Bounds(
-        pos.x - 0.5 * Constants.CELL_PIXEL_SIZE,
-        pos.y - 0.5 * Constants.CELL_PIXEL_SIZE,
-        0.5 * Constants.CELL_PIXEL_SIZE,
-        Constants.CELL_PIXEL_SIZE
+        pos.x - 0.5 * Factory.CELL_PIXEL_SIZE,
+        pos.y - 0.5 * Factory.CELL_PIXEL_SIZE,
+        0.5 * Factory.CELL_PIXEL_SIZE,
+        Factory.CELL_PIXEL_SIZE
       );
     };
   }
@@ -64,18 +64,18 @@ public class Port {
     switch (type) {
       case IN -> {
         switch (direction) {
-          case UP -> resource.position.y -= MOVE_SPEED;
-          case RIGHT -> resource.position.x -= MOVE_SPEED;
-          case DOWN -> resource.position.y += MOVE_SPEED;
-          case LEFT -> resource.position.x += MOVE_SPEED;
+          case UP -> item.pos.y -= MOVE_SPEED;
+          case RIGHT -> item.pos.x -= MOVE_SPEED;
+          case DOWN -> item.pos.y += MOVE_SPEED;
+          case LEFT -> item.pos.x += MOVE_SPEED;
         }
       }
       case OUT -> {
         switch (direction) {
-          case UP -> resource.position.y += MOVE_SPEED;
-          case RIGHT -> resource.position.x += MOVE_SPEED;
-          case DOWN -> resource.position.y -= MOVE_SPEED;
-          case LEFT -> resource.position.x -= MOVE_SPEED;
+          case UP -> item.pos.y += MOVE_SPEED;
+          case RIGHT -> item.pos.x += MOVE_SPEED;
+          case DOWN -> item.pos.y -= MOVE_SPEED;
+          case LEFT -> item.pos.x -= MOVE_SPEED;
         }
       }
     }
@@ -84,8 +84,8 @@ public class Port {
   }
 
   public void transferResourceTo(Port port) {
-    port.resource = resource;
-    resource = null;
+    port.item = item;
+    item = null;
   }
 
   public boolean isInput() {
@@ -97,11 +97,11 @@ public class Port {
   }
 
   public boolean hasResource() {
-    return resource != null;
+    return item != null;
   }
 
   public boolean isResourceInBounds() {
-    return bounds.contains(resource.position.x, resource.position.y);
+    return bounds.contains(item.pos.x, item.pos.y);
   }
 
   public enum Type {
