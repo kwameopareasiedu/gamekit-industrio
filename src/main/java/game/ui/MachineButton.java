@@ -15,7 +15,7 @@ public class MachineButton extends Compose {
   public MachineButton(Machine.Info machineInfo, MouseEvent.Listener mouseListener) {
     super(
       Column.create(
-        Column.options().crossAxisAlignment(CrossAxisAlignment.CENTER).gapSize(12),
+        Column.options().crossAxisAlignment(CrossAxisAlignment.CENTER).gapSize(6),
         Sized.create(
           Sized.options().width(64).height(64),
           Button.create(

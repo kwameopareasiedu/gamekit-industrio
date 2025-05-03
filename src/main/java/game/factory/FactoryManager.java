@@ -132,7 +132,7 @@ public interface FactoryManager {
       Padding.create(
         Padding.options().padding(new Spacing(24, 48)),
         Column.create(
-          Column.options().gapSize(12).crossAxisAlignment(CrossAxisAlignment.CENTER),
+          Column.options().gapSize(32).crossAxisAlignment(CrossAxisAlignment.CENTER),
           MachineButton.create(Extractor.INFO, (e) -> {
             if (e.type == MouseEvent.Type.CLICK) {
               Application.getInstance().scheduleTask(() -> {

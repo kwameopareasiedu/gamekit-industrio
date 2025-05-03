@@ -17,7 +17,7 @@ import java.awt.image.BufferedImage;
 
 public class Playground extends Scene implements FactoryManager {
   private static final BufferedImage PANEL_BG = IO.getResourceImage("panel.png");
-  private static final Color CLEAR_COLOR = new Color(0xe1e1e1);
+  private static final Color CLEAR_COLOR = new Color(0xeceef2);
   private final FactoryManagerState factoryManagerState;
   private final Factory factory;
 
