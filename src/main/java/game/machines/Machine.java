@@ -17,6 +17,7 @@ public abstract class Machine extends Prop {
   protected final Port rightPort;
   protected final Port bottomPort;
   protected final Port leftPort;
+  protected final Port[] ports;
   protected final List<Port> inputs;
   protected final List<Port> outputs;
 
@@ -61,6 +62,7 @@ public abstract class Machine extends Prop {
       case LEFT -> Port.create(topPortType, Direction.LEFT, this);
     };
 
+    ports = new Port[]{ topPort, rightPort, bottomPort, leftPort };
     inputs = new ArrayList<>();
     outputs = new ArrayList<>();
 

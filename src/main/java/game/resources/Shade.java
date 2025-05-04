@@ -31,6 +31,7 @@ public final class Shade extends Prop {
     Color color = switch (type) {
       case WHITE_CIRCLE -> Color.WHITE;
       case BLACK_CIRCLE -> Color.BLACK;
+      case GRAY_CIRCLE -> Color.GRAY;
     };
 
     Renderer.setColor(color);
@@ -41,6 +42,6 @@ public final class Shade extends Prop {
   }
 
   public enum Type {
-    WHITE_CIRCLE, BLACK_CIRCLE
+    WHITE_CIRCLE, BLACK_CIRCLE, GRAY_CIRCLE
   }
 }

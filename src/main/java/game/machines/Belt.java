@@ -11,6 +11,8 @@ import java.awt.image.BufferedImage;
 import static dev.gamekit.utils.Math.cycle;
 
 public final class Belt extends Machine {
+  public static final Info INFO = new Info("Belt", IO.getResourceImage("belts/ui.png"));
+
   private static final BufferedImage[] SPRITES = new BufferedImage[]{
     IO.getResourceImage("belts/1.png"),
     IO.getResourceImage("belts/2.png"),
@@ -20,8 +22,6 @@ public final class Belt extends Machine {
     IO.getResourceImage("belts/6.png"),
     IO.getResourceImage("belts/7.png"),
   };
-
-  public static final Info INFO = new Info("Belt", SPRITES[0]);
 
   private final Vector position;
   private int inputIndex = 0;
@@ -60,36 +60,40 @@ public final class Belt extends Machine {
     Machine bottomMachine = Factory.getMachineAt(index - Factory.GRID_SIZE);
     Machine leftMachine = Factory.getMachineAt(index - 1);
 
-    Belt topBelt = topMachine instanceof Belt ? (Belt) topMachine : null;
-    Belt rightBelt = rightMachine instanceof Belt ? (Belt) rightMachine : null;
-    Belt bottomBelt = bottomMachine instanceof Belt ? (Belt) bottomMachine : null;
-    Belt leftBelt = leftMachine instanceof Belt ? (Belt) leftMachine : null;
-
     int spriteIndex = 0;
 
     switch (direction) {
       case UP -> {
-        if (bottomBelt != null && bottomBelt.direction == Direction.UP) spriteIndex += 1;
-        if (leftBelt != null && leftBelt.direction == Direction.RIGHT) spriteIndex += 2;
-        if (rightBelt != null && rightBelt.direction == Direction.LEFT) spriteIndex += 4;
+        if (checkPortDirection(bottomMachine, Port.TOP, Direction.UP)) spriteIndex += 1;
+        if (checkPortDirection(leftMachine, Port.RIGHT, Direction.RIGHT)) spriteIndex += 2;
+        if (checkPortDirection(rightMachine, Port.LEFT, Direction.LEFT)) spriteIndex += 4;
       }
       case RIGHT -> {
-        if (leftBelt != null && leftBelt.direction == Direction.RIGHT) spriteIndex += 1;
-        if (topBelt != null && topBelt.direction == Direction.DOWN) spriteIndex += 2;
-        if (bottomBelt != null && bottomBelt.direction == Direction.UP) spriteIndex += 4;
+        if (checkPortDirection(leftMachine, Port.RIGHT, Direction.RIGHT)) spriteIndex += 1;
+        if (checkPortDirection(topMachine, Port.BOTTOM, Direction.DOWN)) spriteIndex += 2;
+        if (checkPortDirection(bottomMachine, Port.TOP, Direction.UP)) spriteIndex += 4;
       }
       case DOWN -> {
-        if (topBelt != null && topBelt.direction == Direction.DOWN) spriteIndex += 1;
-        if (rightBelt != null && rightBelt.direction == Direction.LEFT) spriteIndex += 2;
-        if (leftBelt != null && leftBelt.direction == Direction.RIGHT) spriteIndex += 4;
+        if (checkPortDirection(topMachine, Port.BOTTOM, Direction.UP)) spriteIndex += 1;
+        if (checkPortDirection(rightMachine, Port.LEFT, Direction.LEFT)) spriteIndex += 2;
+        if (checkPortDirection(leftMachine, Port.RIGHT, Direction.RIGHT)) spriteIndex += 4;
       }
       case LEFT -> {
-        if (rightBelt != null && rightBelt.direction == Direction.LEFT) spriteIndex += 1;
-        if (bottomBelt != null && bottomBelt.direction == Direction.UP) spriteIndex += 2;
-        if (topBelt != null && topBelt.direction == Direction.DOWN) spriteIndex += 4;
+        if (checkPortDirection(rightMachine, Port.LEFT, Direction.LEFT)) spriteIndex += 1;
+        if (checkPortDirection(bottomMachine, Port.TOP, Direction.UP)) spriteIndex += 2;
+        if (checkPortDirection(topMachine, Port.BOTTOM, Direction.DOWN)) spriteIndex += 4;
       }
     }
 
+
     return SPRITES[Math.max(0, spriteIndex - 1)];
+  }
+
+  private boolean checkPortDirection(Machine machine, int portIndex, Direction direction) {
+    if (machine == null || machine.ports[portIndex] == null)
+      return false;
+
+    Port port = machine.ports[portIndex];
+    return port.isOutput() && port.direction == direction;
   }
 }

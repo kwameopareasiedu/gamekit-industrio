@@ -12,7 +12,6 @@ import static dev.gamekit.utils.Math.toInt;
 
 public final class Source extends Prop {
   private static final int SIZE = toInt(0.4 * Factory.CELL_PIXEL_SIZE);
-  private static final int OUTLINE_SIZE = toInt(0.5 * Factory.CELL_PIXEL_SIZE);
 
   public final Shade.Type type;
   public final int index;
@@ -31,6 +30,7 @@ public final class Source extends Prop {
     return switch (type) {
       case WHITE_CIRCLE -> new Shade(Shade.Type.WHITE_CIRCLE, index);
       case BLACK_CIRCLE -> new Shade(Shade.Type.BLACK_CIRCLE, index);
+      case GRAY_CIRCLE -> new Shade(Shade.Type.GRAY_CIRCLE, index);
     };
   }
 
@@ -41,11 +41,10 @@ public final class Source extends Prop {
     Color color = switch (type) {
       case WHITE_CIRCLE -> Color.WHITE;
       case BLACK_CIRCLE -> Color.BLACK;
+      case GRAY_CIRCLE -> Color.GRAY;
     };
 
     Renderer.setColor(color);
     Renderer.fillRoundRect(pos.x, pos.y, SIZE, SIZE, 8, 8);
-    Renderer.setColor(color);
-    Renderer.drawRoundRect(pos.x, pos.y, OUTLINE_SIZE, OUTLINE_SIZE, 8, 8);
   }
 }

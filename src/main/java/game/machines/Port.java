@@ -7,12 +7,16 @@ import game.factory.Factory;
 import game.resources.Shade;
 
 public class Port {
+  public static final int TOP = 0;
+  public static final int RIGHT = 1;
+  public static final int BOTTOM = 2;
+  public static final int LEFT = 3;
   public static double MOVE_SPEED = 0.75;
 
   public final Type type;
+  public final Direction direction;
   public Shade item;
 
-  private final Direction direction;
   private final Bounds bounds;
 
   public static Port create(Type type, Direction direction, Machine machine) {

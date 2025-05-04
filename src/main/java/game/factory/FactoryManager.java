@@ -16,6 +16,7 @@ import dev.gamekit.utils.Position;
 import game.machines.Belt;
 import game.machines.Direction;
 import game.machines.Extractor;
+import game.machines.Mixer;
 import game.ui.MachineButton;
 
 import java.awt.*;
@@ -145,6 +146,14 @@ public interface FactoryManager {
             if (e.type == MouseEvent.Type.CLICK) {
               Application.getInstance().scheduleTask(() -> {
                 state.machineInfo = Belt.INFO;
+                state.action = FactoryAction.PICK;
+              });
+            }
+          }),
+          MachineButton.create(Mixer.INFO, (e) -> {
+            if (e.type == MouseEvent.Type.CLICK) {
+              Application.getInstance().scheduleTask(() -> {
+                state.machineInfo = Mixer.INFO;
                 state.action = FactoryAction.PICK;
               });
             }

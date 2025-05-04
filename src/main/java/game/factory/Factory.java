@@ -47,7 +47,7 @@ public class Factory extends Prop {
     machineGrid = new Machine[GRID_SIZE * GRID_SIZE];
     sourceGrid = new Source[GRID_SIZE * GRID_SIZE];
     hub = Hub.create((GRID_SIZE * GRID_SIZE) / 2, Direction.UP, (resource) -> {
-      instance.itemContainer.removeChild(resource);
+      Factory.removeItem(resource);
       logger.debug("Consumed {}", resource.type);
     });
     machineContainer = new Prop("Machines") { };
@@ -133,6 +133,8 @@ public class Factory extends Prop {
       machine = Extractor.create(index, direction, sourceGrid[index]);
     } else if (info == Belt.INFO) {
       machine = Belt.create(index, direction);
+    } else if (info == Mixer.INFO) {
+      machine = Mixer.create(index, direction);
     }
 
     if (machine != null)

@@ -21,7 +21,7 @@ public class MachineButton extends Compose {
           Button.create(
             Button.options()
               .mouseListener(mouseListener)
-              .padding(new Spacing(0)),
+              .padding(new Spacing(6)),
             Image.create(
               machineInfo.image()
             )
