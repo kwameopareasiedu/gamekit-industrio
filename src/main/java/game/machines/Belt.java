@@ -44,7 +44,7 @@ public final class Belt extends Machine {
     Port in = inputs.get(inputIndex);
     Port out = outputs.get(0);
 
-    if (in.hasResource() && !in.isResourceInBounds() && !out.hasResource()) {
+    if (in.hasItem() && !in.isItemInBounds() && !out.hasItem()) {
       in.item.pos.set(position);
       in.transferResourceTo(out);
       inputIndex = cycle(inputIndex + 1, 0, inputs.size() - 1);

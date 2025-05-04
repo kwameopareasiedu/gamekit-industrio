@@ -6,7 +6,7 @@ import dev.gamekit.core.Renderer;
 import dev.gamekit.utils.Position;
 import game.Utils;
 import game.machines.*;
-import game.resources.Shade;
+import game.resources.Shape;
 import game.resources.Source;
 
 import java.awt.*;
@@ -57,11 +57,11 @@ public class Factory extends Prop {
     Factory.instance = this;
   }
 
-  public static void addResource(Shade item) {
+  public static void addResource(Shape item) {
     instance.itemContainer.addChild(item);
   }
 
-  public static void removeItem(Shade item) {
+  public static void removeItem(Shape item) {
     instance.itemContainer.removeChild(item);
   }
 

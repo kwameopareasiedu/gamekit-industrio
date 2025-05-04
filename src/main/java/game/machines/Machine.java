@@ -123,7 +123,7 @@ public abstract class Machine extends Prop {
   }
 
   private void updatePort(Port port) {
-    if (port != null && port.hasResource()) {
+    if (port != null && port.hasItem()) {
       if (port.isOutput() && !port.moveResource()) {
         //noinspection ExtractMethodRecommender
         int adjacentMachineOffset =
@@ -148,7 +148,7 @@ public abstract class Machine extends Prop {
             : port == leftPort ? adjacentMachine.rightPort
             : null;
 
-          if (adjacentPort != null && adjacentPort.isInput() && !adjacentPort.hasResource())
+          if (adjacentPort != null && adjacentPort.isInput() && !adjacentPort.hasItem())
             port.transferResourceTo(adjacentPort);
         }
       } else if (port.isInput()) {

@@ -11,37 +11,33 @@ import java.awt.*;
 
 import static dev.gamekit.utils.Math.toInt;
 
-public final class Shade extends Prop {
-  private static final Stroke OUTLINE_STROKE =
-    new BasicStroke(1, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND);
+public final class Shape extends Prop {
   private static final int SIZE = toInt(0.15 * Factory.CELL_PIXEL_SIZE);
 
   public final Type type;
+  public final Color color;
   public final Vector pos;
 
-  public Shade(Type type, int index) {
+  public Shape(Type type, Color color, int index) {
     super(type.name());
     this.type = type;
+    this.color = color;
+
     Position pos = Utils.indexToWorldPosition(index);
     this.pos = new Vector(pos.x, pos.y);
   }
 
   @Override
   protected void render() {
-    Color color = switch (type) {
-      case WHITE_CIRCLE -> Color.WHITE;
-      case BLACK_CIRCLE -> Color.BLACK;
-      case GRAY_CIRCLE -> Color.GRAY;
-    };
-
     Renderer.setColor(color);
-    Renderer.fillCircle((int) pos.x, (int) pos.y, SIZE);
-    Renderer.setColor(color);
-    Renderer.setStroke(OUTLINE_STROKE);
-    Renderer.drawCircle((int) pos.x, (int) pos.y, SIZE);
+    if (type == Type.CIRCLE)
+      Renderer.fillCircle((int) pos.x, (int) pos.y, SIZE);
+    else if (type == Type.SQUARE)
+      Renderer.fillRoundRect((int) pos.x, (int) pos.y, SIZE, SIZE, 4, 4);
   }
 
   public enum Type {
-    WHITE_CIRCLE, BLACK_CIRCLE, GRAY_CIRCLE
+    CIRCLE,
+    SQUARE,
   }
 }

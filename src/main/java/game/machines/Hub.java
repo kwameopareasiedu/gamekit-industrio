@@ -1,7 +1,7 @@
 package game.machines;
 
 import dev.gamekit.core.IO;
-import game.resources.Shade;
+import game.resources.Shape;
 
 import java.awt.image.BufferedImage;
 
@@ -26,7 +26,7 @@ public final class Hub extends Machine {
     super.update();
 
     for (Port in : inputs) {
-      if (in.hasResource() && !in.isResourceInBounds()) {
+      if (in.hasItem() && !in.isItemInBounds()) {
         notifier.notify(in.item);
         in.item = null;
       }
@@ -37,6 +37,6 @@ public final class Hub extends Machine {
   public BufferedImage getImage() { return ICON; }
 
   public interface Notifier {
-    void notify(Shade shade);
+    void notify(Shape shape);
   }
 }

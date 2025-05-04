@@ -3,7 +3,7 @@ package game.machines;
 import dev.gamekit.core.IO;
 import game.factory.Factory;
 import game.resources.Source;
-import game.resources.Shade;
+import game.resources.Shape;
 
 import java.awt.image.BufferedImage;
 
@@ -33,8 +33,8 @@ public final class Extractor extends Machine {
     if (tickCounter <= 0) {
       Port outputPort = outputs.get(0);
 
-      if (!outputPort.hasResource()) {
-        Shade res = source.extract();
+      if (!outputPort.hasItem()) {
+        Shape res = source.extract();
         outputPort.item = res;
         Factory.addResource(res);
       }

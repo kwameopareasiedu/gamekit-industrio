@@ -4,7 +4,7 @@ import dev.gamekit.utils.Bounds;
 import dev.gamekit.utils.Position;
 import game.Utils;
 import game.factory.Factory;
-import game.resources.Shade;
+import game.resources.Shape;
 
 public class Port {
   public static final int TOP = 0;
@@ -15,7 +15,7 @@ public class Port {
 
   public final Type type;
   public final Direction direction;
-  public Shade item;
+  public Shape item;
 
   private final Bounds bounds;
 
@@ -62,7 +62,7 @@ public class Port {
   }
 
   public boolean moveResource() {
-    if (!hasResource() || !isResourceInBounds())
+    if (!hasItem() || !isItemInBounds())
       return false;
 
     switch (type) {
@@ -100,11 +100,11 @@ public class Port {
     return type == Type.OUT;
   }
 
-  public boolean hasResource() {
+  public boolean hasItem() {
     return item != null;
   }
 
-  public boolean isResourceInBounds() {
+  public boolean isItemInBounds() {
     return bounds.contains(item.pos.x, item.pos.y);
   }
 

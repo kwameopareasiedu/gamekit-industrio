@@ -9,7 +9,6 @@ import dev.gamekit.ui.widgets.*;
 import game.factory.Factory;
 import game.factory.FactoryManager;
 import game.factory.FactoryManagerState;
-import game.resources.Shade;
 import game.resources.Source;
 
 import java.awt.*;
@@ -28,8 +27,8 @@ public class Playground extends Scene implements FactoryManager {
 
     factory = new Factory(
       new Source[]{
-        Source.create(Shade.Type.WHITE_CIRCLE, 0, 0),
-        Source.create(Shade.Type.BLACK_CIRCLE, 6, 6)
+        Source.create(Color.WHITE, 0, 0),
+        Source.create(Color.BLACK, 6, 6)
       }
     );
 
