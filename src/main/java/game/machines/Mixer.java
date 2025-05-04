@@ -67,9 +67,9 @@ public class Mixer extends Machine {
     boolean hasRedCircle = false;
     boolean hasGreenCircle = false;
     boolean hasBlueCircle = false;
-    boolean hasCyanCircle = false;
-    boolean hasMagentaCircle = false;
-    boolean hasYellowCircle = false;
+//    boolean hasCyanCircle = false;
+//    boolean hasMagentaCircle = false;
+//    boolean hasYellowCircle = false;
 
     boolean hasWhiteSquare = false;
     boolean hasBlackSquare = false;
@@ -87,9 +87,9 @@ public class Mixer extends Machine {
         if (shape.color == Color.RED) hasRedCircle = true;
         if (shape.color == Color.GREEN) hasGreenCircle = true;
         if (shape.color == Color.BLUE) hasBlueCircle = true;
-        if (shape.color == Color.CYAN) hasCyanCircle = true;
-        if (shape.color == Color.MAGENTA) hasMagentaCircle = true;
-        if (shape.color == Color.YELLOW) hasYellowCircle = true;
+//        if (shape.color == Color.CYAN) hasCyanCircle = true;
+//        if (shape.color == Color.MAGENTA) hasMagentaCircle = true;
+//        if (shape.color == Color.YELLOW) hasYellowCircle = true;
       } else if (shape.type == Shape.Type.SQUARE) {
         if (shape.color == Color.WHITE) hasWhiteSquare = true;
         if (shape.color == Color.BLACK) hasBlackSquare = true;

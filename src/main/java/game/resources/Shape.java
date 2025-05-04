@@ -33,7 +33,7 @@ public final class Shape extends Prop {
     if (type == Type.CIRCLE)
       Renderer.fillCircle((int) pos.x, (int) pos.y, SIZE);
     else if (type == Type.SQUARE)
-      Renderer.fillRoundRect((int) pos.x, (int) pos.y, SIZE, SIZE, 4, 4);
+      Renderer.fillRoundRect((int) pos.x, (int) pos.y, 2 * SIZE, 2 * SIZE, 4, 4);
   }
 
   public enum Type {

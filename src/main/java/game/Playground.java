@@ -23,12 +23,13 @@ public class Playground extends Scene implements FactoryManager {
   public Playground() {
     super("Playground");
 
-    Factory.GRID_SIZE = 7;
+    Factory.GRID_SIZE = 11;
 
     factory = new Factory(
       new Source[]{
         Source.create(Color.WHITE, 0, 0),
-        Source.create(Color.BLACK, 6, 6)
+        Source.create(Color.BLACK, 8, 9),
+        Source.create(Color.RED, 0, 9),
       }
     );
 

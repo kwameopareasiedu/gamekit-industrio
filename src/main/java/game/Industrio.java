@@ -6,7 +6,7 @@ import dev.gamekit.utils.Resolution;
 
 public class Industrio extends Application {
   public Industrio() {
-    super(new Config("Industrio", Resolution.HD, false));
+    super(new Config("Industrio", Resolution.HD, true));
   }
 
   public static void main(String[] args) {

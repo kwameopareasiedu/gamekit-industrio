@@ -13,10 +13,7 @@ import dev.gamekit.ui.widgets.Column;
 import dev.gamekit.ui.widgets.Padding;
 import dev.gamekit.ui.widgets.Widget;
 import dev.gamekit.utils.Position;
-import game.machines.Belt;
-import game.machines.Direction;
-import game.machines.Extractor;
-import game.machines.Mixer;
+import game.machines.*;
 import game.ui.MachineButton;
 
 import java.awt.*;
@@ -154,6 +151,14 @@ public interface FactoryManager {
             if (e.type == MouseEvent.Type.CLICK) {
               Application.getInstance().scheduleTask(() -> {
                 state.machineInfo = Mixer.INFO;
+                state.action = FactoryAction.PICK;
+              });
+            }
+          }),
+          MachineButton.create(Reshaper.INFO, (e) -> {
+            if (e.type == MouseEvent.Type.CLICK) {
+              Application.getInstance().scheduleTask(() -> {
+                state.machineInfo = Reshaper.INFO;
                 state.action = FactoryAction.PICK;
               });
             }

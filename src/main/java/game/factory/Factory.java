@@ -135,6 +135,8 @@ public class Factory extends Prop {
       machine = Belt.create(index, direction);
     } else if (info == Mixer.INFO) {
       machine = Mixer.create(index, direction);
+    } else if (info == Reshaper.INFO) {
+      machine = Reshaper.create(index, direction);
     }
 
     if (machine != null)
