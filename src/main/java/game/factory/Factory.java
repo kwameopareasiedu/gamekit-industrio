@@ -137,6 +137,8 @@ public class Factory extends Prop {
       machine = Mixer.create(index, direction);
     } else if (info == Reshaper.INFO) {
       machine = Reshaper.create(index, direction);
+    } else if (info == HueShifter.INFO) {
+      machine = HueShifter.create(index, direction);
     }
 
     if (machine != null)

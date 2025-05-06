@@ -29,6 +29,8 @@ public class Playground extends Scene implements FactoryManager {
       new Source[]{
         Source.create(Color.WHITE, 0, 0),
         Source.create(Color.BLACK, 8, 9),
+        Source.create(Color.BLACK, 9, 9),
+        Source.create(Color.BLACK, 10, 9),
         Source.create(Color.RED, 0, 9),
       }
     );

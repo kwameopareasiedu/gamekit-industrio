@@ -162,6 +162,14 @@ public interface FactoryManager {
                 state.action = FactoryAction.PICK;
               });
             }
+          }),
+          MachineButton.create(HueShifter.INFO, (e) -> {
+            if (e.type == MouseEvent.Type.CLICK) {
+              Application.getInstance().scheduleTask(() -> {
+                state.machineInfo = HueShifter.INFO;
+                state.action = FactoryAction.PICK;
+              });
+            }
           })
         )
       )

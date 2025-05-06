@@ -7,7 +7,7 @@ public class Industrio extends Application {
   public Industrio() {
     super(
       new Settings(
-        "Industrio", Resolution.HD, false,
+        "Industrio", Resolution.NATIVE, true,
         Antialiasing.ON, AlphaInterpolation.QUALITY, ImageInterpolation.BICUBIC,
         RenderingStrategy.QUALITY, Dithering.ON
       )
