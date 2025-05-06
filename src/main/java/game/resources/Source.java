@@ -11,6 +11,8 @@ import java.awt.*;
 import static dev.gamekit.utils.Math.toInt;
 
 public final class Source extends Prop {
+  private static final Stroke OUTLINE_STROKE =
+    new BasicStroke(2, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND);
   private static final int SIZE = toInt(0.4 * Factory.CELL_PIXEL_SIZE);
 
   public final Color color;
@@ -35,5 +37,8 @@ public final class Source extends Prop {
     Position pos = Utils.indexToWorldPosition(index);
     Renderer.setColor(color);
     Renderer.fillRoundRect(pos.x, pos.y, SIZE, SIZE, 8, 8);
+    Renderer.setColor(Color.BLACK);
+    Renderer.setStroke(OUTLINE_STROKE);
+    Renderer.drawRoundRect(pos.x, pos.y, SIZE, SIZE, 8, 8);
   }
 }

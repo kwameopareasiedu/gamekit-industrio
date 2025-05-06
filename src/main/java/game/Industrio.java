@@ -1,12 +1,17 @@
 package game;
 
 import dev.gamekit.core.Application;
-import dev.gamekit.utils.Config;
-import dev.gamekit.utils.Resolution;
+import dev.gamekit.settings.*;
 
 public class Industrio extends Application {
   public Industrio() {
-    super(new Config("Industrio", Resolution.HD, true));
+    super(
+      new Settings(
+        "Industrio", Resolution.HD, false,
+        Antialiasing.ON, AlphaInterpolation.QUALITY, ImageInterpolation.BICUBIC,
+        RenderingStrategy.QUALITY, Dithering.ON
+      )
+    );
   }
 
   public static void main(String[] args) {

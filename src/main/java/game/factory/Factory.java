@@ -120,9 +120,9 @@ public class Factory extends Prop {
 
   public void createMachine(Position position, Machine.Info info, Direction direction) {
     int index = Utils.worldPositionToIndex(position);
-    int row = Utils.indexToRow(index);
-    int col = Utils.indexToCol(index);
-    System.out.printf("R:%d, C:%d\n", row, col);
+
+    if (machineGrid[index] == hub)
+      return;
 
     if (machineGrid[index] != null)
       removeMachine(position);
@@ -147,7 +147,7 @@ public class Factory extends Prop {
     int index = Utils.worldPositionToIndex(position);
     Machine machine = machineGrid[index];
 
-    if (machine == null)
+    if (machine == null || machine == hub)
       return;
 
     machines.remove(machine);

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Configuration status="INFO">
   <Loggers>
-    <Root level="trace">
+    <Root level="off">
       <AppenderRef ref="console"/>
     </Root>
   </Loggers>

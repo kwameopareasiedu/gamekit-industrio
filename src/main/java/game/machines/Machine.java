@@ -133,13 +133,13 @@ public abstract class Machine extends Prop {
             : port == leftPort ? -1
             : 0;
 
-        int topIndex = index + adjacentMachineOffset;
+        int adjacentIndex = index + adjacentMachineOffset;
         // TODO: If this machine is at an edge or corner,
         //  naively adding adjacentMachineOffset will cause it
         //  to grab the machine at first or last column of the
         //  lower or upper row of the grid, which is wrong.
         //  Fix this later
-        Machine adjacentMachine = Factory.getMachineAt(topIndex);
+        Machine adjacentMachine = Factory.getMachineAt(adjacentIndex);
 
         if (adjacentMachine != null) {
           Port adjacentPort = port == topPort ? adjacentMachine.bottomPort
