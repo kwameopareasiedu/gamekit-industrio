@@ -17,9 +17,9 @@ import static dev.gamekit.utils.Math.clamp;
 import static dev.gamekit.utils.Math.lerp;
 
 public interface FactoryManager {
-  BufferedImage LEVEL_PANEL_BG = IO.getResourceImage("menu-ui-red.png", 2744, 2048, 144, 128);
-  BufferedImage GOAL_PANEL_BG = IO.getResourceImage("menu-ui-red.png", 256, 1176, 128, 80);
-  BufferedImage MACHINES_PANEL_BG = IO.getResourceImage("menu-ui-red.png", 1152, 1720, 128, 144);
+  BufferedImage LEVEL_PANEL_BG = IO.getResourceImage("menu-ui-green.png", 2744, 2048, 144, 128);
+  BufferedImage GOAL_PANEL_BG = IO.getResourceImage("menu-ui-green.png", 256, 1176, 128, 80);
+  BufferedImage MACHINES_PANEL_BG = IO.getResourceImage("menu-ui-green.png", 1152, 1720, 128, 144);
   double MIN_BOUND = -0.5 * Factory.GRID_SIZE * Factory.CELL_PIXEL_SIZE;
   double MAX_BOUND = 0.5 * Factory.GRID_SIZE * Factory.CELL_PIXEL_SIZE;
 

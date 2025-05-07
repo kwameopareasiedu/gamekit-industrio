@@ -14,9 +14,9 @@ import java.awt.image.BufferedImage;
 
 public class MachineButton extends Compose {
   private static final BufferedImage DEFAULT_BG =
-    IO.getResourceImage("menu-ui-red.png", 3200, 320, 64, 64);
+    IO.getResourceImage("menu-ui-green.png", 3200, 320, 64, 64);
   private static final BufferedImage HOVER_BG =
-    IO.getResourceImage("menu-ui-red.png", 3072, 192, 64, 64);
+    IO.getResourceImage("menu-ui-green.png", 3072, 192, 64, 64);
 
   public MachineButton(Machine.Info machineInfo, MouseEvent.Listener mouseListener) {
     super(

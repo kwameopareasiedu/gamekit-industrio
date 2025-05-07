@@ -18,13 +18,7 @@ public class Factory extends Prop {
   public static int GRID_SIZE = 11;
   public static final int CELL_PIXEL_SIZE = 60;
   private static final int TICK_INTERVAL_MS = 100;
-  private static final Color GRID_COLOR = new Color(0x2f000000, true);
-  private static final Stroke OUTER_GRID_STROKE = new BasicStroke(
-    1, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND, 0, new float[]{ 10 }, 5
-  );
-  private static final Stroke INNER_GRID_STROKE = new BasicStroke(
-    1, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND, 0, new float[]{ 10 }, 5
-  );
+  private static final Color GRID_COLOR = Color.LIGHT_GRAY;
   private static Factory instance;
 
   public final int pixelSize;
@@ -94,24 +88,18 @@ public class Factory extends Prop {
 
   @Override
   protected void render() {
-    Renderer.setColor(GRID_COLOR);
-    Renderer.setStroke(OUTER_GRID_STROKE);
-    Renderer.drawRect(0, 0, pixelSize, pixelSize);
-
-    for (int i = 1; i < GRID_SIZE; i++) {
+    for (int i = 0; i <= GRID_SIZE; i++) {
       int x = toInt(i * CELL_PIXEL_SIZE - 0.5 * pixelSize);
 
-      Renderer.setColor(GRID_COLOR);
-      Renderer.setStroke(INNER_GRID_STROKE);
-      Renderer.drawLineV(x, toInt(-0.5 * pixelSize), toInt(0.5 * pixelSize));
-    }
+      for (int j = 0; j <= GRID_SIZE; j++) {
+        int y = toInt(j * CELL_PIXEL_SIZE - 0.5 * pixelSize);
 
-    for (int i = 1; i < GRID_SIZE; i++) {
-      int y = toInt(i * CELL_PIXEL_SIZE - 0.5 * pixelSize);
+        Renderer.setColor(GRID_COLOR);
+        Renderer.drawLineH(x - 4, x + 4, y);
 
-      Renderer.setColor(GRID_COLOR);
-      Renderer.setStroke(INNER_GRID_STROKE);
-      Renderer.drawLineH(toInt(-0.5 * pixelSize), toInt(0.5 * pixelSize), y);
+        Renderer.setColor(GRID_COLOR);
+        Renderer.drawLineV(x, y - 4, y + 4);
+      }
     }
   }
 
