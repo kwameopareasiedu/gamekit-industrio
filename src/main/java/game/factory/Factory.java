@@ -39,17 +39,14 @@ public class Factory extends Prop {
 
   private long tickTime;
 
-  public Factory(Source[] initialSources) {
+  public Factory(Source[] initialSources, Hub.Notifier hubNotifier) {
     super("Factory");
 
     this.initialSources = initialSources;
     pixelSize = GRID_SIZE * CELL_PIXEL_SIZE;
     machineGrid = new Machine[GRID_SIZE * GRID_SIZE];
     sourceGrid = new Source[GRID_SIZE * GRID_SIZE];
-    hub = Hub.create((GRID_SIZE * GRID_SIZE) / 2, Direction.UP, (resource) -> {
-      Factory.removeItem(resource);
-      logger.debug("Consumed {}", resource.type);
-    });
+    hub = Hub.create((GRID_SIZE * GRID_SIZE) / 2, Direction.UP, hubNotifier);
     machineContainer = new Prop("Machines") { };
     sourceContainer = new Prop("Sources") { };
     itemContainer = new Prop("Items") { };

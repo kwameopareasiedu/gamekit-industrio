@@ -1,27 +1,25 @@
 package game.factory;
 
-import dev.gamekit.core.Application;
-import dev.gamekit.core.Camera;
-import dev.gamekit.core.Input;
-import dev.gamekit.core.Renderer;
-import dev.gamekit.ui.Spacing;
+import dev.gamekit.core.*;
 import dev.gamekit.ui.enums.Alignment;
 import dev.gamekit.ui.enums.CrossAxisAlignment;
 import dev.gamekit.ui.events.MouseEvent;
-import dev.gamekit.ui.widgets.Align;
-import dev.gamekit.ui.widgets.Column;
-import dev.gamekit.ui.widgets.Padding;
-import dev.gamekit.ui.widgets.Widget;
+import dev.gamekit.ui.widgets.Panel;
+import dev.gamekit.ui.widgets.*;
 import dev.gamekit.utils.Position;
 import game.machines.*;
 import game.ui.MachineButton;
 
 import java.awt.*;
+import java.awt.image.BufferedImage;
 
 import static dev.gamekit.utils.Math.clamp;
 import static dev.gamekit.utils.Math.lerp;
 
 public interface FactoryManager {
+  BufferedImage LEVEL_PANEL_BG = IO.getResourceImage("menu-ui-red.png", 2744, 2048, 144, 128);
+  BufferedImage GOAL_PANEL_BG = IO.getResourceImage("menu-ui-red.png", 256, 1176, 128, 80);
+  BufferedImage MACHINES_PANEL_BG = IO.getResourceImage("menu-ui-red.png", 1152, 1720, 128, 144);
   double MIN_BOUND = -0.5 * Factory.GRID_SIZE * Factory.CELL_PIXEL_SIZE;
   double MAX_BOUND = 0.5 * Factory.GRID_SIZE * Factory.CELL_PIXEL_SIZE;
 
@@ -29,7 +27,7 @@ public interface FactoryManager {
 
   FactoryManagerState getState();
 
-  Color getClearColor();
+  default void startState() { }
 
   default void updateState() {
     FactoryManagerState state = getState();
@@ -105,7 +103,7 @@ public interface FactoryManager {
   default void renderState() {
     FactoryManagerState state = getState();
 
-    Renderer.setBackground(getClearColor());
+    Renderer.setBackground(state.clearColor);
     Renderer.clear();
 
     if (state.action == FactoryAction.PICK) {
@@ -125,52 +123,97 @@ public interface FactoryManager {
   default Widget renderUI() {
     FactoryManagerState state = getState();
 
-    return Align.create(
-      Align.options().horizontalAlignment(Alignment.END),
-      Padding.create(
-        Padding.options().padding(new Spacing(24, 48)),
-        Column.create(
-          Column.options().gapSize(32).crossAxisAlignment(CrossAxisAlignment.CENTER),
-          MachineButton.create(Extractor.INFO, (e) -> {
-            if (e.type == MouseEvent.Type.CLICK) {
-              Application.getInstance().scheduleTask(() -> {
-                state.machineInfo = Extractor.INFO;
-                state.action = FactoryAction.PICK;
-              });
-            }
-          }),
-          MachineButton.create(Belt.INFO, (e) -> {
-            if (e.type == MouseEvent.Type.CLICK) {
-              Application.getInstance().scheduleTask(() -> {
-                state.machineInfo = Belt.INFO;
-                state.action = FactoryAction.PICK;
-              });
-            }
-          }),
-          MachineButton.create(Mixer.INFO, (e) -> {
-            if (e.type == MouseEvent.Type.CLICK) {
-              Application.getInstance().scheduleTask(() -> {
-                state.machineInfo = Mixer.INFO;
-                state.action = FactoryAction.PICK;
-              });
-            }
-          }),
-          MachineButton.create(Reshaper.INFO, (e) -> {
-            if (e.type == MouseEvent.Type.CLICK) {
-              Application.getInstance().scheduleTask(() -> {
-                state.machineInfo = Reshaper.INFO;
-                state.action = FactoryAction.PICK;
-              });
-            }
-          }),
-          MachineButton.create(HueShifter.INFO, (e) -> {
-            if (e.type == MouseEvent.Type.CLICK) {
-              Application.getInstance().scheduleTask(() -> {
-                state.machineInfo = HueShifter.INFO;
-                state.action = FactoryAction.PICK;
-              });
-            }
-          })
+    return Stack.create(
+      Align.create(
+        Align.options().horizontalAlignment(Alignment.CENTER).verticalAlignment(Alignment.START),
+        Padding.create(
+          Padding.options().padding(48),
+          Column.create(
+            Column.options().crossAxisAlignment(CrossAxisAlignment.CENTER),
+            Sized.create(
+              Sized.options().width(224).height(96),
+              Panel.create(
+                Panel.options().background(LEVEL_PANEL_BG).padding(20, 0),
+                Column.create(
+                  Column.options().crossAxisAlignment(CrossAxisAlignment.STRETCH).gapSize(4),
+                  Text.create(
+                    Text.options().color(Color.GRAY).fontSize(12).alignment(Alignment.CENTER),
+                    "Campaign"
+                  ),
+                  Text.create(
+                    Text.options().color(Color.BLACK).fontSize(24).fontStyle(Font.BOLD)
+                      .alignment(Alignment.CENTER),
+                    String.format("Level %d", state.level)
+                  )
+                )
+              )
+            ),
+            Panel.create(
+              Panel.options().background(GOAL_PANEL_BG).padding(0, 12),
+              Padding.create(
+                Padding.options().padding(24, 0),
+                Text.create(
+                  Text.options().color(Color.BLACK).fontSize(12).alignment(Alignment.CENTER),
+                  state.goalDescription
+                )
+              )
+            )
+          )
+        )
+      ),
+      Align.create(
+        Align.options().horizontalAlignment(Alignment.END),
+        Padding.create(
+          Padding.options().padding(48, 48, 0, 0),
+          Panel.create(
+            Panel.options().background(MACHINES_PANEL_BG).padding(0, 20),
+            Padding.create(
+              Padding.options().padding(24, 48),
+              Column.create(
+                Column.options().gapSize(32).crossAxisAlignment(CrossAxisAlignment.CENTER),
+                MachineButton.create(Extractor.INFO, (e) -> {
+                  if (e.type == MouseEvent.Type.CLICK) {
+                    Application.getInstance().scheduleTask(() -> {
+                      state.machineInfo = Extractor.INFO;
+                      state.action = FactoryAction.PICK;
+                    });
+                  }
+                }),
+                MachineButton.create(Belt.INFO, (e) -> {
+                  if (e.type == MouseEvent.Type.CLICK) {
+                    Application.getInstance().scheduleTask(() -> {
+                      state.machineInfo = Belt.INFO;
+                      state.action = FactoryAction.PICK;
+                    });
+                  }
+                }),
+                MachineButton.create(Mixer.INFO, (e) -> {
+                  if (e.type == MouseEvent.Type.CLICK) {
+                    Application.getInstance().scheduleTask(() -> {
+                      state.machineInfo = Mixer.INFO;
+                      state.action = FactoryAction.PICK;
+                    });
+                  }
+                }),
+                MachineButton.create(Reshaper.INFO, (e) -> {
+                  if (e.type == MouseEvent.Type.CLICK) {
+                    Application.getInstance().scheduleTask(() -> {
+                      state.machineInfo = Reshaper.INFO;
+                      state.action = FactoryAction.PICK;
+                    });
+                  }
+                }),
+                MachineButton.create(HueShifter.INFO, (e) -> {
+                  if (e.type == MouseEvent.Type.CLICK) {
+                    Application.getInstance().scheduleTask(() -> {
+                      state.machineInfo = HueShifter.INFO;
+                      state.action = FactoryAction.PICK;
+                    });
+                  }
+                })
+              )
+            )
+          )
         )
       )
     );

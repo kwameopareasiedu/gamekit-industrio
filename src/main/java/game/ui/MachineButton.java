@@ -1,6 +1,6 @@
 package game.ui;
 
-import dev.gamekit.ui.Spacing;
+import dev.gamekit.core.IO;
 import dev.gamekit.ui.enums.Alignment;
 import dev.gamekit.ui.enums.CrossAxisAlignment;
 import dev.gamekit.ui.events.MouseEvent;
@@ -10,29 +10,29 @@ import dev.gamekit.ui.widgets.*;
 import game.machines.Machine;
 
 import java.awt.*;
+import java.awt.image.BufferedImage;
 
 public class MachineButton extends Compose {
+  private static final BufferedImage DEFAULT_BG =
+    IO.getResourceImage("menu-ui-red.png", 3200, 320, 64, 64);
+  private static final BufferedImage HOVER_BG =
+    IO.getResourceImage("menu-ui-red.png", 3072, 192, 64, 64);
+
   public MachineButton(Machine.Info machineInfo, MouseEvent.Listener mouseListener) {
     super(
       Column.create(
         Column.options().crossAxisAlignment(CrossAxisAlignment.CENTER).gapSize(6),
-        Sized.create(
-          Sized.options().width(64).height(64),
-          Button.create(
-            Button.options()
-              .mouseListener(mouseListener)
-              .padding(new Spacing(6)),
-            Image.create(
-              machineInfo.image()
-            )
+        Button.create(
+          Button.options().mouseListener(mouseListener).defaultBackground(DEFAULT_BG)
+            .hoverBackground(HOVER_BG).pressedBackground(HOVER_BG).padding(12, 12, 6, 6),
+          Sized.create(
+            Sized.options().width(48).height(48),
+            Image.create(machineInfo.image())
           )
         ),
         Text.create(
           Text.options()
-            .alignment(Alignment.CENTER)
-            .color(Color.DARK_GRAY)
-            .fontStyle(Font.BOLD)
-            .fontSize(12),
+            .alignment(Alignment.CENTER).color(Color.BLACK).fontStyle(Font.BOLD).fontSize(12),
           machineInfo.name()
         )
       )
