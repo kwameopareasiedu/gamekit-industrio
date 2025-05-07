@@ -16,93 +16,40 @@ import java.awt.image.BufferedImage;
 import static dev.gamekit.utils.Math.clamp;
 import static dev.gamekit.utils.Math.lerp;
 
-public interface FactoryManager {
-  BufferedImage LEVEL_PANEL_BG = IO.getResourceImage("menu-ui-green.png", 2744, 2048, 144, 128);
-  BufferedImage GOAL_PANEL_BG = IO.getResourceImage("menu-ui-green.png", 256, 1176, 128, 80);
-  BufferedImage MACHINES_PANEL_BG = IO.getResourceImage("menu-ui-green.png", 1152, 1720, 128, 144);
-  double MIN_BOUND = -0.5 * Factory.GRID_SIZE * Factory.CELL_PIXEL_SIZE;
-  double MAX_BOUND = 0.5 * Factory.GRID_SIZE * Factory.CELL_PIXEL_SIZE;
+public abstract class FactoryScene extends Scene {
+  private static final BufferedImage LEVEL_PANEL_BG =
+    IO.getResourceImage("menu-ui-green.png", 2744, 2048, 144, 128);
+  private static final BufferedImage GOAL_PANEL_BG =
+    IO.getResourceImage("menu-ui-green.png", 256, 1176, 128, 80);
+  private static final BufferedImage MACHINES_PANEL_BG =
+    IO.getResourceImage("menu-ui-green.png", 1152, 1720, 128, 144);
+  private static final double MIN_BOUND = -0.5 * Factory.GRID_SIZE * Factory.CELL_PIXEL_SIZE;
+  private static final double MAX_BOUND = 0.5 * Factory.GRID_SIZE * Factory.CELL_PIXEL_SIZE;
 
-  Factory getFactory();
+  private final FactoryState state;
+  private final Factory factory;
 
-  FactoryManagerState getState();
+  public FactoryScene(int gridSize, Factory factory, FactoryState state) {
+    super("Factory Scene");
 
-  default void startState() { }
-
-  default void updateState() {
-    FactoryManagerState state = getState();
-
-    if (Input.isKeyPressed(Input.KEY_D)) {
-      state.desiredX = clamp(state.desiredX + state.navSpeed / state.zoom, MIN_BOUND, MAX_BOUND);
-    } else if (Input.isKeyPressed(Input.KEY_A)) {
-      state.desiredX = clamp(state.desiredX - state.navSpeed / state.zoom, MIN_BOUND, MAX_BOUND);
-    }
-
-    if (Input.isKeyPressed(Input.KEY_W)) {
-      state.desiredY = clamp(state.desiredY + state.navSpeed / state.zoom, MIN_BOUND, MAX_BOUND);
-    } else if (Input.isKeyPressed(Input.KEY_S)) {
-      state.desiredY = clamp(state.desiredY - state.navSpeed / state.zoom, MIN_BOUND, MAX_BOUND);
-    }
-
-    if (Input.isKeyPressed(Input.KEY_E)) {
-      state.zoom = clamp(
-        state.zoom + state.zoomSpeed,
-        state.minZoom, state.maxZoom
-      );
-    } else if (Input.isKeyPressed(Input.KEY_Q)) {
-      state.zoom = clamp(
-        state.zoom - state.zoomSpeed,
-        state.minZoom, state.maxZoom
-      );
-    }
-
-    state.panX = lerp(state.panX, state.desiredX, state.navLerpSpeed);
-    state.panY = lerp(state.panY, state.desiredY, state.navLerpSpeed);
-
-    if (state.action == FactoryAction.PICK &&
-      (Input.isButtonReleased(Input.BUTTON_RMB) || Input.isKeyPressed(Input.KEY_ESCAPE))) {
-      state.action = FactoryAction.CLEAR;
-    } else if (Input.isButtonReleased(Input.BUTTON_RMB)) {
-      state.action = FactoryAction.DELETE;
-    } else if (Input.isButtonReleased(Input.BUTTON_LMB) && state.action == FactoryAction.PICK) {
-      state.action = FactoryAction.PLACE;
-    } else if (Input.isKeyReleased(Input.KEY_R) && state.action == FactoryAction.PICK) {
-      state.action = FactoryAction.ROTATE;
-    }
+    Factory.GRID_SIZE = gridSize;
+    this.factory = factory;
+    this.state = state;
   }
 
-  default void applyState() {
-    Factory factory = getFactory();
-    FactoryManagerState state = getState();
-
-    Camera.lookAt(
-      state.panX * state.zoom,
-      state.panY * state.zoom
-    );
-    Camera.setZoom(state.zoom);
-
-    switch (state.action) {
-      case PLACE -> {
-        Position pos = getMouseWorldPosition();
-        factory.createMachine(pos, state.machineInfo, state.direction);
-        state.action = FactoryAction.PICK;
-      }
-      case ROTATE -> {
-        state.direction = Direction.cycle(state.direction, 1);
-        state.action = FactoryAction.PICK;
-      }
-      case DELETE -> {
-        Position pos = getMouseWorldPosition();
-        factory.removeMachine(pos);
-        state.action = FactoryAction.CLEAR;
-      }
-      case CLEAR -> state.reset();
-    }
+  @Override
+  protected void start() {
+    addChild(factory);
   }
 
-  default void renderState() {
-    FactoryManagerState state = getState();
+  @Override
+  protected final void update() {
+    updateState();
+    applyState();
+  }
 
+  @Override
+  protected final void render() {
     Renderer.setBackground(state.clearColor);
     Renderer.clear();
 
@@ -120,9 +67,8 @@ public interface FactoryManager {
     }
   }
 
-  default Widget renderUI() {
-    FactoryManagerState state = getState();
-
+  @Override
+  public Widget createUI() {
     return Stack.create(
       Align.create(
         Align.options().horizontalAlignment(Alignment.CENTER).verticalAlignment(Alignment.START),
@@ -217,6 +163,69 @@ public interface FactoryManager {
         )
       )
     );
+  }
+
+  private void updateState() {
+    if (Input.isKeyPressed(Input.KEY_D)) {
+      state.desiredX = clamp(state.desiredX + state.navSpeed / state.zoom, MIN_BOUND, MAX_BOUND);
+    } else if (Input.isKeyPressed(Input.KEY_A)) {
+      state.desiredX = clamp(state.desiredX - state.navSpeed / state.zoom, MIN_BOUND, MAX_BOUND);
+    }
+
+    if (Input.isKeyPressed(Input.KEY_W)) {
+      state.desiredY = clamp(state.desiredY + state.navSpeed / state.zoom, MIN_BOUND, MAX_BOUND);
+    } else if (Input.isKeyPressed(Input.KEY_S)) {
+      state.desiredY = clamp(state.desiredY - state.navSpeed / state.zoom, MIN_BOUND, MAX_BOUND);
+    }
+
+    if (Input.isKeyPressed(Input.KEY_E)) {
+      state.zoom = clamp(
+        state.zoom + state.zoomSpeed,
+        state.minZoom, state.maxZoom
+      );
+    } else if (Input.isKeyPressed(Input.KEY_Q)) {
+      state.zoom = clamp(
+        state.zoom - state.zoomSpeed,
+        state.minZoom, state.maxZoom
+      );
+    }
+
+    state.panX = lerp(state.panX, state.desiredX, state.navLerpSpeed);
+    state.panY = lerp(state.panY, state.desiredY, state.navLerpSpeed);
+
+    if (state.action == FactoryAction.PICK &&
+      (Input.isButtonReleased(Input.BUTTON_RMB) || Input.isKeyPressed(Input.KEY_ESCAPE))) {
+      state.action = FactoryAction.CLEAR;
+    } else if (Input.isButtonReleased(Input.BUTTON_RMB)) {
+      state.action = FactoryAction.DELETE;
+    } else if (Input.isButtonReleased(Input.BUTTON_LMB) && state.action == FactoryAction.PICK) {
+      state.action = FactoryAction.PLACE;
+    } else if (Input.isKeyReleased(Input.KEY_R) && state.action == FactoryAction.PICK) {
+      state.action = FactoryAction.ROTATE;
+    }
+  }
+
+  private void applyState() {
+    Camera.lookAt(state.panX * state.zoom, state.panY * state.zoom);
+    Camera.setZoom(state.zoom);
+
+    switch (state.action) {
+      case PLACE -> {
+        Position pos = getMouseWorldPosition();
+        factory.createMachine(pos, state.machineInfo, state.direction);
+        state.action = FactoryAction.PICK;
+      }
+      case ROTATE -> {
+        state.direction = Direction.cycle(state.direction, 1);
+        state.action = FactoryAction.PICK;
+      }
+      case DELETE -> {
+        Position pos = getMouseWorldPosition();
+        factory.removeMachine(pos);
+        state.action = FactoryAction.CLEAR;
+      }
+      case CLEAR -> state.reset();
+    }
   }
 
   private Position getMouseWorldPosition() {

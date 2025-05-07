@@ -7,7 +7,7 @@ import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class FactoryManagerState {
+public class FactoryState {
   final int level;
   final Color clearColor;
   final String goalDescription;
@@ -27,7 +27,7 @@ public class FactoryManagerState {
   double panY = 0;
   double zoom = minZoom;
 
-  public FactoryManagerState(int level, Color clearColor, String goalDescription) {
+  public FactoryState(int level, Color clearColor, String goalDescription) {
     this.level = level;
     this.clearColor = clearColor;
     this.goalDescription = goalDescription;
