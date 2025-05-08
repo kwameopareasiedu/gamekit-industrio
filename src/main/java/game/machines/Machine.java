@@ -122,6 +122,14 @@ public abstract class Machine extends Prop {
     }
   }
 
+  protected boolean portHasDirection(int portIndex, Direction direction) {
+    if (ports[portIndex] == null)
+      return false;
+
+    Port port = ports[portIndex];
+    return port.isOutput() && port.direction == direction;
+  }
+
   private void updatePort(Port port) {
     if (port != null && port.hasItem()) {
       if (port.isOutput() && !port.moveResource()) {

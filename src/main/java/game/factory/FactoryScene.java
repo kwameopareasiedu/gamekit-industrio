@@ -79,16 +79,9 @@ public abstract class FactoryScene extends Scene {
   private double zoom = MIN_ZOOM;
   private Animation revealAnim;
 
-  public FactoryScene(
-    int level,
-    int gridSize,
-    Machine.Info[] machineInfos,
-    Source[] sources,
-    FactoryGoal goal
-  ) {
+  public FactoryScene(int level, Machine.Info[] machineInfos, Source[] sources, FactoryGoal goal) {
     super("Factory Scene");
 
-    Factory.GRID_SIZE = gridSize;
     this.level = level;
     this.machineInfos = machineInfos;
     this.factory = new Factory(sources, shape -> {
@@ -227,11 +220,11 @@ public abstract class FactoryScene extends Scene {
       // Key/Button mappings
       Align.create(
         Align.options().horizontalAlignment(Alignment.CENTER).verticalAlignment(Alignment.END),
-        action == FactoryAction.PICK ?
-          Padding.create(
-            Padding.options().padding(52),
+        Padding.create(
+          Padding.options().padding(48),
+          action == FactoryAction.PICK ?
             Column.create(
-              Column.options().gapSize(4).crossAxisAlignment(CrossAxisAlignment.CENTER),
+              Column.options().gapSize(6).crossAxisAlignment(CrossAxisAlignment.CENTER),
               Padding.create(
                 Padding.options().padding(0, 0, 12, 0),
                 Text.create(
@@ -262,10 +255,7 @@ public abstract class FactoryScene extends Scene {
                 )
               )
             )
-          )
-          :
-          Padding.create(
-            Padding.options().padding(48),
+            :
             Column.create(
               Column.options().gapSize(4).crossAxisAlignment(CrossAxisAlignment.CENTER),
               Row.create(
@@ -314,7 +304,7 @@ public abstract class FactoryScene extends Scene {
                 )
               )
             )
-          )
+        )
       ),
 
       // Machine select panel

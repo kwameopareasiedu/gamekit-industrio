@@ -67,36 +67,40 @@ public final class Belt extends Machine {
 
     switch (direction) {
       case UP -> {
-        if (checkPortDirection(bottomMachine, Port.TOP, Direction.UP)) spriteIndex += 1;
-        if (checkPortDirection(leftMachine, Port.RIGHT, Direction.RIGHT)) spriteIndex += 2;
-        if (checkPortDirection(rightMachine, Port.LEFT, Direction.LEFT)) spriteIndex += 4;
+        if (bottomMachine != null && bottomMachine.portHasDirection(Port.TOP, Direction.UP))
+          spriteIndex += 1;
+        if (leftMachine != null && leftMachine.portHasDirection(Port.RIGHT, Direction.RIGHT))
+          spriteIndex += 2;
+        if (rightMachine != null && rightMachine.portHasDirection(Port.LEFT, Direction.LEFT))
+          spriteIndex += 4;
       }
       case RIGHT -> {
-        if (checkPortDirection(leftMachine, Port.RIGHT, Direction.RIGHT)) spriteIndex += 1;
-        if (checkPortDirection(topMachine, Port.BOTTOM, Direction.DOWN)) spriteIndex += 2;
-        if (checkPortDirection(bottomMachine, Port.TOP, Direction.UP)) spriteIndex += 4;
+        if (leftMachine != null && leftMachine.portHasDirection(Port.RIGHT, Direction.RIGHT))
+          spriteIndex += 1;
+        if (topMachine != null && topMachine.portHasDirection(Port.BOTTOM, Direction.DOWN))
+          spriteIndex += 2;
+        if (bottomMachine != null && bottomMachine.portHasDirection(Port.TOP, Direction.UP))
+          spriteIndex += 4;
       }
       case DOWN -> {
-        if (checkPortDirection(topMachine, Port.BOTTOM, Direction.UP)) spriteIndex += 1;
-        if (checkPortDirection(rightMachine, Port.LEFT, Direction.LEFT)) spriteIndex += 2;
-        if (checkPortDirection(leftMachine, Port.RIGHT, Direction.RIGHT)) spriteIndex += 4;
+        if (topMachine != null && topMachine.portHasDirection(Port.BOTTOM, Direction.UP))
+          spriteIndex += 1;
+        if (rightMachine != null && rightMachine.portHasDirection(Port.LEFT, Direction.LEFT))
+          spriteIndex += 2;
+        if (leftMachine != null && leftMachine.portHasDirection(Port.RIGHT, Direction.RIGHT))
+          spriteIndex += 4;
       }
       case LEFT -> {
-        if (checkPortDirection(rightMachine, Port.LEFT, Direction.LEFT)) spriteIndex += 1;
-        if (checkPortDirection(bottomMachine, Port.TOP, Direction.UP)) spriteIndex += 2;
-        if (checkPortDirection(topMachine, Port.BOTTOM, Direction.DOWN)) spriteIndex += 4;
+        if (rightMachine != null && rightMachine.portHasDirection(Port.LEFT, Direction.LEFT))
+          spriteIndex += 1;
+        if (bottomMachine != null && bottomMachine.portHasDirection(Port.TOP, Direction.UP))
+          spriteIndex += 2;
+        if (topMachine != null && topMachine.portHasDirection(Port.BOTTOM, Direction.DOWN))
+          spriteIndex += 4;
       }
     }
 
 
     return SPRITES[Math.max(0, spriteIndex - 1)];
-  }
-
-  private boolean checkPortDirection(Machine machine, int portIndex, Direction direction) {
-    if (machine == null || machine.ports[portIndex] == null)
-      return false;
-
-    Port port = machine.ports[portIndex];
-    return port.isOutput() && port.direction == direction;
   }
 }

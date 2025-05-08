@@ -19,7 +19,6 @@ public class Playground extends FactoryScene {
   public Playground() {
     super(
       1,
-      5,
       new Machine.Info[]{
         Extractor.INFO,
         Belt.INFO,
