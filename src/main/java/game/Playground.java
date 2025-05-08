@@ -1,5 +1,6 @@
 package game;
 
+import game.factory.Factory;
 import game.factory.FactoryGoal;
 import game.factory.FactoryScene;
 import game.machines.Belt;
@@ -11,6 +12,10 @@ import game.resources.Source;
 import java.awt.*;
 
 public class Playground extends FactoryScene {
+  static {
+    Factory.GRID_SIZE = 5;
+  }
+
   public Playground() {
     super(
       1,
@@ -20,13 +25,9 @@ public class Playground extends FactoryScene {
         Belt.INFO,
       },
       new Source[]{
-        Source.create(Color.WHITE, 0, 0),
-//        Source.create(Color.BLACK, 8, 9),
-//        Source.create(Color.BLACK, 9, 9),
-//        Source.create(Color.BLACK, 10, 9),
-//        Source.create(Color.RED, 0, 9),
+        Source.create(Color.WHITE, 2, 0),
       },
-      new FactoryGoal(10, Shape.Type.CIRCLE, Color.WHITE)
+      new FactoryGoal(0, Shape.Type.CIRCLE, Color.WHITE)
     );
   }
 }

@@ -1,16 +1,20 @@
 package game.factory;
 
+import dev.gamekit.animation.Animation;
+import dev.gamekit.animation.AnimationCurve;
 import dev.gamekit.core.*;
 import dev.gamekit.ui.enums.Alignment;
 import dev.gamekit.ui.enums.CrossAxisAlignment;
 import dev.gamekit.ui.enums.MainAxisAlignment;
 import dev.gamekit.ui.events.MouseEvent;
+import dev.gamekit.ui.widgets.Button;
 import dev.gamekit.ui.widgets.Image;
 import dev.gamekit.ui.widgets.Panel;
 import dev.gamekit.ui.widgets.*;
 import dev.gamekit.utils.Position;
 import game.machines.Direction;
 import game.machines.Machine;
+import game.resources.Shape;
 import game.resources.Source;
 import game.ui.MachineButton;
 
@@ -21,6 +25,8 @@ import java.util.Arrays;
 
 import static dev.gamekit.utils.Math.clamp;
 import static dev.gamekit.utils.Math.lerp;
+import static game.ui.MachineButton.DEFAULT_BG;
+import static game.ui.MachineButton.HOVER_BG;
 
 public abstract class FactoryScene extends Scene {
   private static final BufferedImage LEVEL_PANEL_BG =
@@ -29,6 +35,8 @@ public abstract class FactoryScene extends Scene {
     IO.getResourceImage("menu-ui-cyan.png", 2744, 2048, 144, 128);
   private static final BufferedImage MACHINES_PANEL_BG =
     IO.getResourceImage("menu-ui-cyan.png", 1152, 1720, 128, 144);
+  private static final BufferedImage COMPLETED_PANEL_BG =
+    IO.getResourceImage("menu-ui-cyan.png", 820, 144, 152, 96);
   private static final BufferedImage KEY_W_IMG =
     IO.getResourceImage("pixel-keys.png", 48, 48, 15, 16);
   private static final BufferedImage KEY_A_IMG =
@@ -53,6 +61,7 @@ public abstract class FactoryScene extends Scene {
   private static final double MIN_ZOOM = 1;
   private static final double MAX_ZOOM = 3;
   private static final Color CLEAR_COLOR = new Color(0x202039);
+  private static final Color SCRIM_COLOR = new Color(0x99000000, true);
 
   protected final int level;
   protected final Factory factory;
@@ -68,6 +77,7 @@ public abstract class FactoryScene extends Scene {
   private double panX = 0;
   private double panY = 0;
   private double zoom = MIN_ZOOM;
+  private Animation revealAnim;
 
   public FactoryScene(
     int level,
@@ -84,6 +94,14 @@ public abstract class FactoryScene extends Scene {
     this.factory = new Factory(sources, shape -> {
       Factory.removeItem(shape);
       goal.track(shape);
+
+      if (goal.isCompleted() && revealAnim == null) {
+        revealAnim = new Animation(500, Animation.RepeatMode.NONE, AnimationCurve.EASE_OUT_CUBIC);
+        revealAnim.setValueListener(val -> updateUI());
+        revealAnim.start();
+        Factory.close();
+      }
+
       updateUI();
     });
     this.goal = goal;
@@ -122,6 +140,7 @@ public abstract class FactoryScene extends Scene {
   @Override
   public Widget createUI() {
     return Stack.create(
+      // Level indicator
       Align.create(
         Align.options().horizontalAlignment(Alignment.START).verticalAlignment(Alignment.START),
         Padding.create(
@@ -147,6 +166,7 @@ public abstract class FactoryScene extends Scene {
         )
       ),
 
+      // Level goal indicator
       Align.create(
         Align.options().horizontalAlignment(Alignment.START).verticalAlignment(Alignment.END),
         Padding.create(
@@ -164,7 +184,8 @@ public abstract class FactoryScene extends Scene {
                 Sized.create(
                   Sized.options().width(36).height(36),
                   Colored.create(
-                    Colored.options().color(goal.color).borderRadius(12),
+                    Colored.options().color(goal.color)
+                      .borderRadius(goal.type == Shape.Type.CIRCLE ? 50 : 12),
                     Empty.create()
                   )
                 ),
@@ -190,6 +211,7 @@ public abstract class FactoryScene extends Scene {
         )
       ),
 
+      // How to play
       Align.create(
         Align.options().horizontalAlignment(Alignment.CENTER),
         Padding.create(
@@ -202,6 +224,7 @@ public abstract class FactoryScene extends Scene {
         )
       ),
 
+      // Key/Button mappings
       Align.create(
         Align.options().horizontalAlignment(Alignment.CENTER).verticalAlignment(Alignment.END),
         action == FactoryAction.PICK ?
@@ -294,6 +317,7 @@ public abstract class FactoryScene extends Scene {
           )
       ),
 
+      // Machine select panel
       Align.create(
         Align.options().horizontalAlignment(Alignment.END),
         Padding.create(
@@ -326,7 +350,60 @@ public abstract class FactoryScene extends Scene {
             )
           )
         )
-      )
+      ),
+
+      // Level completed panel
+      goal.isCompleted() && revealAnim != null ?
+        Opacity.create(
+          Opacity.options().opacity(revealAnim.getValue()),
+          Stack.create(
+            Fractional.create(
+              Fractional.options().horizontalAlignment(Alignment.CENTER)
+                .verticalAlignment(Alignment.CENTER),
+              Colored.create(
+                Colored.options().color(SCRIM_COLOR),
+                Empty.create()
+              )
+            ),
+            Fractional.create(
+              Fractional.options().widthFactor(0.75).heightFactor(0.25)
+                .horizontalAlignment(Alignment.CENTER).verticalAlignment(Alignment.CENTER),
+              Panel.create(
+                Panel.options().background(COMPLETED_PANEL_BG).padding(72, 32),
+                Padding.create(
+                  Padding.options().padding(76, 32),
+                  Column.create(
+                    Column.options().crossAxisAlignment(CrossAxisAlignment.CENTER).gapSize(12),
+                    Text.create(
+                      Text.options().color(Color.WHITE).fontSize(24).fontStyle(Font.BOLD),
+                      "Level Completed"
+                    ),
+                    Row.create(
+                      Row.options().gapSize(12).crossAxisAlignment(CrossAxisAlignment.CENTER),
+                      Button.create(
+                        Button.options().defaultBackground(DEFAULT_BG)
+                          .hoverBackground(HOVER_BG).pressedBackground(HOVER_BG).padding(24),
+                        Text.create(
+                          Text.options().color(Color.WHITE).fontSize(24).fontStyle(Font.BOLD),
+                          "Next Level"
+                        )
+                      ),
+                      Button.create(
+                        Button.options().defaultBackground(DEFAULT_BG)
+                          .hoverBackground(HOVER_BG).pressedBackground(HOVER_BG).padding(24),
+                        Text.create(
+                          Text.options().color(Color.WHITE).fontSize(24).fontStyle(Font.BOLD),
+                          "Main Menu"
+                        )
+                      )
+                    )
+                  )
+                )
+              )
+            )
+          )
+        )
+        : Empty.create()
     );
   }
 

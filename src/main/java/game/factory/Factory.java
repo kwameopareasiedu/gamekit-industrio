@@ -31,6 +31,7 @@ public class Factory extends Prop {
   private final Hub hub;
   private final ArrayList<Machine> machines;
 
+  private boolean active = true;
   private long tickTime;
 
   public Factory(Source[] initialSources, Hub.Notifier hubNotifier) {
@@ -63,6 +64,10 @@ public class Factory extends Prop {
     return instance.machineGrid[index];
   }
 
+  public static void close() {
+    instance.active = false;
+  }
+
   @Override
   protected void start() {
     super.start();
@@ -80,7 +85,7 @@ public class Factory extends Prop {
   protected void update() {
     tickTime += Application.FRAME_TIME_MS;
 
-    if (tickTime >= TICK_INTERVAL_MS) {
+    if (active && tickTime >= TICK_INTERVAL_MS) {
       tickTime = 0;
       machines.forEach(Machine::tick);
     }
