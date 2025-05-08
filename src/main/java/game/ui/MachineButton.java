@@ -14,9 +14,9 @@ import java.awt.image.BufferedImage;
 
 public class MachineButton extends Compose {
   private static final BufferedImage DEFAULT_BG =
-    IO.getResourceImage("menu-ui-cyan.png", 3200, 320, 64, 64);
+    IO.getResourceImage("menu-ui-cyan.png", 1204, 792, 152, 80);
   private static final BufferedImage HOVER_BG =
-    IO.getResourceImage("menu-ui-cyan.png", 3072, 192, 64, 64);
+    IO.getResourceImage("menu-ui-cyan.png", 1204, 920, 152, 80);
 
   public MachineButton(Machine.Info machineInfo, MouseEvent.Listener mouseListener) {
     super(
@@ -24,7 +24,7 @@ public class MachineButton extends Compose {
         Column.options().crossAxisAlignment(CrossAxisAlignment.CENTER).gapSize(6),
         Button.create(
           Button.options().mouseListener(mouseListener).defaultBackground(DEFAULT_BG)
-            .hoverBackground(HOVER_BG).pressedBackground(HOVER_BG).padding(12, 12, 6, 6),
+            .hoverBackground(HOVER_BG).pressedBackground(HOVER_BG).padding(16),
           Sized.create(
             Sized.options().width(48).height(48),
             Image.create(machineInfo.image())
