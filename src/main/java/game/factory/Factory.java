@@ -16,7 +16,7 @@ import static dev.gamekit.utils.Math.toInt;
 
 public class Factory extends Prop {
   public static int GRID_SIZE = 11;
-  public static final int CELL_PIXEL_SIZE = 60;
+  public static final int CELL_PIXEL_SIZE = 150;
   private static final int TICK_INTERVAL_MS = 100;
   private static final Color GRID_COLOR = Color.LIGHT_GRAY;
   private static Factory instance;
@@ -100,10 +100,10 @@ public class Factory extends Prop {
         int y = toInt(j * CELL_PIXEL_SIZE - 0.5 * pixelSize);
 
         Renderer.setColor(GRID_COLOR);
-        Renderer.drawLineH(x - 4, x + 4, y);
+        Renderer.drawLineH(x - 8, x + 8, y);
 
         Renderer.setColor(GRID_COLOR);
-        Renderer.drawLineV(x, y - 4, y + 4);
+        Renderer.drawLineV(x, y - 8, y + 8);
       }
     }
   }

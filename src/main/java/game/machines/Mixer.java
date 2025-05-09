@@ -9,8 +9,9 @@ import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 
 public class Mixer extends Machine {
-  private static final BufferedImage IMAGE = IO.getResourceImage("mixer.png");
-  public static final Info INFO = new Info("Mixer", IMAGE);
+  private static final BufferedImage SPRITE = IO.getResourceImage("mixer.png");
+
+  public static final Info INFO = new Info("Mixer", SPRITE);
 
   private final ArrayList<Shape> inputShapes;
 
@@ -58,7 +59,7 @@ public class Mixer extends Machine {
 
   @Override
   public BufferedImage getImage() {
-    return IMAGE;
+    return SPRITE;
   }
 
   private Shape combine(ArrayList<Shape> shapes) {

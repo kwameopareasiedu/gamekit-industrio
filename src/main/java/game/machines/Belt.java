@@ -100,7 +100,6 @@ public final class Belt extends Machine {
       }
     }
 
-
     return SPRITES[Math.max(0, spriteIndex - 1)];
   }
 }

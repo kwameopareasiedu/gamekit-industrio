@@ -6,6 +6,7 @@ import game.factory.FactoryScene;
 import game.machines.Belt;
 import game.machines.Extractor;
 import game.machines.Machine;
+import game.machines.Mixer;
 import game.resources.Shape;
 import game.resources.Source;
 
@@ -22,11 +23,12 @@ public class Playground extends FactoryScene {
       new Machine.Info[]{
         Extractor.INFO,
         Belt.INFO,
+        Mixer.INFO
       },
       new Source[]{
         Source.create(Color.WHITE, 2, 0),
       },
-      new FactoryGoal(0, Shape.Type.CIRCLE, Color.WHITE)
+      new FactoryGoal(10, Shape.Type.CIRCLE, Color.WHITE)
     );
   }
 }

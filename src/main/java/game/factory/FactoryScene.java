@@ -30,9 +30,7 @@ import static game.ui.MachineButton.HOVER_BG;
 
 public abstract class FactoryScene extends Scene {
   private static final BufferedImage LEVEL_PANEL_BG =
-    IO.getResourceImage("menu-ui-cyan.png", 2744, 2048, 144, 128);
-  private static final BufferedImage GOAL_PANEL_BG =
-    IO.getResourceImage("menu-ui-cyan.png", 2744, 2048, 144, 128);
+    IO.getResourceImage("menu-ui-cyan.png", 1152, 1720, 128, 144);
   private static final BufferedImage MACHINES_PANEL_BG =
     IO.getResourceImage("menu-ui-cyan.png", 1152, 1720, 128, 144);
   private static final BufferedImage COMPLETED_PANEL_BG =
@@ -45,10 +43,6 @@ public abstract class FactoryScene extends Scene {
     IO.getResourceImage("pixel-keys.png", 48, 64, 15, 16);
   private static final BufferedImage KEY_D_IMG =
     IO.getResourceImage("pixel-keys.png", 64, 64, 15, 16);
-  private static final BufferedImage KEY_E_IMG =
-    IO.getResourceImage("pixel-keys.png", 64, 48, 15, 16);
-  private static final BufferedImage KEY_Q_IMG =
-    IO.getResourceImage("pixel-keys.png", 32, 48, 15, 16);
   private static final BufferedImage KEY_R_IMG =
     IO.getResourceImage("pixel-keys.png", 80, 48, 15, 16);
   private static final BufferedImage KEY_ESC_IMG =
@@ -57,9 +51,6 @@ public abstract class FactoryScene extends Scene {
   private static final double MAX_BOUND = 0.5 * Factory.GRID_SIZE * Factory.CELL_PIXEL_SIZE;
   private static final double NAV_SPEED = 3;
   private static final double NAV_LERP_SPEED = 0.02;
-  private static final double ZOOM_SPEED = 0.01;
-  private static final double MIN_ZOOM = 1;
-  private static final double MAX_ZOOM = 3;
   private static final Color CLEAR_COLOR = new Color(0x202039);
   private static final Color SCRIM_COLOR = new Color(0x99000000, true);
 
@@ -76,7 +67,6 @@ public abstract class FactoryScene extends Scene {
   private double desiredY = 0;
   private double panX = 0;
   private double panY = 0;
-  private double zoom = MIN_ZOOM;
   private Animation revealAnim;
 
   public FactoryScene(int level, Machine.Info[] machineInfos, Source[] sources, FactoryGoal goal) {
@@ -133,43 +123,36 @@ public abstract class FactoryScene extends Scene {
   @Override
   public Widget createUI() {
     return Stack.create(
-      // Level indicator
+      // Level details
       Align.create(
         Align.options().horizontalAlignment(Alignment.START).verticalAlignment(Alignment.START),
         Padding.create(
           Padding.options().padding(48),
-          Sized.create(
-            Sized.options().width(224).height(96),
-            Panel.create(
-              Panel.options().background(LEVEL_PANEL_BG).padding(20, 0),
+          Panel.create(
+            Panel.options().background(LEVEL_PANEL_BG).padding(32, 20),
+            Padding.create(
+              Padding.options().padding(0, 24),
               Column.create(
-                Column.options().crossAxisAlignment(CrossAxisAlignment.STRETCH).gapSize(4),
+                Column.options().crossAxisAlignment(CrossAxisAlignment.CENTER).gapSize(10),
                 Text.create(
-                  Text.options().color(Color.LIGHT_GRAY).fontSize(12).alignment(Alignment.CENTER),
+                  Text.options().color(Color.GRAY).fontSize(12).alignment(Alignment.CENTER),
                   "Campaign"
                 ),
                 Text.create(
                   Text.options().color(Color.WHITE).fontSize(24).fontStyle(Font.BOLD)
                     .alignment(Alignment.CENTER),
                   String.format("Level %d", level)
-                )
-              )
-            )
-          )
-        )
-      ),
-
-      // Level goal indicator
-      Align.create(
-        Align.options().horizontalAlignment(Alignment.START).verticalAlignment(Alignment.END),
-        Padding.create(
-          Padding.options().padding(48),
-          Panel.create(
-            Panel.options().background(GOAL_PANEL_BG).padding(32, 16),
-            Padding.create(
-              Padding.options().padding(32, 0),
-              Column.create(
-                Column.options().crossAxisAlignment(CrossAxisAlignment.CENTER).gapSize(16),
+                ),
+                Padding.create(
+                  Padding.options().padding(0, 24),
+                  Sized.create(
+                    Sized.options().width(64).height(2),
+                    Colored.create(
+                      Colored.options().color(Color.GRAY),
+                      Empty.create()
+                    )
+                  )
+                ),
                 Text.create(
                   Text.options().color(Color.LIGHT_GRAY).fontSize(12).alignment(Alignment.CENTER),
                   "Goal"
@@ -281,21 +264,6 @@ public abstract class FactoryScene extends Scene {
                   Image.create(KEY_D_IMG)
                 )
               ),
-              Row.create(
-                Row.options().gapSize(12).crossAxisAlignment(CrossAxisAlignment.CENTER),
-                Text.create(
-                  Text.options().color(Color.WHITE).fontSize(16).alignment(Alignment.CENTER),
-                  "Zoom in and out with"
-                ),
-                Sized.create(
-                  Sized.options().width(36).height(36),
-                  Image.create(KEY_E_IMG)
-                ),
-                Sized.create(
-                  Sized.options().width(36).height(36),
-                  Image.create(KEY_Q_IMG)
-                )
-              ),
               Padding.create(
                 Padding.options().padding(12, 0, 0, 0),
                 Text.create(
@@ -399,27 +367,15 @@ public abstract class FactoryScene extends Scene {
 
   private void updateState() {
     if (Input.isKeyPressed(Input.KEY_D)) {
-      desiredX = clamp(desiredX + NAV_SPEED / zoom, MIN_BOUND, MAX_BOUND);
+      desiredX = clamp(desiredX + NAV_SPEED, MIN_BOUND, MAX_BOUND);
     } else if (Input.isKeyPressed(Input.KEY_A)) {
-      desiredX = clamp(desiredX - NAV_SPEED / zoom, MIN_BOUND, MAX_BOUND);
+      desiredX = clamp(desiredX - NAV_SPEED, MIN_BOUND, MAX_BOUND);
     }
 
     if (Input.isKeyPressed(Input.KEY_W)) {
-      desiredY = clamp(desiredY + NAV_SPEED / zoom, MIN_BOUND, MAX_BOUND);
+      desiredY = clamp(desiredY + NAV_SPEED, MIN_BOUND, MAX_BOUND);
     } else if (Input.isKeyPressed(Input.KEY_S)) {
-      desiredY = clamp(desiredY - NAV_SPEED / zoom, MIN_BOUND, MAX_BOUND);
-    }
-
-    if (Input.isKeyPressed(Input.KEY_E)) {
-      zoom = clamp(
-        zoom + ZOOM_SPEED,
-        MIN_ZOOM, MAX_ZOOM
-      );
-    } else if (Input.isKeyPressed(Input.KEY_Q)) {
-      zoom = clamp(
-        zoom - ZOOM_SPEED,
-        MIN_ZOOM, MAX_ZOOM
-      );
+      desiredY = clamp(desiredY - NAV_SPEED, MIN_BOUND, MAX_BOUND);
     }
 
     panX = lerp(panX, desiredX, NAV_LERP_SPEED);
@@ -438,8 +394,7 @@ public abstract class FactoryScene extends Scene {
   }
 
   private void applyState() {
-    Camera.lookAt(panX * zoom, panY * zoom);
-    Camera.setZoom(zoom);
+    Camera.lookAt(panX, panY);
 
     switch (action) {
       case PLACE -> {
