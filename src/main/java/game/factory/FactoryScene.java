@@ -192,86 +192,82 @@ public abstract class FactoryScene extends Scene {
         Align.options().horizontalAlignment(Alignment.CENTER),
         Padding.create(
           Padding.options().padding(80),
-          Text.create(
-            Text.options().color(Color.WHITE).fontSize(16).fontStyle(Font.BOLD)
-              .alignment(Alignment.CENTER),
-            "Place machines on your factory floor to achieve your goal"
+          Column.create(
+            Column.options().crossAxisAlignment(CrossAxisAlignment.STRETCH),
+            Text.create(
+              Text.options().color(Color.WHITE).fontSize(16).fontStyle(Font.BOLD)
+                .alignment(Alignment.CENTER),
+              "Place machines on your factory floor to achieve your goal"
+            ),
+            Empty.create(),
+            action == FactoryAction.PICK ?
+              Column.create(
+                Column.options().gapSize(6).crossAxisAlignment(CrossAxisAlignment.CENTER),
+                Padding.create(
+                  Padding.options().padding(0, 0, 12, 0),
+                  Text.create(
+                    Text.options().color(Color.WHITE).fontSize(16).alignment(Alignment.CENTER),
+                    "LEFT CLICK to place"
+                  )
+                ),
+                Row.create(
+                  Row.options().gapSize(12).crossAxisAlignment(CrossAxisAlignment.CENTER),
+                  Sized.create(
+                    Sized.options().width(72).height(36),
+                    Image.create(KEY_ESC_IMG)
+                  ),
+                  Text.create(
+                    Text.options().color(Color.WHITE).fontSize(16).alignment(Alignment.CENTER),
+                    "or RIGHT CLICK to cancel"
+                  )
+                ),
+                Row.create(
+                  Row.options().gapSize(12).crossAxisAlignment(CrossAxisAlignment.CENTER),
+                  Sized.create(
+                    Sized.options().width(36).height(36),
+                    Image.create(KEY_R_IMG)
+                  ),
+                  Text.create(
+                    Text.options().color(Color.WHITE).fontSize(16).alignment(Alignment.CENTER),
+                    "to rotate"
+                  )
+                )
+              )
+              :
+              Column.create(
+                Column.options().gapSize(4).crossAxisAlignment(CrossAxisAlignment.CENTER),
+                Row.create(
+                  Row.options().gapSize(12).crossAxisAlignment(CrossAxisAlignment.CENTER),
+                  Text.create(
+                    Text.options().color(Color.WHITE).fontSize(16).alignment(Alignment.CENTER),
+                    "Move around with"
+                  ),
+                  Sized.create(
+                    Sized.options().width(36).height(36),
+                    Image.create(KEY_W_IMG)
+                  ),
+                  Sized.create(
+                    Sized.options().width(36).height(36),
+                    Image.create(KEY_A_IMG)
+                  ),
+                  Sized.create(
+                    Sized.options().width(36).height(36),
+                    Image.create(KEY_S_IMG)
+                  ),
+                  Sized.create(
+                    Sized.options().width(36).height(36),
+                    Image.create(KEY_D_IMG)
+                  )
+                ),
+                Padding.create(
+                  Padding.options().padding(12, 0, 0, 0),
+                  Text.create(
+                    Text.options().color(Color.WHITE).fontSize(16).alignment(Alignment.CENTER),
+                    "RIGHT CLICK to delete"
+                  )
+                )
+              )
           )
-        )
-      ),
-
-      // Key/Button mappings
-      Align.create(
-        Align.options().horizontalAlignment(Alignment.CENTER).verticalAlignment(Alignment.END),
-        Padding.create(
-          Padding.options().padding(48),
-          action == FactoryAction.PICK ?
-            Column.create(
-              Column.options().gapSize(6).crossAxisAlignment(CrossAxisAlignment.CENTER),
-              Padding.create(
-                Padding.options().padding(0, 0, 12, 0),
-                Text.create(
-                  Text.options().color(Color.WHITE).fontSize(16).alignment(Alignment.CENTER),
-                  "LEFT CLICK to place"
-                )
-              ),
-              Row.create(
-                Row.options().gapSize(12).crossAxisAlignment(CrossAxisAlignment.CENTER),
-                Sized.create(
-                  Sized.options().width(72).height(36),
-                  Image.create(KEY_ESC_IMG)
-                ),
-                Text.create(
-                  Text.options().color(Color.WHITE).fontSize(16).alignment(Alignment.CENTER),
-                  "or RIGHT CLICK to cancel"
-                )
-              ),
-              Row.create(
-                Row.options().gapSize(12).crossAxisAlignment(CrossAxisAlignment.CENTER),
-                Sized.create(
-                  Sized.options().width(36).height(36),
-                  Image.create(KEY_R_IMG)
-                ),
-                Text.create(
-                  Text.options().color(Color.WHITE).fontSize(16).alignment(Alignment.CENTER),
-                  "to rotate"
-                )
-              )
-            )
-            :
-            Column.create(
-              Column.options().gapSize(4).crossAxisAlignment(CrossAxisAlignment.CENTER),
-              Row.create(
-                Row.options().gapSize(12).crossAxisAlignment(CrossAxisAlignment.CENTER),
-                Text.create(
-                  Text.options().color(Color.WHITE).fontSize(16).alignment(Alignment.CENTER),
-                  "Move around with"
-                ),
-                Sized.create(
-                  Sized.options().width(36).height(36),
-                  Image.create(KEY_W_IMG)
-                ),
-                Sized.create(
-                  Sized.options().width(36).height(36),
-                  Image.create(KEY_A_IMG)
-                ),
-                Sized.create(
-                  Sized.options().width(36).height(36),
-                  Image.create(KEY_S_IMG)
-                ),
-                Sized.create(
-                  Sized.options().width(36).height(36),
-                  Image.create(KEY_D_IMG)
-                )
-              ),
-              Padding.create(
-                Padding.options().padding(12, 0, 0, 0),
-                Text.create(
-                  Text.options().color(Color.WHITE).fontSize(16).alignment(Alignment.CENTER),
-                  "RIGHT CLICK to delete"
-                )
-              )
-            )
         )
       ),
 
