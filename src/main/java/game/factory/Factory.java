@@ -3,8 +3,6 @@ package game.factory;
 import dev.gamekit.core.Application;
 import dev.gamekit.core.Prop;
 import dev.gamekit.core.Renderer;
-import dev.gamekit.utils.Position;
-import game.Utils;
 import game.machines.*;
 import game.resources.Shape;
 import game.resources.Source;
@@ -108,14 +106,12 @@ public class Factory extends Prop {
     }
   }
 
-  public void createMachine(Position position, Machine.Info info, Direction direction) {
-    int index = Utils.worldPositionToIndex(position);
-
+  public boolean createMachine(int index, Machine.Info info, Direction direction) {
     if (machineGrid[index] == hub)
-      return;
+      return false;
 
     if (machineGrid[index] != null)
-      removeMachine(position);
+      removeMachine(index);
 
     Machine machine = null;
 
@@ -131,12 +127,15 @@ public class Factory extends Prop {
       machine = HueShifter.create(index, direction);
     }
 
-    if (machine != null)
+    if (machine != null) {
       addMachine(machine);
+      return true;
+    }
+
+    return false;
   }
 
-  public void removeMachine(Position position) {
-    int index = Utils.worldPositionToIndex(position);
+  public void removeMachine(int index) {
     Machine machine = machineGrid[index];
 
     if (machine == null || machine == hub)

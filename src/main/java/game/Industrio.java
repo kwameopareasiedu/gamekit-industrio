@@ -17,7 +17,7 @@ public class Industrio extends Application {
 
   public static void main(String[] args) {
     final Industrio game = new Industrio();
-    game.loadScene(new Menu());
+    game.loadScene(new Playground());
     game.run();
   }
 }
