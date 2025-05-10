@@ -1,15 +1,15 @@
 package game;
 
 import game.factory.Factory;
+import game.factory.FactoryController;
 import game.factory.FactoryGoal;
-import game.factory.FactoryScene;
 import game.machines.*;
 import game.resources.Shape;
 import game.resources.Source;
 
 import java.awt.*;
 
-public class Playground extends FactoryScene {
+public class Playground extends FactoryController {
   static {
     Factory.GRID_SIZE = 11;
   }

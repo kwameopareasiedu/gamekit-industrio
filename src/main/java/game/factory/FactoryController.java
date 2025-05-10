@@ -28,7 +28,7 @@ import static dev.gamekit.utils.Math.lerp;
 import static game.ui.MachineButton.DEFAULT_BG;
 import static game.ui.MachineButton.HOVER_BG;
 
-public abstract class FactoryScene extends Scene {
+public abstract class FactoryController extends Scene {
   private static final BufferedImage LEVEL_PANEL_BG =
     IO.getResourceImage("menu-ui-cyan.png", 1152, 1720, 128, 144);
   private static final BufferedImage MACHINES_PANEL_BG =
@@ -69,8 +69,13 @@ public abstract class FactoryScene extends Scene {
   private double panY = 0;
   private Animation revealAnim;
 
-  public FactoryScene(int level, Machine.Info[] machineInfos, Source[] sources, FactoryGoal goal) {
-    super("Factory Scene");
+  public FactoryController(
+    int level,
+    Machine.Info[] machineInfos,
+    Source[] sources,
+    FactoryGoal goal
+  ) {
+    super("Factory Controller");
 
     this.level = level;
     this.machineInfos = machineInfos;

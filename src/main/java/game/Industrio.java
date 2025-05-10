@@ -2,6 +2,7 @@ package game;
 
 import dev.gamekit.core.Application;
 import dev.gamekit.settings.*;
+import game.levels.Menu;
 
 public class Industrio extends Application {
   public Industrio() {
@@ -16,7 +17,7 @@ public class Industrio extends Application {
 
   public static void main(String[] args) {
     final Industrio game = new Industrio();
-    game.loadScene(new Playground());
+    game.loadScene(new Menu());
     game.run();
   }
 }
