@@ -18,11 +18,9 @@ public final class Belt extends Machine {
     IO.getResourceImage("belts.png", 0, 0, 192, 192),
     IO.getResourceImage("belts.png", 384, 0, 192, 192),
     IO.getResourceImage("belts.png", 192, 192, 192, 192),
-
     IO.getResourceImage("belts.png", 192, 0, 192, 192),
     IO.getResourceImage("belts.png", 384, 192, 192, 192),
     IO.getResourceImage("belts.png", 0, 192, 192, 192),
-
     IO.getResourceImage("belts.png", 0, 384, 192, 192),
   };
 

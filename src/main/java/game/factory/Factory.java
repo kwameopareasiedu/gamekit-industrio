@@ -21,7 +21,7 @@ public class Factory extends Prop {
   private static final Color GRID_COLOR = Color.LIGHT_GRAY;
   private static Factory instance;
 
-  public final int pixelSize;
+  private final int pixelSize;
   private final Prop machineContainer;
   private final Prop sourceContainer;
   private final Prop itemContainer;

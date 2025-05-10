@@ -16,6 +16,7 @@ import game.machines.Belt;
 import game.machines.Direction;
 import game.machines.Extractor;
 import game.resources.Source;
+import game.ui.MenuButton;
 import game.ui.StarGlowLetter;
 
 import java.awt.*;
@@ -79,34 +80,9 @@ public final class Menu extends Scene {
               .crossAxisAlignment(CrossAxisAlignment.CENTER).gapSize(4),
             StarGlowLetter.from("Industrio", 192)
           ),
-          Button.create(
-            Button.options().defaultBackground(DEFAULT_BG)
-              .hoverBackground(HOVER_BG).pressedBackground(HOVER_BG).padding(36),
-            Text.create(
-              Text.options().color(Color.WHITE).fontSize(24).fontStyle(Font.BOLD),
-              "Campaign"
-            )
-          ),
-          Button.create(
-            Button.options().defaultBackground(DEFAULT_BG)
-              .hoverBackground(HOVER_BG).pressedBackground(HOVER_BG).padding(36),
-            Text.create(
-              Text.options().color(Color.WHITE).fontSize(24).fontStyle(Font.ITALIC),
-              "Sandbox (Coming Soon)"
-            )
-          ),
-          Button.create(
-            Button.options().defaultBackground(DEFAULT_BG)
-              .hoverBackground(HOVER_BG).pressedBackground(HOVER_BG).padding(36)
-              .mouseListener(ev -> {
-                if (ev.type == MouseEvent.Type.CLICK)
-                  exitApplication();
-              }),
-            Text.create(
-              Text.options().color(Color.WHITE).fontSize(24).fontStyle(Font.BOLD),
-              "Quit To Desktop"
-            )
-          )
+          MenuButton.create("Campaign", this::startCampaignMode),
+          MenuButton.create("Sandbox (Coming Soon)", () -> {}, Font.ITALIC),
+          MenuButton.create("Quit To Desktop", this::exitApplication)
         )
       ),
 
@@ -181,6 +157,10 @@ public final class Menu extends Scene {
         Direction.DOWN
       );
     });
+  }
+
+  private void startCampaignMode() {
+
   }
 
   private void exitApplication() {
