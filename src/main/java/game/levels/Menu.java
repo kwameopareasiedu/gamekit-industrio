@@ -59,11 +59,10 @@ public final class Menu extends Scene {
   @Override
   public Widget createUI() {
     return Stack.create(
-      Fractional.create(
-        Fractional.options(),
+      Sized.create(
+        Sized.options().fractionalWidth(1).fractionalHeight(1),
         Colored.create(
-          Colored.options().color(SCRIM_COLOR),
-          Empty.create()
+          Colored.options().color(SCRIM_COLOR)
         )
       ),
 
@@ -113,33 +112,31 @@ public final class Menu extends Scene {
         Direction.LEFT
       );
 
-      for (int i = 2; i <= 4; i++) {
+      Object[][] belts = new Object[][]{
+        new Object[]{ 2, 0, Direction.UP },
+        new Object[]{ 3, 0, Direction.UP },
+        new Object[]{ 4, 0, Direction.UP },
+        new Object[]{ 5, 0, Direction.RIGHT },
+        new Object[]{ 5, 1, Direction.RIGHT },
+        new Object[]{ 5, 2, Direction.RIGHT },
+        new Object[]{ 5, 3, Direction.RIGHT },
+        new Object[]{ 5, 4, Direction.RIGHT },
+
+        new Object[]{ 6, 6, Direction.LEFT },
+        new Object[]{ 6, 5, Direction.DOWN },
+      };
+
+      for (Object[] beltConfig : belts) {
+        int row = (int) beltConfig[0];
+        int col = (int) beltConfig[1];
+        Direction dir = (Direction) beltConfig[2];
+
         factory.createMachine(
-          Utils.rowColToIndex(i, 0),
+          Utils.rowColToIndex(row, col),
           Belt.INFO,
-          Direction.UP
+          dir
         );
       }
-
-      for (int i = 0; i <= 4; i++) {
-        factory.createMachine(
-          Utils.rowColToIndex(5, i),
-          Belt.INFO,
-          Direction.RIGHT
-        );
-      }
-
-      factory.createMachine(
-        Utils.rowColToIndex(6, 6),
-        Belt.INFO,
-        Direction.LEFT
-      );
-
-      factory.createMachine(
-        Utils.rowColToIndex(6, 5),
-        Belt.INFO,
-        Direction.DOWN
-      );
     });
   }
 

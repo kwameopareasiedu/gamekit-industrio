@@ -29,7 +29,7 @@ public class MenuButton extends Compose {
     super(
       Button.create(
         Button.options().defaultBackground(DEFAULT_BG).hoverBackground(HOVER_BG)
-          .pressedBackground(HOVER_BG).padding(36).mouseListener(ev -> {
+          .pressedBackground(HOVER_BG).ninePatch(36).mouseListener(ev -> {
             switch (ev.type) {
               case ENTER -> Audio.<AudioClip2D>get(text + "hover").play();
               case EXIT -> Audio.<AudioClip2D>get(text + "hover").stop();

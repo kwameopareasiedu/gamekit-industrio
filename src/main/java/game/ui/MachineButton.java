@@ -24,15 +24,17 @@ public class MachineButton extends Compose {
         Column.options().crossAxisAlignment(CrossAxisAlignment.CENTER).gapSize(6),
         Button.create(
           Button.options().mouseListener(mouseListener).defaultBackground(DEFAULT_BG)
-            .hoverBackground(HOVER_BG).pressedBackground(HOVER_BG).padding(16),
-          Sized.create(
-            Sized.options().width(56).height(56),
-            Image.create(machineInfo.image())
+            .hoverBackground(HOVER_BG).pressedBackground(HOVER_BG).ninePatch(16),
+          Padding.create(
+            Padding.options().padding(16),
+            Sized.create(
+              Sized.options().width(56).height(56),
+              Image.create(machineInfo.image())
+            )
           )
         ),
         Text.create(
-          Text.options()
-            .alignment(Alignment.CENTER).color(Color.WHITE).fontStyle(Font.BOLD).fontSize(12),
+          Text.options().alignment(Alignment.CENTER).color(Color.WHITE).fontSize(20),
           machineInfo.name()
         )
       )

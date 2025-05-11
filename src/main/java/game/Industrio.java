@@ -8,9 +8,14 @@ public class Industrio extends Application {
   public Industrio() {
     super(
       new Settings(
-        "Industrio", Resolution.NATIVE, true,
-        Antialiasing.ON, AlphaInterpolation.QUALITY, ImageInterpolation.BICUBIC,
-        RenderingStrategy.QUALITY, Dithering.ON
+        "Industrio",
+        Resolution.NATIVE,
+        WindowMode.FULLSCREEN,
+        Antialiasing.ON,
+        ImageInterpolation.BICUBIC,
+        AlphaInterpolation.SPEED,
+        RenderingStrategy.SPEED,
+        Dithering.OFF
       )
     );
   }

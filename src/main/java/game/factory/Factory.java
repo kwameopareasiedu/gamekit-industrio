@@ -14,7 +14,7 @@ import static dev.gamekit.utils.Math.toInt;
 
 public class Factory extends Prop {
   public static int GRID_SIZE = 11;
-  public static final int CELL_PIXEL_SIZE = 150;
+  public static final int CELL_PIXEL_SIZE = 120;
   private static final int TICK_INTERVAL_MS = 100;
   private static final Color GRID_COLOR = Color.LIGHT_GRAY;
   private static Factory instance;
