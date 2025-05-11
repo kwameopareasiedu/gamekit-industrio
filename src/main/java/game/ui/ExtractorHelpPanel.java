@@ -22,7 +22,12 @@ public class ExtractorHelpPanel extends MachineHelpPanel {
         Column.options().crossAxisAlignment(CrossAxisAlignment.CENTER),
         Text.create(
           Text.options().alignment(Alignment.CENTER).fontSize(20),
-          "Extractors produce colored shapes when placed over a colored source."
+          "Extractors produce produce the shapes needed by your factory."
+        ),
+        Text.create(
+          Text.options().alignment(Alignment.CENTER).fontSize(20),
+          "When placed on the factory floor, extractors start produce circles which you can work " +
+            "with."
         ),
         Row.create(
           Row.options().mainAxisAlignment(MainAxisAlignment.CENTER)

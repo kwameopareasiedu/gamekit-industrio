@@ -17,10 +17,7 @@ import game.Utils;
 import game.machines.*;
 import game.resources.Shape;
 import game.resources.Source;
-import game.ui.BeltHelpPanel;
-import game.ui.ExtractorHelpPanel;
-import game.ui.MachineButton;
-import game.ui.MixerHelpPanel;
+import game.ui.*;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
@@ -350,7 +347,11 @@ public abstract class FactoryController extends Scene {
                 new BeltHelpPanel() :
                 hoverMachineInfo == Mixer.INFO ?
                   new MixerHelpPanel() :
-                  Empty.create()
+                  hoverMachineInfo == Reshaper.INFO ?
+                    new ReshaperHelpPanel() :
+                    hoverMachineInfo == HueShifter.INFO ?
+                      new HueShifterHelpPanel() :
+                      Empty.create()
           )
         ) : Empty.create(),
 

@@ -7,6 +7,7 @@ import dev.gamekit.ui.enums.MainAxisAlignment;
 import dev.gamekit.ui.widgets.Image;
 import dev.gamekit.ui.widgets.*;
 import game.machines.Mixer;
+import game.resources.Shape;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
@@ -17,33 +18,62 @@ public class MixerHelpPanel extends MachineHelpPanel {
   private static final BufferedImage PLUS_IMG = IO.getResourceImage("plus.png");
   private static final BufferedImage EQUAL_IMG = IO.getResourceImage("equal.png");
 
-  private static final Row[] CIRCLE_COMBINATION_ROW = Arrays.stream(
-    new Color[][]{
-      new Color[]{ Color.WHITE, Color.BLACK, Color.GRAY },
-      new Color[]{ Color.WHITE, Color.RED, Color.GREEN, Color.YELLOW },
-      new Color[]{ Color.WHITE, Color.RED, Color.BLUE, Color.MAGENTA },
-      new Color[]{ Color.WHITE, Color.GREEN, Color.BLUE, Color.CYAN },
-    }
-  ).map(combos -> MixerHelpPanel.generateColorRow(combos, 24)).toArray(Row[]::new);
+  private static final Row[] COMBINATION_WIDGET = Arrays.stream(
+    new Shape[][]{
+      new Shape[]{
+        new Shape(Shape.Type.CIRCLE, Color.WHITE, 0),
+        new Shape(Shape.Type.CIRCLE, Color.BLACK, 0),
+        new Shape(Shape.Type.CIRCLE, Color.GRAY, 0)
+      },
+      new Shape[]{
+        new Shape(Shape.Type.CIRCLE, Color.WHITE, 0),
+        new Shape(Shape.Type.CIRCLE, Color.RED, 0),
+        new Shape(Shape.Type.CIRCLE, Color.GREEN, 0),
+        new Shape(Shape.Type.CIRCLE, Color.YELLOW, 0)
+      },
+      new Shape[]{
+        new Shape(Shape.Type.CIRCLE, Color.WHITE, 0),
+        new Shape(Shape.Type.CIRCLE, Color.RED, 0),
+        new Shape(Shape.Type.CIRCLE, Color.BLUE, 0),
+        new Shape(Shape.Type.CIRCLE, Color.MAGENTA, 0)
+      },
+      new Shape[]{
+        new Shape(Shape.Type.CIRCLE, Color.WHITE, 0),
+        new Shape(Shape.Type.CIRCLE, Color.GREEN, 0),
+        new Shape(Shape.Type.CIRCLE, Color.BLUE, 0),
+        new Shape(Shape.Type.CIRCLE, Color.CYAN, 0)
+      },
 
-  private static final Row[] SQUARE_COMBINATION_ROW = Arrays.stream(
-    new Color[][]{
-      new Color[]{ Color.CYAN, Color.MAGENTA, Color.YELLOW, Color.BLACK },
-      new Color[]{ Color.RED, Color.GREEN, Color.BLUE, Color.WHITE },
-      new Color[]{ Color.WHITE, Color.BLACK, Color.GRAY },
+      new Shape[]{
+        new Shape(Shape.Type.CIRCLE, Color.CYAN, 0),
+        new Shape(Shape.Type.CIRCLE, Color.MAGENTA, 0),
+        new Shape(Shape.Type.CIRCLE, Color.YELLOW, 0),
+        new Shape(Shape.Type.CIRCLE, Color.BLACK, 0)
+      },
+      new Shape[]{
+        new Shape(Shape.Type.CIRCLE, Color.RED, 0),
+        new Shape(Shape.Type.CIRCLE, Color.GREEN, 0),
+        new Shape(Shape.Type.CIRCLE, Color.BLUE, 0),
+        new Shape(Shape.Type.CIRCLE, Color.WHITE, 0)
+      },
+      new Shape[]{
+        new Shape(Shape.Type.CIRCLE, Color.WHITE, 0),
+        new Shape(Shape.Type.CIRCLE, Color.BLACK, 0),
+        new Shape(Shape.Type.CIRCLE, Color.GRAY, 0)
+      }
     }
-  ).map(combos -> MixerHelpPanel.generateColorRow(combos, 0)).toArray(Row[]::new);
+  ).map(MixerHelpPanel::getShapeComboRow).toArray(Row[]::new);
 
-  public static Row generateColorRow(Color[] combos, int borderRadius) {
+  public static Row getShapeComboRow(Shape[] combos) {
     ArrayList<Widget> children = new ArrayList<>();
 
     for (int i = 0; i < combos.length; i++) {
-      Color color = combos[i];
+      Shape shape = combos[i];
 
       children.add(
         Sized.create(
           Sized.options().width(24).height(24),
-          Colored.create(color, borderRadius)
+          Colored.create(shape.color, shape.type == Shape.Type.CIRCLE ? 24 : 0)
         )
       );
 
@@ -85,11 +115,7 @@ public class MixerHelpPanel extends MachineHelpPanel {
         ),
         Column.create(
           Column.options().crossAxisAlignment(CrossAxisAlignment.CENTER),
-          CIRCLE_COMBINATION_ROW
-        ),
-        Column.create(
-          Column.options().crossAxisAlignment(CrossAxisAlignment.CENTER),
-          SQUARE_COMBINATION_ROW
+          COMBINATION_WIDGET
         )
       )
     );
