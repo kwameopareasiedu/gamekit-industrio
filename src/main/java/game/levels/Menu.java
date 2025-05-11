@@ -91,7 +91,7 @@ public final class Menu extends Scene {
               Text.options().fontStyle(Font.BOLD),
               "Created by Kwame Opare Asiedu"
             ),
-            Text.create("Powered by GameKit engine")
+            Text.create("Powered by GameKit")
           )
         )
       )

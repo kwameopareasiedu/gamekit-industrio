@@ -1,7 +1,5 @@
 package game.factory;
 
-import dev.gamekit.animation.Animation;
-import dev.gamekit.animation.AnimationCurve;
 import dev.gamekit.core.*;
 import dev.gamekit.settings.ImageInterpolation;
 import dev.gamekit.ui.enums.Alignment;
@@ -14,6 +12,7 @@ import dev.gamekit.ui.widgets.Panel;
 import dev.gamekit.ui.widgets.*;
 import dev.gamekit.utils.Position;
 import game.Utils;
+import game.levels.Menu;
 import game.machines.*;
 import game.resources.Shape;
 import game.resources.Source;
@@ -59,7 +58,6 @@ public abstract class FactoryController extends Scene {
   protected final Machine.Info[] machineInfos;
   protected final FactoryGoal goal;
 
-  private final Animation levelCompletedAnimation;
   private FactoryAction action = FactoryAction.DEFAULT;
   private Direction direction = Direction.UP;
   private Machine.Info selectedMachineInfo;
@@ -80,17 +78,12 @@ public abstract class FactoryController extends Scene {
 
     this.level = level;
     this.machineInfos = machineInfos;
-    this.levelCompletedAnimation
-      = new Animation(500, Animation.RepeatMode.NONE, AnimationCurve.EASE_OUT_CUBIC);
-    this.levelCompletedAnimation.setValueListener(val -> updateUI());
     this.factory = new Factory(sources, shape -> {
       Factory.removeItem(shape);
       goal.track(shape);
 
-      if (goal.isCompleted()) {
-        levelCompletedAnimation.start();
+      if (goal.isCompleted())
         Factory.close();
-      }
 
       updateUI();
     });
@@ -326,6 +319,9 @@ public abstract class FactoryController extends Scene {
                     Column.options().gapSize(32).crossAxisAlignment(CrossAxisAlignment.CENTER),
                     Arrays.stream(machineInfos).map(info ->
                       MachineButton.create(info, (e) -> {
+                        if (goal.isCompleted())
+                          return;
+
                         if (e.type == MouseEvent.Type.ENTER) {
                           Application.getInstance().scheduleTask(() -> {
                             hoverMachineInfo = info;
@@ -356,42 +352,49 @@ public abstract class FactoryController extends Scene {
 
       // Level completed panel
       goal.isCompleted() ?
-        Opacity.create(
-          Opacity.options().opacity(levelCompletedAnimation.getValue()),
-          Stack.create(
-            Sized.create(
-              Sized.options().fractionalWidth(1).fractionalHeight(1),
-              Colored.create(SCRIM_COLOR, 0)
-            ),
+        Stack.create(
+          Sized.create(
+            Sized.options().fractionalWidth(1).fractionalHeight(1),
+            Colored.create(SCRIM_COLOR, 0)
+          ),
 
-            Align.create(
-              Align.options().horizontalAlignment(Alignment.CENTER)
-                .verticalAlignment(Alignment.CENTER),
-              Sized.create(
-                Sized.options().fractionalWidth(0.75).intrinsicHeight(),
-                Panel.create(
-                  Panel.options().background(COMPLETED_PANEL_BG).ninePatch(72, 32),
-                  Padding.create(
-                    Padding.options().padding(76, 32),
-                    Column.create(
-                      Column.options().crossAxisAlignment(CrossAxisAlignment.CENTER).gapSize(12),
-                      Text.create(
-                        Text.options().color(Color.WHITE).fontSize(24).fontStyle(Font.BOLD),
-                        "Level Completed"
-                      ),
-                      Row.create(
-                        Row.options().gapSize(12).crossAxisAlignment(CrossAxisAlignment.CENTER),
-                        Button.create(
-                          Button.options().defaultBackground(DEFAULT_BG)
-                            .hoverBackground(HOVER_BG).pressedBackground(HOVER_BG).ninePatch(24),
+          Align.create(
+            Align.options().horizontalAlignment(Alignment.CENTER)
+              .verticalAlignment(Alignment.CENTER),
+            Sized.create(
+              Sized.options().fractionalWidth(0.75).intrinsicHeight(),
+              Panel.create(
+                Panel.options().background(COMPLETED_PANEL_BG).ninePatch(72, 32),
+                Padding.create(
+                  Padding.options().padding(80),
+                  Column.create(
+                    Column.options().crossAxisAlignment(CrossAxisAlignment.CENTER).gapSize(12),
+                    Text.create(
+                      Text.options().color(Color.WHITE).fontSize(56).fontStyle(Font.BOLD),
+                      "Level Completed"
+                    ),
+                    Row.create(
+                      Row.options().gapSize(12).crossAxisAlignment(CrossAxisAlignment.CENTER),
+                      Button.create(
+                        Button.options().defaultBackground(DEFAULT_BG)
+                          .hoverBackground(HOVER_BG).pressedBackground(HOVER_BG).ninePatch(24),
+                        Padding.create(
+                          Padding.options().padding(32),
                           Text.create(
                             Text.options().color(Color.WHITE).fontSize(24).fontStyle(Font.BOLD),
-                            "Next Level"
+                            "Start Next Level"
                           )
-                        ),
-                        Button.create(
-                          Button.options().defaultBackground(DEFAULT_BG)
-                            .hoverBackground(HOVER_BG).pressedBackground(HOVER_BG).ninePatch(24),
+                        )
+                      ),
+                      Button.create(
+                        Button.options().defaultBackground(DEFAULT_BG)
+                          .hoverBackground(HOVER_BG).pressedBackground(HOVER_BG).ninePatch(24)
+                          .mouseListener(ev -> {
+                            if (ev.type == MouseEvent.Type.CLICK)
+                              returnToMainMenu();
+                          }),
+                        Padding.create(
+                          Padding.options().padding(32),
                           Text.create(
                             Text.options().color(Color.WHITE).fontSize(24).fontStyle(Font.BOLD),
                             "Main Menu"
@@ -458,13 +461,8 @@ public abstract class FactoryController extends Scene {
         Position pos = getMouseWorldPosition();
         int index = Utils.worldPositionToIndex(pos);
 
-        if (factory.createMachine(index, selectedMachineInfo, direction)) {
-          action = FactoryAction.CLEAR;
-        } else {
-          action = FactoryAction.PICK;
-        }
-
-        updateUI();
+        action = factory.createMachine(index, selectedMachineInfo, direction) ?
+          FactoryAction.CLEAR : FactoryAction.PICK;
       }
       case DRAG_PLACE -> {
         Position pos = getMouseWorldPosition();
@@ -506,7 +504,9 @@ public abstract class FactoryController extends Scene {
       }
       case CLEAR -> {
         resetState();
-        updateUI();
+        Application.getInstance().scheduleTask(
+          this::updateUI
+        );
       }
     }
   }
@@ -521,5 +521,11 @@ public abstract class FactoryController extends Scene {
   private Position getMouseWorldPosition() {
     Position mousePos = Input.getMousePosition();
     return Camera.screenToWorldPosition(mousePos.x, mousePos.y);
+  }
+
+  private void returnToMainMenu() {
+    Application.getInstance().loadScene(
+      new Menu()
+    );
   }
 }

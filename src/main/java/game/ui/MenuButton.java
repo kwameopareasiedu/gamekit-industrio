@@ -4,9 +4,7 @@ import dev.gamekit.audio.AudioClip2D;
 import dev.gamekit.audio.AudioGroup;
 import dev.gamekit.core.Audio;
 import dev.gamekit.ui.widgets.Button;
-import dev.gamekit.ui.widgets.Compose;
-import dev.gamekit.ui.widgets.Text;
-import dev.gamekit.ui.widgets.Widget;
+import dev.gamekit.ui.widgets.*;
 
 import java.awt.*;
 import java.util.Objects;
@@ -40,15 +38,23 @@ public class MenuButton extends Compose {
               default -> { }
             }
           }),
-        Text.create(
-          Text.options().color(Color.WHITE).fontSize(24).fontStyle(fontStyle),
-          text
+        Padding.create(
+          Padding.options().padding(36),
+          Text.create(
+            Text.options().color(Color.WHITE).fontSize(32).fontStyle(fontStyle),
+            text
+          )
         )
       )
     );
 
-    Audio.preload(text + "hover", new AudioClip2D("audio/btn-hover.wav", AudioGroup.EFFECTS, 1));
-    Audio.preload(text + "click", new AudioClip2D("audio/btn-click.wav", AudioGroup.EFFECTS, 1));
+    try {
+      Audio.preload(text + "hover", new AudioClip2D("audio/btn-hover.wav", AudioGroup.EFFECTS, 1));
+    } catch (Exception ignored) { }
+
+    try {
+      Audio.preload(text + "click", new AudioClip2D("audio/btn-click.wav", AudioGroup.EFFECTS, 1));
+    } catch (Exception ignored) { }
 
     this.text = text;
   }

@@ -12,7 +12,7 @@ public class Industrio extends Application {
         Resolution.NATIVE,
         WindowMode.FULLSCREEN,
         Antialiasing.ON,
-        ImageInterpolation.BICUBIC,
+        ImageInterpolation.NEAREST,
         AlphaInterpolation.SPEED,
         RenderingStrategy.SPEED,
         Dithering.OFF
@@ -22,7 +22,7 @@ public class Industrio extends Application {
 
   public static void main(String[] args) {
     final Industrio game = new Industrio();
-    game.loadScene(new Playground());
+    game.loadScene(new Menu());
     game.run();
   }
 }
