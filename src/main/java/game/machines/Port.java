@@ -11,7 +11,7 @@ public class Port {
   public static final int RIGHT = 1;
   public static final int BOTTOM = 2;
   public static final int LEFT = 3;
-  public static double MOVE_SPEED = 0.5;
+  public static double MOVE_SPEED = 0.85;
 
   public final Type type;
   public final Direction direction;

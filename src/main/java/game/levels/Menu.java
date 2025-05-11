@@ -8,7 +8,6 @@ import dev.gamekit.ui.enums.Alignment;
 import dev.gamekit.ui.enums.CrossAxisAlignment;
 import dev.gamekit.ui.enums.MainAxisAlignment;
 import dev.gamekit.ui.widgets.*;
-import game.Playground;
 import game.Utils;
 import game.factory.Factory;
 import game.machines.Belt;
@@ -24,15 +23,11 @@ public final class Menu extends Scene {
   private static final Color CLEAR_COLOR = new Color(0x202039);
   private static final Color SCRIM_COLOR = new Color(0x99000000, true);
 
-  static {
-    Factory.GRID_SIZE = 11;
-  }
-
   private final Factory factory;
 
   public Menu() {
     super("Menu Scene");
-
+    Factory.GRID_SIZE = 11;
     this.factory = new Factory(
       new Source[]{
         Source.create(Color.CYAN, 1, 0),
@@ -141,7 +136,7 @@ public final class Menu extends Scene {
   }
 
   private void startCampaignMode() {
-    Application.getInstance().loadScene(new Playground());
+    Application.getInstance().loadScene(new Level2());
   }
 
   private void exitApplication() {

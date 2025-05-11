@@ -106,12 +106,15 @@ public class Factory extends Prop {
     }
   }
 
-  public boolean createMachine(int index, Machine.Info info, Direction direction) {
+  public void createMachine(int index, Machine.Info info, Direction direction) {
     if (machineGrid[index] == hub)
-      return false;
+      return;
 
-    if (machineGrid[index] != null)
+    if (machineGrid[index] != null) {
+      if (info == Belt.INFO && !(machineGrid[index] instanceof Belt))
+        return;
       removeMachine(index);
+    }
 
     Machine machine = null;
 
@@ -127,12 +130,8 @@ public class Factory extends Prop {
       machine = HueShifter.create(index, direction);
     }
 
-    if (machine != null) {
+    if (machine != null)
       addMachine(machine);
-      return true;
-    }
-
-    return false;
   }
 
   public void removeMachine(int index) {

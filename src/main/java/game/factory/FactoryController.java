@@ -11,6 +11,7 @@ import dev.gamekit.ui.widgets.Image;
 import dev.gamekit.ui.widgets.Panel;
 import dev.gamekit.ui.widgets.*;
 import dev.gamekit.utils.Position;
+import dev.gamekit.utils.Task;
 import game.Utils;
 import game.levels.Menu;
 import game.machines.*;
@@ -57,6 +58,7 @@ public abstract class FactoryController extends Scene {
   protected final Factory factory;
   protected final Machine.Info[] machineInfos;
   protected final FactoryGoal goal;
+  protected final Task onCompleted;
 
   private FactoryAction action = FactoryAction.DEFAULT;
   private Direction direction = Direction.UP;
@@ -72,9 +74,11 @@ public abstract class FactoryController extends Scene {
     int level,
     Machine.Info[] machineInfos,
     Source[] sources,
-    FactoryGoal goal
+    FactoryGoal goal,
+    Task onCompleted
   ) {
     super("Factory Controller");
+    setGridSize();
 
     this.level = level;
     this.machineInfos = machineInfos;
@@ -88,6 +92,7 @@ public abstract class FactoryController extends Scene {
       updateUI();
     });
     this.goal = goal;
+    this.onCompleted = onCompleted;
   }
 
   @Override
@@ -377,7 +382,11 @@ public abstract class FactoryController extends Scene {
                       Row.options().gapSize(12).crossAxisAlignment(CrossAxisAlignment.CENTER),
                       Button.create(
                         Button.options().defaultBackground(DEFAULT_BG)
-                          .hoverBackground(HOVER_BG).pressedBackground(HOVER_BG).ninePatch(24),
+                          .hoverBackground(HOVER_BG).pressedBackground(HOVER_BG).ninePatch(24)
+                          .mouseListener(ev -> {
+                            if (ev.type == MouseEvent.Type.CLICK)
+                              onCompleted.run();
+                          }),
                         Padding.create(
                           Padding.options().padding(32),
                           Text.create(
@@ -412,6 +421,8 @@ public abstract class FactoryController extends Scene {
     );
   }
 
+  protected abstract void setGridSize();
+
   private void updateState() {
     if (goal.isCompleted()) {
       action = FactoryAction.DEFAULT;
@@ -445,7 +456,7 @@ public abstract class FactoryController extends Scene {
     } else if (Input.isButtonReleased(Input.BUTTON_LMB) && action == FactoryAction.PICK) {
       action = FactoryAction.PLACE;
     } else if (Input.isButtonReleased(Input.BUTTON_LMB) && action == FactoryAction.DRAG_PLACE) {
-      action = FactoryAction.CLEAR;
+      action = FactoryAction.PICK;
     } else if (Input.isKeyReleased(Input.KEY_R) && action == FactoryAction.PICK) {
       action = FactoryAction.ROTATE;
     }
@@ -461,8 +472,8 @@ public abstract class FactoryController extends Scene {
         Position pos = getMouseWorldPosition();
         int index = Utils.worldPositionToIndex(pos);
 
-        action = factory.createMachine(index, selectedMachineInfo, direction) ?
-          FactoryAction.CLEAR : FactoryAction.PICK;
+        factory.createMachine(index, selectedMachineInfo, direction);
+        action = FactoryAction.PICK;
       }
       case DRAG_PLACE -> {
         Position pos = getMouseWorldPosition();

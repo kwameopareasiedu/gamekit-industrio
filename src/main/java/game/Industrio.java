@@ -12,7 +12,7 @@ public class Industrio extends Application {
         Resolution.NATIVE,
         WindowMode.FULLSCREEN,
         Antialiasing.ON,
-        ImageInterpolation.NEAREST,
+        ImageInterpolation.BILINEAR,
         AlphaInterpolation.SPEED,
         RenderingStrategy.SPEED,
         Dithering.OFF
