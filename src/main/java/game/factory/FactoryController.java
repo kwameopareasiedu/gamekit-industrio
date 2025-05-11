@@ -289,71 +289,70 @@ public abstract class FactoryController extends Scene {
         )
       ),
 
-      // Machine select panel
       Align.create(
         Align.options().horizontalAlignment(Alignment.END),
         Padding.create(
           Padding.options().padding(48),
-          Panel.create(
-            Panel.options().background(MACHINES_PANEL_BG).ninePatch(0, 20),
-            Padding.create(
-              Padding.options().padding(32),
-              Column.create(
-                Column.options().gapSize(36).crossAxisAlignment(CrossAxisAlignment.CENTER),
-                Text.create(
-                  Text.options().color(Color.WHITE).fontSize(24).fontStyle(Font.BOLD),
-                  "Machines"
-                ),
+          Row.create(
+            Row.options().mainAxisAlignment(MainAxisAlignment.END),
+
+            // Machine help panel
+            hoverMachineInfo == null ?
+              Empty.create() :
+              hoverMachineInfo == Extractor.INFO ?
+                new ExtractorHelpPanel() :
+                hoverMachineInfo == Belt.INFO ?
+                  new BeltHelpPanel() :
+                  hoverMachineInfo == Mixer.INFO ?
+                    new MixerHelpPanel() :
+                    hoverMachineInfo == Reshaper.INFO ?
+                      new ReshaperHelpPanel() :
+                      hoverMachineInfo == HueShifter.INFO ?
+                        new HueShifterHelpPanel() :
+                        Empty.create(),
+
+            // Machine select panel
+            Panel.create(
+              Panel.options().background(MACHINES_PANEL_BG).ninePatch(0, 20),
+              Padding.create(
+                Padding.options().padding(32),
                 Column.create(
-                  Column.options().gapSize(32).crossAxisAlignment(CrossAxisAlignment.CENTER),
-                  Arrays.stream(machineInfos).map(info ->
-                    MachineButton.create(info, (e) -> {
-                      if (e.type == MouseEvent.Type.ENTER) {
-                        Application.getInstance().scheduleTask(() -> {
-                          hoverMachineInfo = info;
-                          updateUI();
-                        });
-                      } else if (e.type == MouseEvent.Type.EXIT) {
-                        Application.getInstance().scheduleTask(() -> {
-                          if (hoverMachineInfo == info)
-                            hoverMachineInfo = null;
-                          updateUI();
-                        });
-                      } else if (e.type == MouseEvent.Type.CLICK) {
-                        Application.getInstance().scheduleTask(() -> {
-                          selectedMachineInfo = info;
-                          action = FactoryAction.PICK;
-                          updateUI();
-                        });
-                      }
-                    })
-                  ).toArray(MachineButton[]::new)
+                  Column.options().gapSize(36).crossAxisAlignment(CrossAxisAlignment.CENTER),
+                  Text.create(
+                    Text.options().color(Color.WHITE).fontSize(24).fontStyle(Font.BOLD),
+                    "Machines"
+                  ),
+                  Column.create(
+                    Column.options().gapSize(32).crossAxisAlignment(CrossAxisAlignment.CENTER),
+                    Arrays.stream(machineInfos).map(info ->
+                      MachineButton.create(info, (e) -> {
+                        if (e.type == MouseEvent.Type.ENTER) {
+                          Application.getInstance().scheduleTask(() -> {
+                            hoverMachineInfo = info;
+                            updateUI();
+                          });
+                        } else if (e.type == MouseEvent.Type.EXIT) {
+                          Application.getInstance().scheduleTask(() -> {
+                            if (hoverMachineInfo == info)
+                              hoverMachineInfo = null;
+                            updateUI();
+                          });
+                        } else if (e.type == MouseEvent.Type.CLICK) {
+                          Application.getInstance().scheduleTask(() -> {
+                            selectedMachineInfo = info;
+                            action = FactoryAction.PICK;
+                            updateUI();
+                          });
+                        }
+                      })
+                    ).toArray(MachineButton[]::new)
+                  )
                 )
               )
             )
           )
         )
       ),
-
-      // Machine help panel
-      hoverMachineInfo != null ?
-        Align.create(
-          Align.options().horizontalAlignment(Alignment.START).verticalAlignment(Alignment.END),
-          Padding.create(
-            Padding.options().padding(48),
-            hoverMachineInfo == Extractor.INFO ?
-              new ExtractorHelpPanel() :
-              hoverMachineInfo == Belt.INFO ?
-                new BeltHelpPanel() :
-                hoverMachineInfo == Mixer.INFO ?
-                  new MixerHelpPanel() :
-                  hoverMachineInfo == Reshaper.INFO ?
-                    new ReshaperHelpPanel() :
-                    hoverMachineInfo == HueShifter.INFO ?
-                      new HueShifterHelpPanel() :
-                      Empty.create()
-          )
-        ) : Empty.create(),
 
       // Level completed panel
       goal.isCompleted() ?
