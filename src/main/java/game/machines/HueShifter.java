@@ -14,14 +14,8 @@ public class HueShifter extends Machine {
 
   private final ArrayList<Shape> inputShapes;
 
-  public static HueShifter create(int index, Direction direction) {
-    if (direction == null)
-      return null;
-    return new HueShifter(index, direction);
-  }
-
-  protected HueShifter(int index, Direction direction) {
-    super("Mixer", index, direction, Port.Type.OUT, Port.Type.IN, null, Port.Type.IN);
+  public HueShifter(int row, int col, Factory factory, Direction direction) {
+    super("Mixer", row, col, factory, direction, Port.Type.OUT, Port.Type.IN, null, Port.Type.IN);
     inputShapes = new ArrayList<>();
   }
 
@@ -44,11 +38,11 @@ public class HueShifter extends Machine {
 
       if (combinedShape != null) {
         for (Port port : inputs) {
-          Factory.removeItem(port.item);
+          factory.removeItem(port.item);
           port.item = null;
         }
 
-        Factory.addResource(combinedShape);
+        factory.addItem(combinedShape);
         out.item = combinedShape;
       }
     }
@@ -83,17 +77,17 @@ public class HueShifter extends Machine {
     }
 
     if (hasBlackCircle && hasRedCircle)
-      return new Shape(Shape.Type.CIRCLE, Color.GREEN, index);
+      return new Shape(Shape.Type.CIRCLE, Color.GREEN, position);
     else if (hasBlackCircle && hasGreenCircle)
-      return new Shape(Shape.Type.CIRCLE, Color.BLUE, index);
+      return new Shape(Shape.Type.CIRCLE, Color.BLUE, position);
     else if (hasBlackCircle && hasBlueCircle)
-      return new Shape(Shape.Type.CIRCLE, Color.RED, index);
+      return new Shape(Shape.Type.CIRCLE, Color.RED, position);
     else if (hasBlackCircle && hasCyanCircle)
-      return new Shape(Shape.Type.CIRCLE, Color.MAGENTA, index);
+      return new Shape(Shape.Type.CIRCLE, Color.MAGENTA, position);
     else if (hasBlackCircle && hasMagentaCircle)
-      return new Shape(Shape.Type.CIRCLE, Color.YELLOW, index);
+      return new Shape(Shape.Type.CIRCLE, Color.YELLOW, position);
     else if (hasBlackCircle && hasYellowCircle)
-      return new Shape(Shape.Type.CIRCLE, Color.CYAN, index);
+      return new Shape(Shape.Type.CIRCLE, Color.CYAN, position);
 
     return null;
   }

@@ -1,9 +1,7 @@
 package game.machines;
 
 import dev.gamekit.core.IO;
-import dev.gamekit.utils.Position;
 import dev.gamekit.utils.Vector;
-import game.Utils;
 import game.factory.Factory;
 
 import java.awt.image.BufferedImage;
@@ -27,16 +25,12 @@ public final class Belt extends Machine {
   private final Vector position;
   private int inputIndex = 0;
 
-  public static Belt create(int index, Direction direction) {
-    if (direction == null)
-      return null;
-    return new Belt(index, direction);
-  }
-
-  private Belt(int index, Direction direction) {
-    super("Belt", index, direction, Port.Type.OUT, Port.Type.IN, Port.Type.IN, Port.Type.IN);
-    Position pos = Utils.indexToWorldPosition(index);
-    position = new Vector(pos.x, pos.y);
+  public Belt(int row, int col, Factory factory, Direction direction) {
+    super(
+      "Belt", row, col, factory, direction,
+      Port.Type.OUT, Port.Type.IN, Port.Type.IN, Port.Type.IN
+    );
+    position = new Vector(super.position.x, super.position.y);
   }
 
   @Override
@@ -56,10 +50,10 @@ public final class Belt extends Machine {
 
   @Override
   public BufferedImage getImage() {
-    Machine topMachine = Factory.getMachineAt(index + Factory.GRID_SIZE);
-    Machine rightMachine = Factory.getMachineAt(index + 1);
-    Machine bottomMachine = Factory.getMachineAt(index - Factory.GRID_SIZE);
-    Machine leftMachine = Factory.getMachineAt(index - 1);
+    Machine topMachine = factory.getMachineAt(row + 1, col);
+    Machine rightMachine = factory.getMachineAt(row, col + 1);
+    Machine bottomMachine = factory.getMachineAt(row - 1, col);
+    Machine leftMachine = factory.getMachineAt(row, col - 1);
 
     int spriteIndex = 0;
 

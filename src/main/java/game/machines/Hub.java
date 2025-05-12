@@ -2,8 +2,6 @@ package game.machines;
 
 import dev.gamekit.core.IO;
 import dev.gamekit.core.Renderer;
-import dev.gamekit.utils.Position;
-import game.Utils;
 import game.factory.Factory;
 import game.resources.Shape;
 
@@ -20,14 +18,12 @@ public final class Hub extends Machine {
 
   private final Notifier notifier;
 
-  public static Hub create(int index, Direction direction, Notifier notifier) {
-    if (direction == null || notifier == null)
-      return null;
-    return new Hub(index, direction, notifier);
-  }
+  public Hub(int row, int col, Factory factory, Direction direction, Notifier notifier) {
+    super(
+      "Hub", row, col, factory, direction,
+      Port.Type.IN, Port.Type.IN, Port.Type.IN, Port.Type.IN
+    );
 
-  private Hub(int index, Direction direction, Notifier notifier) {
-    super("Hub", index, direction, Port.Type.IN, Port.Type.IN, Port.Type.IN, Port.Type.IN);
     this.notifier = notifier;
   }
 
@@ -50,22 +46,23 @@ public final class Hub extends Machine {
 
   @Override
   protected void render() {
-    Position pos = Utils.indexToWorldPosition(index);
+    int posX = (int) position.x;
+    int posY = (int) position.y;
 
     Renderer.drawImage(
-      SPRITES[0], pos.x, pos.y,
+      SPRITES[0], posX, posY,
       Factory.CELL_PIXEL_SIZE,
       Factory.CELL_PIXEL_SIZE
     );
 
-    Machine topMachine = Factory.getMachineAt(index + Factory.GRID_SIZE);
-    Machine rightMachine = Factory.getMachineAt(index + 1);
-    Machine bottomMachine = Factory.getMachineAt(index - Factory.GRID_SIZE);
-    Machine leftMachine = Factory.getMachineAt(index - 1);
+    Machine topMachine = factory.getMachineAt(row + 1, col);
+    Machine rightMachine = factory.getMachineAt(row, col + 1);
+    Machine bottomMachine = factory.getMachineAt(row - 1, col);
+    Machine leftMachine = factory.getMachineAt(row, col - 1);
 
     if (topMachine != null && topMachine.portHasDirection(Port.BOTTOM, Direction.DOWN)) {
       Renderer.drawImage(
-        SPRITES[3], pos.x, pos.y,
+        SPRITES[3], posX, posY,
         Factory.CELL_PIXEL_SIZE,
         Factory.CELL_PIXEL_SIZE
       );
@@ -73,7 +70,7 @@ public final class Hub extends Machine {
 
     if (rightMachine != null && rightMachine.portHasDirection(Port.LEFT, Direction.LEFT)) {
       Renderer.drawImage(
-        SPRITES[4], pos.x, pos.y,
+        SPRITES[4], posX, posY,
         Factory.CELL_PIXEL_SIZE,
         Factory.CELL_PIXEL_SIZE
       );
@@ -81,7 +78,7 @@ public final class Hub extends Machine {
 
     if (bottomMachine != null && bottomMachine.portHasDirection(Port.TOP, Direction.UP)) {
       Renderer.drawImage(
-        SPRITES[1], pos.x, pos.y,
+        SPRITES[1], posX, posY,
         Factory.CELL_PIXEL_SIZE,
         Factory.CELL_PIXEL_SIZE
       );
@@ -89,7 +86,7 @@ public final class Hub extends Machine {
 
     if (leftMachine != null && leftMachine.portHasDirection(Port.RIGHT, Direction.RIGHT)) {
       Renderer.drawImage(
-        SPRITES[2], pos.x, pos.y,
+        SPRITES[2], posX, posY,
         Factory.CELL_PIXEL_SIZE,
         Factory.CELL_PIXEL_SIZE
       );

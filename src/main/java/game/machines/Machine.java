@@ -3,7 +3,7 @@ package game.machines;
 import dev.gamekit.core.Prop;
 import dev.gamekit.core.Renderer;
 import dev.gamekit.utils.Position;
-import game.Utils;
+import dev.gamekit.utils.Vector;
 import game.factory.Factory;
 
 import java.awt.image.BufferedImage;
@@ -11,7 +11,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 public abstract class Machine extends Prop {
-  public final int index;
+  public final int row;
+  public final int col;
+  protected final Factory factory;
+  protected final Vector position;
   protected final Direction direction;
   protected final Port topPort;
   protected final Port rightPort;
@@ -23,7 +26,9 @@ public abstract class Machine extends Prop {
 
   protected Machine(
     String name,
-    int index,
+    int row,
+    int col,
+    Factory factory,
     Direction direction,
     Port.Type topPortType,
     Port.Type rightPortType,
@@ -31,8 +36,13 @@ public abstract class Machine extends Prop {
     Port.Type leftPortType
   ) {
     super(name);
-    this.index = index;
+    this.row = row;
+    this.col = col;
+    this.factory = factory;
     this.direction = direction;
+
+    Position pos = factory.gridToPosition(row, col);
+    this.position = new Vector(pos.x, pos.y);
 
     this.topPort = switch (direction) {
       case UP -> Port.create(topPortType, Direction.UP, this);
@@ -97,12 +107,13 @@ public abstract class Machine extends Prop {
   @Override
   protected void render() {
     BufferedImage icon = getImage();
-    Position pos = Utils.indexToWorldPosition(index);
+    int posX = (int) position.x;
+    int posY = (int) position.y;
 
     Renderer.withRotation(
-      pos.x, pos.y, direction.getAngle(),
+      posX, posY, direction.getAngle(),
       () -> Renderer.drawImage(
-        icon, pos.x, pos.y,
+        icon, posX, posY,
         Factory.CELL_PIXEL_SIZE,
         Factory.CELL_PIXEL_SIZE
       )
@@ -113,12 +124,12 @@ public abstract class Machine extends Prop {
   protected void dispose() {
     for (Port port : inputs) {
       if (port.item != null)
-        Factory.removeItem(port.item);
+        factory.removeItem(port.item);
     }
 
     for (Port port : outputs) {
       if (port.item != null)
-        Factory.removeItem(port.item);
+        factory.removeItem(port.item);
     }
   }
 
@@ -133,24 +144,20 @@ public abstract class Machine extends Prop {
   private void updatePort(Port port) {
     if (port != null && port.hasItem()) {
       if (port.isOutput() && !port.moveResource()) {
-        //noinspection ExtractMethodRecommender
-        int adjacentMachineOffset =
-          port == topPort ? Factory.GRID_SIZE
-            : port == rightPort ? 1
-            : port == bottomPort ? -Factory.GRID_SIZE
-            : port == leftPort ? -1
-            : 0;
+        int adjacentFactoryRow = row + (port == topPort ? 1 : port == bottomPort ? -1 : 0);
+        int adjacentFactoryCol = col + (port == leftPort ? -1 : port == rightPort ? 1 : 0);
 
-        int adjacentIndex = index + adjacentMachineOffset;
-        // TODO: If this machine is at an edge or corner,
-        //  naively adding adjacentMachineOffset will cause it
-        //  to grab the machine at first or last column of the
-        //  lower or upper row of the grid, which is wrong.
-        //  Fix this later
-        Machine adjacentMachine = Factory.getMachineAt(adjacentIndex);
+        if (adjacentFactoryCol < 0 || adjacentFactoryCol >= factory.getGridSize() ||
+          adjacentFactoryRow < 0 || adjacentFactoryRow >= factory.getGridSize())
+          return;
+
+        Machine adjacentMachine = factory.getMachineAt(
+          adjacentFactoryRow, adjacentFactoryCol
+        );
 
         if (adjacentMachine != null) {
-          Port adjacentPort = port == topPort ? adjacentMachine.bottomPort
+          Port adjacentPort
+            = port == topPort ? adjacentMachine.bottomPort
             : port == rightPort ? adjacentMachine.leftPort
             : port == bottomPort ? adjacentMachine.topPort
             : port == leftPort ? adjacentMachine.rightPort

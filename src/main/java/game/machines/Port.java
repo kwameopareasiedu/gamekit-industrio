@@ -1,8 +1,7 @@
 package game.machines;
 
 import dev.gamekit.utils.Bounds;
-import dev.gamekit.utils.Position;
-import game.Utils;
+import dev.gamekit.utils.Vector;
 import game.factory.Factory;
 import game.resources.Shape;
 
@@ -31,7 +30,7 @@ public class Port {
     this.direction = direction;
     this.item = null;
 
-    Position pos = Utils.indexToWorldPosition(machine.index);
+    Vector pos = machine.position;
 
     bounds = switch (direction) {
       case UP -> new Bounds(
@@ -104,6 +103,7 @@ public class Port {
     return item != null;
   }
 
+  @SuppressWarnings("BooleanMethodIsAlwaysInverted")
   public boolean isItemInBounds() {
     return bounds.contains(item.pos.x, item.pos.y);
   }

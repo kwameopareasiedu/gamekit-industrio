@@ -1,6 +1,6 @@
 package game.levels;
 
-import game.factory.Factory;
+import dev.gamekit.core.Application;
 import game.factory.FactoryController;
 import game.factory.FactoryGoal;
 import game.machines.Belt;
@@ -16,18 +16,22 @@ public class Level2 extends FactoryController {
   public Level2() {
     super(
       1,
-      new Machine.Info[]{ Extractor.INFO, Belt.INFO, Mixer.INFO },
+      new Machine.Info[]{
+        Extractor.INFO,
+        Belt.INFO,
+        Mixer.INFO
+      },
       new Source[]{
-        Source.create(Color.WHITE, 0, 0),
-        Source.create(Color.BLACK, 0, 4),
+        Source.create(0, 0, Color.WHITE),
+        Source.create(0, 4, Color.BLACK),
       },
       new FactoryGoal(15, Shape.Type.CIRCLE, Color.GRAY),
-      () -> {}
+      () -> Application.getInstance().loadScene(new Level3())
     );
   }
 
   @Override
-  protected void setGridSize() {
-    Factory.GRID_SIZE = 5;
+  protected int getGridSize() {
+    return 5;
   }
 }

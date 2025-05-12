@@ -3,6 +3,7 @@ package game.factory;
 import dev.gamekit.core.Application;
 import dev.gamekit.core.Prop;
 import dev.gamekit.core.Renderer;
+import dev.gamekit.utils.Position;
 import game.machines.*;
 import game.resources.Shape;
 import game.resources.Source;
@@ -10,73 +11,148 @@ import game.resources.Source;
 import java.awt.*;
 import java.util.ArrayList;
 
+import static dev.gamekit.utils.Math.clamp;
 import static dev.gamekit.utils.Math.toInt;
 
 public class Factory extends Prop {
-  public static int GRID_SIZE = 11;
   public static final int CELL_PIXEL_SIZE = 120;
+  public static final int SOURCE_PIXEL_SIZE = toInt(0.4 * CELL_PIXEL_SIZE);
+  private static final Stroke SOURCE_OUTLINE_STROKE =
+    new BasicStroke(2, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND);
   private static final int TICK_INTERVAL_MS = 100;
   private static final Color GRID_COLOR = Color.LIGHT_GRAY;
-  private static Factory instance;
+  private static final Position POSITION_CACHE = new Position();
 
+  private final int gridSize;
   private final int pixelSize;
-  private final Prop machineContainer;
-  private final Prop sourceContainer;
-  private final Prop itemContainer;
+  private final Prop machineParent;
+  private final Prop itemParent;
   private final Source[] sourceGrid;
   private final Machine[] machineGrid;
-  private final Source[] initialSources;
   private final Hub hub;
   private final ArrayList<Machine> machines;
 
   private boolean active = true;
   private long tickTime;
 
-  public Factory(Source[] initialSources, Hub.Notifier hubNotifier) {
+  public Factory(int gridSize, Source[] sources, Hub.Notifier hubNotifier) {
     super("Factory");
 
-    this.initialSources = initialSources;
-    pixelSize = GRID_SIZE * CELL_PIXEL_SIZE;
-    machineGrid = new Machine[GRID_SIZE * GRID_SIZE];
-    sourceGrid = new Source[GRID_SIZE * GRID_SIZE];
-    hub = Hub.create((GRID_SIZE * GRID_SIZE) / 2, Direction.UP, hubNotifier);
-    machineContainer = new Prop("Machines") { };
-    sourceContainer = new Prop("Sources") { };
-    itemContainer = new Prop("Items") { };
+    this.gridSize = gridSize;
+    pixelSize = gridSize * CELL_PIXEL_SIZE;
+    machineGrid = new Machine[gridSize * gridSize];
+    sourceGrid = new Source[gridSize * gridSize];
+    hub = new Hub(gridSize / 2, gridSize / 2, this, Direction.UP, hubNotifier);
+    machineParent = new Prop("Machines") { };
+    itemParent = new Prop("Items") { };
     machines = new ArrayList<>();
-    Factory.instance = this;
+
+    for (Source source : sources) {
+      int index = gridToIndex(source.row, source.col);
+      sourceGrid[index] = source;
+    }
   }
 
-  public static void addResource(Shape item) {
-    instance.itemContainer.addChild(item);
+  public void createMachine(int row, int col, Machine.Info info, Direction direction) {
+    int index = gridToIndex(row, col);
+    Machine existing = machineGrid[index];
+
+    if (existing == hub)
+      return;
+
+    if (existing != null) {
+      if (info == Belt.INFO && !(existing instanceof Belt))
+        return;
+
+      removeMachine(row, col);
+    }
+
+    Machine machine = null;
+
+    if (info == Extractor.INFO && sourceGrid[index] != null) {
+      machine = new Extractor(row, col, this, direction, sourceGrid[index]);
+    } else if (info == Belt.INFO) {
+      machine = new Belt(row, col, this, direction);
+    } else if (info == Mixer.INFO) {
+      machine = new Mixer(row, col, this, direction);
+    } else if (info == Reshaper.INFO) {
+      machine = new Reshaper(row, col, this, direction);
+    } else if (info == HueShifter.INFO) {
+      machine = new HueShifter(row, col, this, direction);
+    }
+
+    if (machine != null)
+      addMachine(machine);
   }
 
-  public static void removeItem(Shape item) {
-    instance.itemContainer.removeChild(item);
+  public void removeMachine(int row, int col) {
+    int index = gridToIndex(row, col);
+    Machine machine = machineGrid[index];
+
+    if (machine == null || machine == hub)
+      return;
+
+    machines.remove(machine);
+    machineParent.removeChild(machine);
+    machineGrid[index] = null;
   }
 
-  public static Machine getMachineAt(int index) {
-    if (index < 0 || index >= instance.machineGrid.length)
+  public void addItem(Shape item) {
+    itemParent.addChild(item);
+  }
+
+  public void removeItem(Shape item) {
+    itemParent.removeChild(item);
+  }
+
+  public int getGridSize() {
+    return gridSize;
+  }
+
+  public int gridToIndex(int row, int col) {
+    return row * gridSize + col;
+  }
+
+  public Position gridToPosition(int row, int col) {
+    int gridPixelSize = gridSize * CELL_PIXEL_SIZE;
+
+    POSITION_CACHE.set(
+      toInt((col + 0.5) * CELL_PIXEL_SIZE - 0.5 * gridPixelSize),
+      toInt((row + 0.5) * CELL_PIXEL_SIZE - 0.5 * gridPixelSize)
+    );
+
+    return POSITION_CACHE;
+  }
+
+  public Position positionToGrid(Position pos) {
+    int gridPixelSize = gridSize * CELL_PIXEL_SIZE;
+    int row = toInt(Math.floor((0.5 * gridPixelSize + pos.y) / CELL_PIXEL_SIZE));
+    int col = toInt(Math.floor((0.5 * gridPixelSize + pos.x) / CELL_PIXEL_SIZE));
+    row = clamp(row, 0, gridSize - 1);
+    col = clamp(col, 0, gridSize - 1);
+    POSITION_CACHE.set(col, row);
+    return POSITION_CACHE;
+  }
+
+  public Machine getMachineAt(int row, int col) {
+    if (row < 0 || row >= gridSize || col < 0 || col >= gridSize)
       return null;
 
-    return instance.machineGrid[index];
+    int index = gridToIndex(row, col);
+    return machineGrid[index];
   }
 
-  public static void close() {
-    instance.active = false;
+  public void close() {
+    active = false;
   }
 
   @Override
   protected void start() {
     super.start();
-    addChild(sourceContainer);
-    addChild(machineContainer);
-    addChild(itemContainer);
+    addChild(machineParent);
+    addChild(itemParent);
 
     addMachine(hub);
-
-    for (Source source : initialSources)
-      addSource(source);
   }
 
   @Override
@@ -91,68 +167,45 @@ public class Factory extends Prop {
 
   @Override
   protected void render() {
-    for (int i = 0; i <= GRID_SIZE; i++) {
+    for (int i = 0; i <= gridSize; i++) {
       int x = toInt(i * CELL_PIXEL_SIZE - 0.5 * pixelSize);
 
-      for (int j = 0; j <= GRID_SIZE; j++) {
+      for (int j = 0; j <= gridSize; j++) {
         int y = toInt(j * CELL_PIXEL_SIZE - 0.5 * pixelSize);
 
+        // Render grid
         Renderer.setColor(GRID_COLOR);
         Renderer.drawLineH(x - 8, x + 8, y);
-
         Renderer.setColor(GRID_COLOR);
         Renderer.drawLineV(x, y - 8, y + 8);
+
+        // Render sources
+        if (i < gridSize && j < gridSize) {
+          int index = gridToIndex(i, j);
+          Source source = sourceGrid[index];
+
+          if (source != null) {
+            Position pos = gridToPosition(source.row, source.col);
+            Renderer.setColor(source.color);
+            Renderer.fillRoundRect(
+              pos.x, pos.y, SOURCE_PIXEL_SIZE, SOURCE_PIXEL_SIZE, 8, 8
+            );
+
+            Renderer.setColor(Color.BLACK);
+            Renderer.setStroke(SOURCE_OUTLINE_STROKE);
+            Renderer.drawRoundRect(
+              pos.x, pos.y, SOURCE_PIXEL_SIZE, SOURCE_PIXEL_SIZE, 8, 8
+            );
+          }
+        }
       }
     }
   }
 
-  public void createMachine(int index, Machine.Info info, Direction direction) {
-    if (machineGrid[index] == hub)
-      return;
-
-    if (machineGrid[index] != null) {
-      if (info == Belt.INFO && !(machineGrid[index] instanceof Belt))
-        return;
-      removeMachine(index);
-    }
-
-    Machine machine = null;
-
-    if (info == Extractor.INFO) {
-      machine = Extractor.create(index, direction, sourceGrid[index]);
-    } else if (info == Belt.INFO) {
-      machine = Belt.create(index, direction);
-    } else if (info == Mixer.INFO) {
-      machine = Mixer.create(index, direction);
-    } else if (info == Reshaper.INFO) {
-      machine = Reshaper.create(index, direction);
-    } else if (info == HueShifter.INFO) {
-      machine = HueShifter.create(index, direction);
-    }
-
-    if (machine != null)
-      addMachine(machine);
-  }
-
-  public void removeMachine(int index) {
-    Machine machine = machineGrid[index];
-
-    if (machine == null || machine == hub)
-      return;
-
-    machines.remove(machine);
-    machineContainer.removeChild(machine);
-    machineGrid[index] = null;
-  }
-
-  private void addSource(Source source) {
-    sourceGrid[source.index] = source;
-    sourceContainer.addChild(source);
-  }
-
   private void addMachine(Machine machine) {
-    machineGrid[machine.index] = machine;
-    machineContainer.addChild(machine);
+    int index = gridToIndex(machine.row, machine.col);
+    machineGrid[index] = machine;
+    machineParent.addChild(machine);
     machines.add(machine);
   }
 }

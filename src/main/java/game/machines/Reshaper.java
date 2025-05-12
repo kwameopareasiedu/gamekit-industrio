@@ -14,14 +14,8 @@ public class Reshaper extends Machine {
 
   private final ArrayList<Shape> inputShapes;
 
-  public static Reshaper create(int index, Direction direction) {
-    if (direction == null)
-      return null;
-    return new Reshaper(index, direction);
-  }
-
-  protected Reshaper(int index, Direction direction) {
-    super("Mixer", index, direction, Port.Type.OUT, Port.Type.IN, null, Port.Type.IN);
+  public Reshaper(int row, int col, Factory factory, Direction direction) {
+    super("Mixer", row, col, factory, direction, Port.Type.OUT, Port.Type.IN, null, Port.Type.IN);
     inputShapes = new ArrayList<>();
   }
 
@@ -44,11 +38,11 @@ public class Reshaper extends Machine {
 
       if (combinedShape != null) {
         for (Port port : inputs) {
-          Factory.removeItem(port.item);
+          factory.removeItem(port.item);
           port.item = null;
         }
 
-        Factory.addResource(combinedShape);
+        factory.addItem(combinedShape);
         out.item = combinedShape;
       }
     }
@@ -83,17 +77,17 @@ public class Reshaper extends Machine {
     }
 
     if (hasGrayCircle && hasRedCircle)
-      return new Shape(Shape.Type.SQUARE, Color.RED, index);
+      return new Shape(Shape.Type.SQUARE, Color.RED, position);
     else if (hasGrayCircle && hasGreenCircle)
-      return new Shape(Shape.Type.SQUARE, Color.GREEN, index);
+      return new Shape(Shape.Type.SQUARE, Color.GREEN, position);
     else if (hasGrayCircle && hasBlueCircle)
-      return new Shape(Shape.Type.SQUARE, Color.BLUE, index);
+      return new Shape(Shape.Type.SQUARE, Color.BLUE, position);
     else if (hasGrayCircle && hasCyanCircle)
-      return new Shape(Shape.Type.SQUARE, Color.CYAN, index);
+      return new Shape(Shape.Type.SQUARE, Color.CYAN, position);
     else if (hasGrayCircle && hasMagentaCircle)
-      return new Shape(Shape.Type.SQUARE, Color.MAGENTA, index);
+      return new Shape(Shape.Type.SQUARE, Color.MAGENTA, position);
     else if (hasGrayCircle && hasYellowCircle)
-      return new Shape(Shape.Type.SQUARE, Color.YELLOW, index);
+      return new Shape(Shape.Type.SQUARE, Color.YELLOW, position);
 
     return null;
   }

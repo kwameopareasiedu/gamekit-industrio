@@ -2,9 +2,7 @@ package game.resources;
 
 import dev.gamekit.core.Prop;
 import dev.gamekit.core.Renderer;
-import dev.gamekit.utils.Position;
 import dev.gamekit.utils.Vector;
-import game.Utils;
 import game.factory.Factory;
 
 import java.awt.*;
@@ -20,13 +18,18 @@ public final class Shape extends Prop {
   public final Color color;
   public final Vector pos;
 
-  public Shape(Type type, Color color, int index) {
+  public Shape(Type type, Color color) {
     super(type.name());
     this.type = type;
     this.color = color;
+    this.pos = new Vector();
+  }
 
-    Position pos = Utils.indexToWorldPosition(index);
-    this.pos = new Vector(pos.x, pos.y);
+  public Shape(Type type, Color color, Vector position) {
+    super(type.name());
+    this.type = type;
+    this.color = color;
+    this.pos = new Vector(position);
   }
 
   @Override

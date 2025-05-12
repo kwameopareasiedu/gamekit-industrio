@@ -1,44 +1,25 @@
 package game.resources;
 
-import dev.gamekit.core.Prop;
-import dev.gamekit.core.Renderer;
-import dev.gamekit.utils.Position;
-import game.Utils;
-import game.factory.Factory;
+import dev.gamekit.utils.Vector;
 
 import java.awt.*;
 
-import static dev.gamekit.utils.Math.toInt;
-
-public final class Source extends Prop {
-  private static final Stroke OUTLINE_STROKE =
-    new BasicStroke(2, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND);
-  private static final int SIZE = toInt(0.4 * Factory.CELL_PIXEL_SIZE);
-
+public final class Source {
+  public final int row;
+  public final int col;
   public final Color color;
-  public final int index;
 
-  public Source(Color color, int row, int col) {
-    super(String.format("%s deposit", color));
+  public static Source create(int row, int col, Color color) {
+    return new Source(row, col, color);
+  }
+
+  private Source(int row, int col, Color color) {
+    this.row = row;
+    this.col = col;
     this.color = color;
-    this.index = Utils.rowColToIndex(row, col);
   }
 
-  public static Source create(Color color, int row, int col) {
-    return new Source(color, row, col);
-  }
-
-  public Shape extract() {
-    return new Shape(Shape.Type.CIRCLE, color, index);
-  }
-
-  @Override
-  protected void render() {
-    Position pos = Utils.indexToWorldPosition(index);
-    Renderer.setColor(color);
-    Renderer.fillRoundRect(pos.x, pos.y, SIZE, SIZE, 8, 8);
-    Renderer.setColor(Color.BLACK);
-    Renderer.setStroke(OUTLINE_STROKE);
-    Renderer.drawRoundRect(pos.x, pos.y, SIZE, SIZE, 8, 8);
+  public Shape extract(Vector position) {
+    return new Shape(Shape.Type.CIRCLE, color, position);
   }
 }

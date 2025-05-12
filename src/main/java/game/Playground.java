@@ -1,6 +1,5 @@
 package game;
 
-import game.factory.Factory;
 import game.factory.FactoryController;
 import game.factory.FactoryGoal;
 import game.machines.*;
@@ -14,14 +13,14 @@ public class Playground extends FactoryController {
     super(
       1,
       new Machine.Info[]{ Extractor.INFO, Belt.INFO, Mixer.INFO, Reshaper.INFO, HueShifter.INFO },
-      new Source[]{ Source.create(Color.WHITE, 1, 0), },
+      new Source[]{ Source.create(1, 0, Color.WHITE), },
       new FactoryGoal(10, Shape.Type.CIRCLE, Color.WHITE),
       () -> { }
     );
   }
 
   @Override
-  protected void setGridSize() {
-    Factory.GRID_SIZE = 11;
+  protected int getGridSize() {
+    return 11;
   }
 }

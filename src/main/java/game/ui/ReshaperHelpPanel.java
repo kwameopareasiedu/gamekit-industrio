@@ -16,34 +16,34 @@ public class ReshaperHelpPanel extends MachineHelpPanel {
   private static final Row[] COMBINATION_WIDGET = Arrays.stream(
     new Shape[][]{
       new Shape[]{
-        new Shape(Shape.Type.CIRCLE, Color.GRAY, 0),
-        new Shape(Shape.Type.CIRCLE, Color.RED, 0),
-        new Shape(Shape.Type.SQUARE, Color.RED, 0)
+        new Shape(Shape.Type.CIRCLE, Color.GRAY),
+        new Shape(Shape.Type.CIRCLE, Color.RED),
+        new Shape(Shape.Type.SQUARE, Color.RED)
       },
       new Shape[]{
-        new Shape(Shape.Type.CIRCLE, Color.GRAY, 0),
-        new Shape(Shape.Type.CIRCLE, Color.GREEN, 0),
-        new Shape(Shape.Type.SQUARE, Color.GREEN, 0)
+        new Shape(Shape.Type.CIRCLE, Color.GRAY),
+        new Shape(Shape.Type.CIRCLE, Color.GREEN),
+        new Shape(Shape.Type.SQUARE, Color.GREEN)
       },
       new Shape[]{
-        new Shape(Shape.Type.CIRCLE, Color.GRAY, 0),
-        new Shape(Shape.Type.CIRCLE, Color.BLUE, 0),
-        new Shape(Shape.Type.SQUARE, Color.BLUE, 0)
+        new Shape(Shape.Type.CIRCLE, Color.GRAY),
+        new Shape(Shape.Type.CIRCLE, Color.BLUE),
+        new Shape(Shape.Type.SQUARE, Color.BLUE)
       },
       new Shape[]{
-        new Shape(Shape.Type.CIRCLE, Color.GRAY, 0),
-        new Shape(Shape.Type.CIRCLE, Color.CYAN, 0),
-        new Shape(Shape.Type.SQUARE, Color.CYAN, 0)
+        new Shape(Shape.Type.CIRCLE, Color.GRAY),
+        new Shape(Shape.Type.CIRCLE, Color.CYAN),
+        new Shape(Shape.Type.SQUARE, Color.CYAN)
       },
       new Shape[]{
-        new Shape(Shape.Type.CIRCLE, Color.GRAY, 0),
-        new Shape(Shape.Type.CIRCLE, Color.MAGENTA, 0),
-        new Shape(Shape.Type.SQUARE, Color.MAGENTA, 0)
+        new Shape(Shape.Type.CIRCLE, Color.GRAY),
+        new Shape(Shape.Type.CIRCLE, Color.MAGENTA),
+        new Shape(Shape.Type.SQUARE, Color.MAGENTA)
       },
       new Shape[]{
-        new Shape(Shape.Type.CIRCLE, Color.GRAY, 0),
-        new Shape(Shape.Type.CIRCLE, Color.YELLOW, 0),
-        new Shape(Shape.Type.SQUARE, Color.YELLOW, 0)
+        new Shape(Shape.Type.CIRCLE, Color.GRAY),
+        new Shape(Shape.Type.CIRCLE, Color.YELLOW),
+        new Shape(Shape.Type.SQUARE, Color.YELLOW)
       },
     }
   ).map(MixerHelpPanel::getShapeComboRow).toArray(Row[]::new);

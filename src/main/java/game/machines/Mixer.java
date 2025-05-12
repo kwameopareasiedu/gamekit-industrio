@@ -15,14 +15,11 @@ public class Mixer extends Machine {
 
   private final ArrayList<Shape> inputShapes;
 
-  public static Mixer create(int index, Direction direction) {
-    if (direction == null)
-      return null;
-    return new Mixer(index, direction);
-  }
-
-  protected Mixer(int index, Direction direction) {
-    super("Mixer", index, direction, Port.Type.OUT, Port.Type.IN, Port.Type.IN, Port.Type.IN);
+  public Mixer(int row, int col, Factory factory, Direction direction) {
+    super(
+      "Mixer", row, col, factory, direction,
+      Port.Type.OUT, Port.Type.IN, Port.Type.IN, Port.Type.IN
+    );
     inputShapes = new ArrayList<>();
   }
 
@@ -45,11 +42,11 @@ public class Mixer extends Machine {
 
       if (combinedShape != null) {
         for (Port port : inputs) {
-          Factory.removeItem(port.item);
+          factory.removeItem(port.item);
           port.item = null;
         }
 
-        Factory.addResource(combinedShape);
+        factory.addItem(combinedShape);
         out.item = combinedShape;
       }
     }
@@ -68,9 +65,6 @@ public class Mixer extends Machine {
     boolean hasRedCircle = false;
     boolean hasGreenCircle = false;
     boolean hasBlueCircle = false;
-//    boolean hasCyanCircle = false;
-//    boolean hasMagentaCircle = false;
-//    boolean hasYellowCircle = false;
 
     boolean hasWhiteSquare = false;
     boolean hasBlackSquare = false;
@@ -104,19 +98,19 @@ public class Mixer extends Machine {
     }
 
     if (hasWhiteCircle && hasBlackCircle)
-      return new Shape(Shape.Type.CIRCLE, Color.GRAY, index);
+      return new Shape(Shape.Type.CIRCLE, Color.GRAY, position);
     else if (hasWhiteCircle && hasRedCircle && hasGreenCircle)
-      return new Shape(Shape.Type.CIRCLE, Color.YELLOW, index);
+      return new Shape(Shape.Type.CIRCLE, Color.YELLOW, position);
     else if (hasWhiteCircle && hasRedCircle && hasBlueCircle)
-      return new Shape(Shape.Type.CIRCLE, Color.MAGENTA, index);
+      return new Shape(Shape.Type.CIRCLE, Color.MAGENTA, position);
     else if (hasWhiteCircle && hasGreenCircle && hasBlueCircle)
-      return new Shape(Shape.Type.CIRCLE, Color.CYAN, index);
+      return new Shape(Shape.Type.CIRCLE, Color.CYAN, position);
     else if (hasCyanSquare && hasMagentaSquare && hasYellowSquare)
-      return new Shape(Shape.Type.SQUARE, Color.BLACK, index);
+      return new Shape(Shape.Type.SQUARE, Color.BLACK, position);
     else if (hasRedSquare && hasGreenSquare && hasBlueSquare)
-      return new Shape(Shape.Type.SQUARE, Color.WHITE, index);
+      return new Shape(Shape.Type.SQUARE, Color.WHITE, position);
     else if (hasWhiteSquare && hasBlackSquare)
-      return new Shape(Shape.Type.SQUARE, Color.GRAY, index);
+      return new Shape(Shape.Type.SQUARE, Color.GRAY, position);
 
     return null;
   }

@@ -12,7 +12,6 @@ import dev.gamekit.ui.widgets.Panel;
 import dev.gamekit.ui.widgets.*;
 import dev.gamekit.utils.Position;
 import dev.gamekit.utils.Task;
-import game.Utils;
 import game.levels.Menu;
 import game.machines.*;
 import game.resources.Shape;
@@ -47,18 +46,17 @@ public abstract class FactoryController extends Scene {
     IO.getResourceImage("pixel-keys.png", 80, 48, 15, 16);
   private static final BufferedImage KEY_ESC_IMG =
     IO.getResourceImage("pixel-keys.png", 0, 0, 31, 16);
-  private static final double MIN_BOUND = -0.5 * Factory.GRID_SIZE * Factory.CELL_PIXEL_SIZE;
-  private static final double MAX_BOUND = 0.5 * Factory.GRID_SIZE * Factory.CELL_PIXEL_SIZE;
   private static final double NAV_SPEED = 3;
   private static final double NAV_LERP_SPEED = 0.02;
   private static final Color CLEAR_COLOR = new Color(0x202039);
   private static final Color SCRIM_COLOR = new Color(0x99000000, true);
 
   protected final int level;
-  protected final Factory factory;
   protected final Machine.Info[] machineInfos;
   protected final FactoryGoal goal;
   protected final Task onCompleted;
+
+  protected Factory factory;
 
   private FactoryAction action = FactoryAction.DEFAULT;
   private Direction direction = Direction.UP;
@@ -68,7 +66,11 @@ public abstract class FactoryController extends Scene {
   private double desiredY = 0;
   private double panX = 0;
   private double panY = 0;
-  private int lastIndex = -1;
+  private int prevDragRow = -1;
+  private int prevDragCol = -1;
+
+  private final double minBound;
+  private final double maxBound;
 
   public FactoryController(
     int level,
@@ -78,19 +80,25 @@ public abstract class FactoryController extends Scene {
     Task onCompleted
   ) {
     super("Factory Controller");
-    setGridSize();
+    int gridSize = getGridSize();
+
+    this.minBound = -0.5 * gridSize * Factory.CELL_PIXEL_SIZE;
+    this.maxBound = 0.5 * gridSize * Factory.CELL_PIXEL_SIZE;
 
     this.level = level;
     this.machineInfos = machineInfos;
-    this.factory = new Factory(sources, shape -> {
-      Factory.removeItem(shape);
-      goal.track(shape);
+    this.factory = new Factory(
+      gridSize, sources,
+      shape -> {
+        factory.removeItem(shape);
+        goal.track(shape);
 
-      if (goal.isCompleted())
-        Factory.close();
+        if (goal.isCompleted())
+          factory.close();
 
-      updateUI();
-    });
+        updateUI();
+      }
+    );
     this.goal = goal;
     this.onCompleted = onCompleted;
   }
@@ -421,7 +429,7 @@ public abstract class FactoryController extends Scene {
     );
   }
 
-  protected abstract void setGridSize();
+  protected abstract int getGridSize();
 
   private void updateState() {
     if (goal.isCompleted()) {
@@ -430,33 +438,32 @@ public abstract class FactoryController extends Scene {
     }
 
     if (Input.isKeyPressed(Input.KEY_D)) {
-      desiredX = clamp(desiredX + NAV_SPEED, MIN_BOUND, MAX_BOUND);
+      desiredX = clamp(desiredX + NAV_SPEED, minBound, maxBound);
     } else if (Input.isKeyPressed(Input.KEY_A)) {
-      desiredX = clamp(desiredX - NAV_SPEED, MIN_BOUND, MAX_BOUND);
+      desiredX = clamp(desiredX - NAV_SPEED, minBound, maxBound);
     }
 
     if (Input.isKeyPressed(Input.KEY_W)) {
-      desiredY = clamp(desiredY + NAV_SPEED, MIN_BOUND, MAX_BOUND);
+      desiredY = clamp(desiredY + NAV_SPEED, minBound, maxBound);
     } else if (Input.isKeyPressed(Input.KEY_S)) {
-      desiredY = clamp(desiredY - NAV_SPEED, MIN_BOUND, MAX_BOUND);
+      desiredY = clamp(desiredY - NAV_SPEED, minBound, maxBound);
     }
 
-    if (action == FactoryAction.PICK &&
-      (Input.isButtonReleased(Input.BUTTON_RMB) || Input.isKeyPressed(Input.KEY_ESCAPE))) {
+    if ((Input.isButtonReleased(Input.BUTTON_RMB) || Input.isKeyPressed(Input.KEY_ESCAPE)) && action == FactoryAction.PICK) {
       action = FactoryAction.CLEAR;
-    } else if (Input.isButtonPressed(Input.BUTTON_RMB)) {
-      action = FactoryAction.DRAG_DELETE;
-    } else if (Input.isButtonReleased(Input.BUTTON_RMB)) {
+    } else if (Input.isButtonReleased(Input.BUTTON_RMB) && action == FactoryAction.DEFAULT) {
       action = FactoryAction.DELETE;
     } else if (Input.isButtonReleased(Input.BUTTON_RMB) && action == FactoryAction.DRAG_DELETE) {
       action = FactoryAction.CLEAR;
-    } else if (Input.isButtonPressed(Input.BUTTON_LMB) && action == FactoryAction.PICK
-      && selectedMachineInfo == Belt.INFO) {
-      action = FactoryAction.DRAG_PLACE;
-    } else if (Input.isButtonReleased(Input.BUTTON_LMB) && action == FactoryAction.PICK) {
+    } else if (Input.isButtonReleased(Input.BUTTON_LMB) && (action == FactoryAction.PICK || action == FactoryAction.DRAG_PLACE)) {
       action = FactoryAction.PLACE;
     } else if (Input.isButtonReleased(Input.BUTTON_LMB) && action == FactoryAction.DRAG_PLACE) {
       action = FactoryAction.PICK;
+      prevDragRow = prevDragCol = -1;
+    } else if (Input.isButtonPressed(Input.BUTTON_RMB) && action == FactoryAction.DEFAULT) {
+      action = FactoryAction.DRAG_DELETE;
+    } else if (Input.isButtonPressed(Input.BUTTON_LMB) && action == FactoryAction.PICK && selectedMachineInfo == Belt.INFO) {
+      action = FactoryAction.DRAG_PLACE;
     } else if (Input.isKeyReleased(Input.KEY_R) && action == FactoryAction.PICK) {
       action = FactoryAction.ROTATE;
     }
@@ -469,33 +476,37 @@ public abstract class FactoryController extends Scene {
 
     switch (action) {
       case PLACE -> {
-        Position pos = getMouseWorldPosition();
-        int index = Utils.worldPositionToIndex(pos);
-
-        factory.createMachine(index, selectedMachineInfo, direction);
+        Position mousePos = getMouseWorldPosition();
+        Position machinePos = factory.positionToGrid(mousePos);
+        factory.createMachine(machinePos.y, machinePos.x, selectedMachineInfo, direction);
         action = FactoryAction.PICK;
       }
       case DRAG_PLACE -> {
-        Position pos = getMouseWorldPosition();
-        int newIndex = Utils.worldPositionToIndex(pos);
+        Position mousePos = getMouseWorldPosition();
+        Position currentDragGrid = factory.positionToGrid(mousePos);
+        int currentDragRow = currentDragGrid.y, currentDragCol = currentDragGrid.x;
+
+        int newIndex = factory.gridToIndex(currentDragRow, currentDragCol);
+        int lastIndex = factory.gridToIndex(prevDragRow, prevDragCol);
         int diff = newIndex - lastIndex;
 
-        if (diff == Factory.GRID_SIZE) {
+        if (diff == factory.getGridSize())
           direction = Direction.UP;
-        } else if (diff == 1) {
+        else if (diff == 1)
           direction = Direction.RIGHT;
-        } else if (diff == -Factory.GRID_SIZE) {
+        else if (diff == -factory.getGridSize())
           direction = Direction.DOWN;
-        } else if (diff == -1) {
+        else if (diff == -1)
           direction = Direction.LEFT;
-        }
 
-        if (lastIndex == -1 || lastIndex != newIndex) {
-          if (lastIndex != -1)
-            factory.createMachine(lastIndex, selectedMachineInfo, direction);
+        if (prevDragCol == -1 || lastIndex != newIndex) {
+          if (prevDragCol != -1) {
+            factory.createMachine(prevDragRow, prevDragCol, selectedMachineInfo, direction);
+          }
 
-          factory.createMachine(newIndex, selectedMachineInfo, direction);
-          lastIndex = newIndex;
+          factory.createMachine(currentDragRow, currentDragCol, selectedMachineInfo, direction);
+          prevDragRow = currentDragRow;
+          prevDragCol = currentDragCol;
         }
       }
       case ROTATE -> {
@@ -503,15 +514,15 @@ public abstract class FactoryController extends Scene {
         action = FactoryAction.PICK;
       }
       case DELETE -> {
-        Position pos = getMouseWorldPosition();
-        int index = Utils.worldPositionToIndex(pos);
-        factory.removeMachine(index);
+        Position mousePos = getMouseWorldPosition();
+        Position machinePos = factory.positionToGrid(mousePos);
+        factory.removeMachine(machinePos.y, machinePos.x);
         action = FactoryAction.CLEAR;
       }
       case DRAG_DELETE -> {
-        Position pos = getMouseWorldPosition();
-        int index = Utils.worldPositionToIndex(pos);
-        factory.removeMachine(index);
+        Position mousePos = getMouseWorldPosition();
+        Position machinePos = factory.positionToGrid(mousePos);
+        factory.removeMachine(machinePos.y, machinePos.x);
       }
       case CLEAR -> {
         resetState();
@@ -523,7 +534,7 @@ public abstract class FactoryController extends Scene {
   }
 
   private void resetState() {
-    lastIndex = -1;
+    prevDragRow = prevDragCol = -1;
     action = FactoryAction.DEFAULT;
     direction = Direction.UP;
     selectedMachineInfo = null;

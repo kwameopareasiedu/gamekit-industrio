@@ -8,7 +8,6 @@ import dev.gamekit.ui.enums.Alignment;
 import dev.gamekit.ui.enums.CrossAxisAlignment;
 import dev.gamekit.ui.enums.MainAxisAlignment;
 import dev.gamekit.ui.widgets.*;
-import game.Utils;
 import game.factory.Factory;
 import game.machines.Belt;
 import game.machines.Direction;
@@ -23,17 +22,18 @@ public final class Menu extends Scene {
   private static final Color CLEAR_COLOR = new Color(0x202039);
   private static final Color SCRIM_COLOR = new Color(0x99000000, true);
 
-  private final Factory factory;
+  private Factory factory;
 
   public Menu() {
     super("Menu Scene");
-    Factory.GRID_SIZE = 11;
+
     this.factory = new Factory(
+      11,
       new Source[]{
-        Source.create(Color.CYAN, 1, 0),
-        Source.create(Color.RED, 6, 7),
+        Source.create(1, 0, Color.CYAN),
+        Source.create(6, 7, Color.RED),
       },
-      Factory::removeItem
+      item -> factory.removeItem(item)
     );
   }
 
@@ -95,17 +95,8 @@ public final class Menu extends Scene {
 
   private void setupFactory() {
     Application.getInstance().scheduleTask(() -> {
-      factory.createMachine(
-        Utils.rowColToIndex(1, 0),
-        Extractor.INFO,
-        Direction.UP
-      );
-
-      factory.createMachine(
-        Utils.rowColToIndex(6, 7),
-        Extractor.INFO,
-        Direction.LEFT
-      );
+      factory.createMachine(1, 0, Extractor.INFO, Direction.UP);
+      factory.createMachine(6, 7, Extractor.INFO, Direction.LEFT);
 
       Object[][] belts = new Object[][]{
         new Object[]{ 2, 0, Direction.UP },
@@ -126,17 +117,13 @@ public final class Menu extends Scene {
         int col = (int) beltConfig[1];
         Direction dir = (Direction) beltConfig[2];
 
-        factory.createMachine(
-          Utils.rowColToIndex(row, col),
-          Belt.INFO,
-          dir
-        );
+        factory.createMachine(row, col, Belt.INFO, dir);
       }
     });
   }
 
   private void startCampaignMode() {
-    Application.getInstance().loadScene(new Level2());
+    Application.getInstance().loadScene(new Level3());
   }
 
   private void exitApplication() {
