@@ -1,12 +1,13 @@
 package game.factory;
 
+import dev.gamekit.audio.AudioClip2D;
+import dev.gamekit.audio.AudioGroup;
 import dev.gamekit.core.*;
 import dev.gamekit.settings.ImageInterpolation;
 import dev.gamekit.ui.enums.Alignment;
 import dev.gamekit.ui.enums.CrossAxisAlignment;
 import dev.gamekit.ui.enums.MainAxisAlignment;
 import dev.gamekit.ui.events.MouseEvent;
-import dev.gamekit.ui.widgets.Button;
 import dev.gamekit.ui.widgets.Image;
 import dev.gamekit.ui.widgets.Panel;
 import dev.gamekit.ui.widgets.*;
@@ -24,8 +25,6 @@ import java.util.Arrays;
 
 import static dev.gamekit.utils.Math.clamp;
 import static dev.gamekit.utils.Math.lerp;
-import static game.ui.MachineButton.DEFAULT_BG;
-import static game.ui.MachineButton.HOVER_BG;
 
 public abstract class FactoryController extends Scene {
   private static final BufferedImage LEVEL_PANEL_BG =
@@ -51,6 +50,12 @@ public abstract class FactoryController extends Scene {
   private static final Color CLEAR_COLOR = new Color(0x202039);
   private static final Color SCRIM_COLOR = new Color(0x99000000, true);
 
+  static {
+    Audio.preload("placed", new AudioClip2D("audio/btn-hover.wav", AudioGroup.EFFECTS, 1));
+    Audio.preload("removed", new AudioClip2D("audio/removed.wav", AudioGroup.EFFECTS, 1));
+    Audio.preload("completed", new AudioClip2D("audio/completed.wav", AudioGroup.EFFECTS, 1));
+  }
+
   protected final int level;
   protected final Machine.Info[] machineInfos;
   protected final FactoryGoal goal;
@@ -71,6 +76,7 @@ public abstract class FactoryController extends Scene {
 
   private final double minBound;
   private final double maxBound;
+  private boolean completed = false;
 
   public FactoryController(
     int level,
@@ -93,8 +99,13 @@ public abstract class FactoryController extends Scene {
         factory.removeItem(shape);
         goal.track(shape);
 
-        if (goal.isCompleted())
+        if (!goal.isCompleted()) {
+          Audio.get("placed").play();
+        } else if (goal.isCompleted() && !completed) {
+          Audio.get("completed").play();
           factory.close();
+          completed = true;
+        }
 
         updateUI();
       }
@@ -329,7 +340,7 @@ public abstract class FactoryController extends Scene {
                     "Machines"
                   ),
                   Column.create(
-                    Column.options().gapSize(32).crossAxisAlignment(CrossAxisAlignment.CENTER),
+                    Column.options().gapSize(32).crossAxisAlignment(CrossAxisAlignment.STRETCH),
                     Arrays.stream(machineInfos).map(info ->
                       MachineButton.create(info, (e) -> {
                         if (goal.isCompleted())
@@ -350,8 +361,8 @@ public abstract class FactoryController extends Scene {
                           Application.getInstance().scheduleTask(() -> {
                             selectedMachineInfo = info;
                             action = FactoryAction.PICK;
-                            updateUI();
                           });
+                          updateUI();
                         }
                       })
                     ).toArray(MachineButton[]::new)
@@ -388,35 +399,13 @@ public abstract class FactoryController extends Scene {
                     ),
                     Row.create(
                       Row.options().gapSize(12).crossAxisAlignment(CrossAxisAlignment.CENTER),
-                      Button.create(
-                        Button.options().defaultBackground(DEFAULT_BG)
-                          .hoverBackground(HOVER_BG).pressedBackground(HOVER_BG).ninePatch(24)
-                          .mouseListener(ev -> {
-                            if (ev.type == MouseEvent.Type.CLICK)
-                              onCompleted.run();
-                          }),
-                        Padding.create(
-                          Padding.options().padding(32),
-                          Text.create(
-                            Text.options().color(Color.WHITE).fontSize(24).fontStyle(Font.BOLD),
-                            "Start Next Level"
-                          )
-                        )
+                      MenuButton.create(
+                        "Start Next Level",
+                        onCompleted::run
                       ),
-                      Button.create(
-                        Button.options().defaultBackground(DEFAULT_BG)
-                          .hoverBackground(HOVER_BG).pressedBackground(HOVER_BG).ninePatch(24)
-                          .mouseListener(ev -> {
-                            if (ev.type == MouseEvent.Type.CLICK)
-                              returnToMainMenu();
-                          }),
-                        Padding.create(
-                          Padding.options().padding(32),
-                          Text.create(
-                            Text.options().color(Color.WHITE).fontSize(24).fontStyle(Font.BOLD),
-                            "Main Menu"
-                          )
-                        )
+                      MenuButton.create(
+                        "Main Menu",
+                        this::returnToMainMenu
                       )
                     )
                   )
@@ -479,6 +468,7 @@ public abstract class FactoryController extends Scene {
         Position mousePos = getMouseWorldPosition();
         Position machinePos = factory.positionToGrid(mousePos);
         factory.createMachine(machinePos.y, machinePos.x, selectedMachineInfo, direction);
+        Audio.get("placed").play();
         action = FactoryAction.PICK;
       }
       case DRAG_PLACE -> {
@@ -507,22 +497,29 @@ public abstract class FactoryController extends Scene {
           factory.createMachine(currentDragRow, currentDragCol, selectedMachineInfo, direction);
           prevDragRow = currentDragRow;
           prevDragCol = currentDragCol;
+          Audio.get("placed").play();
         }
       }
       case ROTATE -> {
         direction = Direction.cycle(direction, 1);
+        Audio.get("placed").play();
         action = FactoryAction.PICK;
       }
       case DELETE -> {
         Position mousePos = getMouseWorldPosition();
         Position machinePos = factory.positionToGrid(mousePos);
-        factory.removeMachine(machinePos.y, machinePos.x);
+
+        if (factory.removeMachine(machinePos.y, machinePos.x))
+          Audio.get("removed").play();
+
         action = FactoryAction.CLEAR;
       }
       case DRAG_DELETE -> {
         Position mousePos = getMouseWorldPosition();
         Position machinePos = factory.positionToGrid(mousePos);
-        factory.removeMachine(machinePos.y, machinePos.x);
+
+        if (factory.removeMachine(machinePos.y, machinePos.x))
+          Audio.get("removed").play();
       }
       case CLEAR -> {
         resetState();

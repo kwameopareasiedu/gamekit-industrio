@@ -85,16 +85,17 @@ public class Factory extends Prop {
       addMachine(machine);
   }
 
-  public void removeMachine(int row, int col) {
+  public boolean removeMachine(int row, int col) {
     int index = gridToIndex(row, col);
     Machine machine = machineGrid[index];
 
     if (machine == null || machine == hub)
-      return;
+      return false;
 
     machines.remove(machine);
     machineParent.removeChild(machine);
     machineGrid[index] = null;
+    return true;
   }
 
   public void addItem(Shape item) {

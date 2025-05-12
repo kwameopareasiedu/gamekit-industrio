@@ -15,7 +15,10 @@ public class HueShifter extends Machine {
   private final ArrayList<Shape> inputShapes;
 
   public HueShifter(int row, int col, Factory factory, Direction direction) {
-    super("Mixer", row, col, factory, direction, Port.Type.OUT, Port.Type.IN, null, Port.Type.IN);
+    super(
+      "Mixer", row, col, factory, direction,
+      Port.Type.OUT, Port.Type.IN, Port.Type.IN, Port.Type.IN
+    );
     inputShapes = new ArrayList<>();
   }
 
@@ -33,7 +36,7 @@ public class HueShifter extends Machine {
       }
     }
 
-    if (inputsWithItems == 2 && !out.hasItem()) {
+    if (inputsWithItems >= 2 && !out.hasItem()) {
       Shape combinedShape = combine(inputShapes);
 
       if (combinedShape != null) {
