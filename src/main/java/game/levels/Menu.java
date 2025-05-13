@@ -70,8 +70,8 @@ public final class Menu extends Scene {
               .crossAxisAlignment(CrossAxisAlignment.CENTER).gapSize(4),
             StarGlowLetter.from("Industrio", 192)
           ),
-          MenuButton.create("Campaign", this::startCampaignMode),
-          MenuButton.create("Sandbox (Coming Soon)", () -> { }, Font.ITALIC),
+          MenuButton.create("Start Campaign", this::startCampaignMode),
+          MenuButton.create("About Game", this::openCredits),
           MenuButton.create("Quit To Desktop", this::exitApplication)
         )
       ),
@@ -123,7 +123,11 @@ public final class Menu extends Scene {
   }
 
   private void startCampaignMode() {
-    Application.getInstance().loadScene(new Level8());
+    Application.getInstance().loadScene(new Level10());
+  }
+
+  private void openCredits() {
+    Application.getInstance().loadScene(new Credits());
   }
 
   private void exitApplication() {
