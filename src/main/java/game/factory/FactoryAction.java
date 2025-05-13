@@ -7,6 +7,5 @@ public enum FactoryAction {
   DRAG_PLACE,
   ROTATE,
   DELETE,
-  DRAG_DELETE,
   CLEAR
 }

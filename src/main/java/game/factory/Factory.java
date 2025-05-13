@@ -21,7 +21,6 @@ public class Factory extends Prop {
     new BasicStroke(2, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND);
   private static final int TICK_INTERVAL_MS = 100;
   private static final Color GRID_COLOR = Color.LIGHT_GRAY;
-  private static final Position POSITION_CACHE = new Position();
 
   private final int gridSize;
   private final int pixelSize;
@@ -53,19 +52,12 @@ public class Factory extends Prop {
     }
   }
 
-  public void createMachine(int row, int col, Machine.Info info, Direction direction) {
+  public boolean createMachine(int row, int col, Machine.Info info, Direction direction) {
     int index = gridToIndex(row, col);
     Machine existing = machineGrid[index];
 
-    if (existing == hub)
-      return;
-
-    if (existing != null) {
-      if (info == Belt.INFO && !(existing instanceof Belt))
-        return;
-
-      removeMachine(row, col);
-    }
+    if (existing != null && !(existing instanceof Belt))
+      return false;
 
     Machine machine = null;
 
@@ -83,11 +75,24 @@ public class Factory extends Prop {
       machine = new Splitter(row, col, this, direction);
     }
 
-    if (machine != null)
+    if (machine != null) {
+      removeMachineAt(row, col);
       addMachine(machine);
+      return true;
+    }
+
+    return false;
   }
 
-  public boolean removeMachine(int row, int col) {
+  public Machine getMachineAt(int row, int col) {
+    if (row < 0 || row >= gridSize || col < 0 || col >= gridSize)
+      return null;
+
+    int index = gridToIndex(row, col);
+    return machineGrid[index];
+  }
+
+  public boolean removeMachineAt(int row, int col) {
     int index = gridToIndex(row, col);
     Machine machine = machineGrid[index];
 
@@ -119,12 +124,10 @@ public class Factory extends Prop {
   public Position gridToPosition(int row, int col) {
     int gridPixelSize = gridSize * CELL_PIXEL_SIZE;
 
-    POSITION_CACHE.set(
+    return new Position(
       toInt((col + 0.5) * CELL_PIXEL_SIZE - 0.5 * gridPixelSize),
       toInt((row + 0.5) * CELL_PIXEL_SIZE - 0.5 * gridPixelSize)
     );
-
-    return POSITION_CACHE;
   }
 
   public Position positionToGrid(Position pos) {
@@ -133,16 +136,7 @@ public class Factory extends Prop {
     int col = toInt(Math.floor((0.5 * gridPixelSize + pos.x) / CELL_PIXEL_SIZE));
     row = clamp(row, 0, gridSize - 1);
     col = clamp(col, 0, gridSize - 1);
-    POSITION_CACHE.set(col, row);
-    return POSITION_CACHE;
-  }
-
-  public Machine getMachineAt(int row, int col) {
-    if (row < 0 || row >= gridSize || col < 0 || col >= gridSize)
-      return null;
-
-    int index = gridToIndex(row, col);
-    return machineGrid[index];
+    return new Position(col, row);
   }
 
   public void close() {

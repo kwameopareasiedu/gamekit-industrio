@@ -71,8 +71,8 @@ public abstract class FactoryController extends Scene {
   private double desiredY = 0;
   private double panX = 0;
   private double panY = 0;
-  private int prevDragRow = -1;
-  private int prevDragCol = -1;
+  private int prevGridRow = -1;
+  private int prevGridCol = -1;
 
   private final double minBound;
   private final double maxBound;
@@ -440,23 +440,34 @@ public abstract class FactoryController extends Scene {
       desiredY = clamp(desiredY - NAV_SPEED, minBound, maxBound);
     }
 
-    if ((Input.isButtonReleased(Input.BUTTON_RMB) || Input.isKeyPressed(Input.KEY_ESCAPE)) && action == FactoryAction.PICK) {
-      action = FactoryAction.CLEAR;
-    } else if (Input.isButtonReleased(Input.BUTTON_RMB) && action == FactoryAction.DEFAULT) {
-      action = FactoryAction.DELETE;
-    } else if (Input.isButtonReleased(Input.BUTTON_RMB) && action == FactoryAction.DRAG_DELETE) {
-      action = FactoryAction.CLEAR;
-    } else if (Input.isButtonReleased(Input.BUTTON_LMB) && (action == FactoryAction.PICK || action == FactoryAction.DRAG_PLACE)) {
-      action = FactoryAction.PLACE;
-    } else if (Input.isButtonReleased(Input.BUTTON_LMB) && action == FactoryAction.DRAG_PLACE) {
-      action = FactoryAction.PICK;
-      prevDragRow = prevDragCol = -1;
-    } else if (Input.isButtonPressed(Input.BUTTON_RMB) && action == FactoryAction.DEFAULT) {
-      action = FactoryAction.DRAG_DELETE;
-    } else if (Input.isButtonPressed(Input.BUTTON_LMB) && action == FactoryAction.PICK && selectedMachineInfo == Belt.INFO) {
-      action = FactoryAction.DRAG_PLACE;
-    } else if (Input.isKeyReleased(Input.KEY_R) && action == FactoryAction.PICK) {
-      action = FactoryAction.ROTATE;
+    switch (action) {
+      case DEFAULT -> {
+        if (Input.isButtonDown(Input.BUTTON_RMB))
+          action = FactoryAction.DELETE;
+      }
+      case PICK -> {
+        if (Input.isButtonDown(Input.BUTTON_LMB))
+          action = FactoryAction.PLACE;
+        else if (Input.isButtonReleased(Input.BUTTON_RMB) || Input.isKeyPressed(Input.KEY_ESCAPE))
+          action = FactoryAction.CLEAR;
+        else if (Input.isKeyDown(Input.KEY_R))
+          action = FactoryAction.ROTATE;
+      }
+      case PLACE -> {
+        if (Input.isButtonPressed(Input.BUTTON_LMB) && selectedMachineInfo == Belt.INFO)
+          action = FactoryAction.DRAG_PLACE;
+        if (Input.isButtonReleased(Input.BUTTON_LMB))
+          action = FactoryAction.PICK;
+      }
+      case DRAG_PLACE -> {
+        if (Input.isButtonReleased(Input.BUTTON_LMB))
+          action = FactoryAction.PICK;
+      }
+      case DELETE -> {
+        if (Input.isButtonReleased(Input.BUTTON_RMB))
+          action = FactoryAction.CLEAR;
+      }
+      case CLEAR -> action = FactoryAction.DEFAULT;
     }
   }
 
@@ -467,38 +478,41 @@ public abstract class FactoryController extends Scene {
 
     switch (action) {
       case PLACE -> {
-        Position mousePos = getMouseWorldPosition();
-        Position machinePos = factory.positionToGrid(mousePos);
-        factory.createMachine(machinePos.y, machinePos.x, selectedMachineInfo, direction);
-        Audio.get("placed").play();
-        action = FactoryAction.PICK;
+        Position worldPos = getMouseWorldPosition();
+        Position gridPos = factory.positionToGrid(worldPos);
+
+        if (factory.createMachine(gridPos.y, gridPos.x, selectedMachineInfo, direction)) {
+          prevGridRow = gridPos.y;
+          prevGridCol = gridPos.x;
+          Audio.get("placed").play();
+        }
       }
       case DRAG_PLACE -> {
-        Position mousePos = getMouseWorldPosition();
-        Position currentDragGrid = factory.positionToGrid(mousePos);
-        int currentDragRow = currentDragGrid.y, currentDragCol = currentDragGrid.x;
+        Position worldPos = getMouseWorldPosition();
+        Position gridPos = factory.positionToGrid(worldPos);
+        int newGridRow = gridPos.y;
+        int newGridCol = gridPos.x;
 
-        int newIndex = factory.gridToIndex(currentDragRow, currentDragCol);
-        int lastIndex = factory.gridToIndex(prevDragRow, prevDragCol);
-        int diff = newIndex - lastIndex;
+        int prevGridIndex = factory.gridToIndex(prevGridRow, prevGridCol);
+        int newGridIndex = factory.gridToIndex(newGridRow, newGridCol);
+        int diff = newGridIndex - prevGridIndex;
+        Direction newDirection = null;
 
         if (diff == factory.getGridSize())
-          direction = Direction.UP;
+          newDirection = Direction.UP;
         else if (diff == 1)
-          direction = Direction.RIGHT;
+          newDirection = Direction.RIGHT;
         else if (diff == -factory.getGridSize())
-          direction = Direction.DOWN;
+          newDirection = Direction.DOWN;
         else if (diff == -1)
-          direction = Direction.LEFT;
+          newDirection = Direction.LEFT;
 
-        if (prevDragCol == -1 || lastIndex != newIndex) {
-          if (prevDragCol != -1) {
-            factory.createMachine(prevDragRow, prevDragCol, selectedMachineInfo, direction);
-          }
-
-          factory.createMachine(currentDragRow, currentDragCol, selectedMachineInfo, direction);
-          prevDragRow = currentDragRow;
-          prevDragCol = currentDragCol;
+        if (newDirection != null && prevGridIndex != newGridIndex) {
+          factory.createMachine(prevGridRow, prevGridCol, selectedMachineInfo, newDirection);
+          factory.createMachine(newGridRow, newGridCol, selectedMachineInfo, newDirection);
+          prevGridRow = newGridRow;
+          prevGridCol = newGridCol;
+          direction = newDirection;
           Audio.get("placed").play();
         }
       }
@@ -511,32 +525,20 @@ public abstract class FactoryController extends Scene {
         Position mousePos = getMouseWorldPosition();
         Position machinePos = factory.positionToGrid(mousePos);
 
-        if (factory.removeMachine(machinePos.y, machinePos.x))
-          Audio.get("removed").play();
-
-        action = FactoryAction.CLEAR;
-      }
-      case DRAG_DELETE -> {
-        Position mousePos = getMouseWorldPosition();
-        Position machinePos = factory.positionToGrid(mousePos);
-
-        if (factory.removeMachine(machinePos.y, machinePos.x))
+        if (factory.removeMachineAt(machinePos.y, machinePos.x))
           Audio.get("removed").play();
       }
       case CLEAR -> {
-        resetState();
+        action = FactoryAction.DEFAULT;
+        direction = Direction.UP;
+        selectedMachineInfo = null;
+        prevGridRow = prevGridCol = -1;
+
         Application.getInstance().scheduleTask(
           this::updateUI
         );
       }
     }
-  }
-
-  private void resetState() {
-    prevDragRow = prevDragCol = -1;
-    action = FactoryAction.DEFAULT;
-    direction = Direction.UP;
-    selectedMachineInfo = null;
   }
 
   private Position getMouseWorldPosition() {

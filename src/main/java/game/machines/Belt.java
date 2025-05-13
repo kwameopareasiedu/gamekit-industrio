@@ -14,11 +14,11 @@ public final class Belt extends Machine {
 
   private static final BufferedImage[] SPRITES = new BufferedImage[]{
     IO.getResourceImage("machines/belts.png", 0, 0, 192, 192),
-    IO.getResourceImage("machines/belts.png", 384, 0, 192, 192),
-    IO.getResourceImage("machines/belts.png", 192, 192, 192, 192),
     IO.getResourceImage("machines/belts.png", 192, 0, 192, 192),
-    IO.getResourceImage("machines/belts.png", 384, 192, 192, 192),
+    IO.getResourceImage("machines/belts.png", 384, 0, 192, 192),
     IO.getResourceImage("machines/belts.png", 0, 192, 192, 192),
+    IO.getResourceImage("machines/belts.png", 192, 192, 192, 192),
+    IO.getResourceImage("machines/belts.png", 384, 192, 192, 192),
     IO.getResourceImage("machines/belts.png", 0, 384, 192, 192),
   };
 
