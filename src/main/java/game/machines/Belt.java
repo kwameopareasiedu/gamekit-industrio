@@ -10,16 +10,16 @@ import static dev.gamekit.utils.Math.cycle;
 
 public final class Belt extends Machine {
   public static final Info INFO =
-    new Info("Belt", IO.getResourceImage("belts.png", 192, 384, 192, 192));
+    new Info("Belt", IO.getResourceImage("machines/belts.png", 192, 384, 192, 192));
 
   private static final BufferedImage[] SPRITES = new BufferedImage[]{
-    IO.getResourceImage("belts.png", 0, 0, 192, 192),
-    IO.getResourceImage("belts.png", 384, 0, 192, 192),
-    IO.getResourceImage("belts.png", 192, 192, 192, 192),
-    IO.getResourceImage("belts.png", 192, 0, 192, 192),
-    IO.getResourceImage("belts.png", 384, 192, 192, 192),
-    IO.getResourceImage("belts.png", 0, 192, 192, 192),
-    IO.getResourceImage("belts.png", 0, 384, 192, 192),
+    IO.getResourceImage("machines/belts.png", 0, 0, 192, 192),
+    IO.getResourceImage("machines/belts.png", 384, 0, 192, 192),
+    IO.getResourceImage("machines/belts.png", 192, 192, 192, 192),
+    IO.getResourceImage("machines/belts.png", 192, 0, 192, 192),
+    IO.getResourceImage("machines/belts.png", 384, 192, 192, 192),
+    IO.getResourceImage("machines/belts.png", 0, 192, 192, 192),
+    IO.getResourceImage("machines/belts.png", 0, 384, 192, 192),
   };
 
   private final Vector position;

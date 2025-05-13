@@ -9,11 +9,11 @@ import java.awt.image.BufferedImage;
 
 public final class Hub extends Machine {
   private static final BufferedImage[] SPRITES = new BufferedImage[]{
-    IO.getResourceImage("hub.png", 0, 0, 192, 192),
-    IO.getResourceImage("hub.png", 192, 0, 192, 192),
-    IO.getResourceImage("hub.png", 384, 0, 192, 192),
-    IO.getResourceImage("hub.png", 0, 192, 192, 192),
-    IO.getResourceImage("hub.png", 192, 192, 192, 192),
+    IO.getResourceImage("machines/hub.png", 0, 0, 192, 192),
+    IO.getResourceImage("machines/hub.png", 192, 0, 192, 192),
+    IO.getResourceImage("machines/hub.png", 384, 0, 192, 192),
+    IO.getResourceImage("machines/hub.png", 0, 192, 192, 192),
+    IO.getResourceImage("machines/hub.png", 192, 192, 192, 192),
   };
 
   private final Notifier notifier;

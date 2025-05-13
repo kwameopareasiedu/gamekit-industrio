@@ -101,7 +101,7 @@ public abstract class FactoryController extends Scene {
 
         if (!goal.isCompleted()) {
           Audio.get("placed").play();
-        } else if (goal.isCompleted() && !completed) {
+        } else if (!completed) {
           Audio.get("completed").play();
           factory.close();
           completed = true;
@@ -313,20 +313,22 @@ public abstract class FactoryController extends Scene {
           Row.create(
             Row.options().mainAxisAlignment(MainAxisAlignment.END),
 
-            // Machine help panel
-            hoverMachineInfo == null ?
-              Empty.create() :
-              hoverMachineInfo == Extractor.INFO ?
-                new ExtractorHelpPanel() :
-                hoverMachineInfo == Belt.INFO ?
-                  new BeltHelpPanel() :
-                  hoverMachineInfo == Mixer.INFO ?
-                    new MixerHelpPanel() :
-                    hoverMachineInfo == Reshaper.INFO ?
-                      new ReshaperHelpPanel() :
-                      hoverMachineInfo == HueShifter.INFO ?
-                        new HueShifterHelpPanel() :
-                        Empty.create(),
+            // Machine help panels
+            hoverMachineInfo == null
+              ? Empty.create()
+              : hoverMachineInfo == Extractor.INFO
+              ? new ExtractorHelpPanel()
+              : hoverMachineInfo == Belt.INFO
+              ? new BeltHelpPanel()
+              : hoverMachineInfo == Mixer.INFO
+              ? new MixerHelpPanel()
+              : hoverMachineInfo == Reshaper.INFO
+              ? new ReshaperHelpPanel()
+              : hoverMachineInfo == HueShifter.INFO
+              ? new HueShifterHelpPanel()
+              : hoverMachineInfo == Splitter.INFO
+              ? new SplitterHelpPanel()
+              : Empty.create(),
 
             // Machine select panel
             Panel.create(

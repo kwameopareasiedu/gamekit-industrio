@@ -9,7 +9,7 @@ import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 
 public class HueShifter extends Machine {
-  private static final BufferedImage IMAGE = IO.getResourceImage("hue-shifter.png");
+  private static final BufferedImage IMAGE = IO.getResourceImage("machines/hue-shifter.png");
   public static final Info INFO = new Info("Hue Shifter", IMAGE);
 
   private final ArrayList<Shape> inputShapes;

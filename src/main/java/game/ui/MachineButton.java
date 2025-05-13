@@ -23,15 +23,15 @@ public class MachineButton extends InteractiveButton {
 
   public MachineButton(Machine.Info machineInfo, MouseEvent.Listener mouseListener) {
     super(
-      mouseListener, 16,
+      mouseListener, 12,
       Column.create(
         Column.options().crossAxisAlignment(CrossAxisAlignment.CENTER).gapSize(6),
         Sized.create(
-          Sized.options().width(56).height(56),
+          Sized.options().width(48).height(48),
           Image.create(machineInfo.image())
         ),
         Text.create(
-          Text.options().alignment(Alignment.CENTER).color(Color.WHITE).fontSize(20),
+          Text.options().alignment(Alignment.CENTER).color(Color.WHITE).fontSize(18),
           machineInfo.name()
         )
       )

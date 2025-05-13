@@ -79,6 +79,8 @@ public class Factory extends Prop {
       machine = new Reshaper(row, col, this, direction);
     } else if (info == HueShifter.INFO) {
       machine = new HueShifter(row, col, this, direction);
+    } else if (info == Splitter.INFO) {
+      machine = new Splitter(row, col, this, direction);
     }
 
     if (machine != null)

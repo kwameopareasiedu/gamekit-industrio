@@ -8,7 +8,7 @@ import game.resources.Source;
 import java.awt.image.BufferedImage;
 
 public final class Extractor extends Machine {
-  private static final BufferedImage IMAGE = IO.getResourceImage("extractor.png");
+  private static final BufferedImage IMAGE = IO.getResourceImage("machines/extractor.png");
   public static final Info INFO = new Info("Extractor", IMAGE);
   public static int TICKS_FOR_EXTRACTION = 7;
 

@@ -26,7 +26,7 @@ public abstract class MachineHelpPanel extends Compose {
             Column.create(
               Column.options().gapSize(24).crossAxisAlignment(CrossAxisAlignment.CENTER),
               Sized.create(
-                Sized.options().width(96).height(96),
+                Sized.options().width(128).height(128),
                 Image.create(info.image())
               ),
               Text.create(

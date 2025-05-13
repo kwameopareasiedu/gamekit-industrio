@@ -9,7 +9,7 @@ import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 
 public class Mixer extends Machine {
-  private static final BufferedImage SPRITE = IO.getResourceImage("mixer.png");
+  private static final BufferedImage SPRITE = IO.getResourceImage("machines/mixer.png");
 
   public static final Info INFO = new Info("Mixer", SPRITE);
 

@@ -9,7 +9,7 @@ import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 
 public class Reshaper extends Machine {
-  private static final BufferedImage IMAGE = IO.getResourceImage("reshaper.png");
+  private static final BufferedImage IMAGE = IO.getResourceImage("machines/reshaper.png");
   public static final Info INFO = new Info("Reshaper", IMAGE);
 
   private final ArrayList<Shape> inputShapes;
