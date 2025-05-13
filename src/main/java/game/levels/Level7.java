@@ -17,22 +17,21 @@ public class Level7 extends FactoryController {
         Belt.INFO,
         Mixer.INFO,
         Reshaper.INFO,
-        HueShifter.INFO
+        HueShifter.INFO,
+        Splitter.INFO
       },
       new Source[]{
-        Source.create(0, 0, Color.BLACK),
-        Source.create(0, 1, Color.WHITE),
-        Source.create(0, 6, Color.BLACK),
-        Source.create(0, 7, Color.BLACK),
-        Source.create(8, 2, Color.RED),
+        Source.create(0, 0, Color.WHITE),
+        Source.create(0, 10, Color.BLACK),
+        Source.create(10, 10, Color.RED),
       },
-      new FactoryGoal(30, Shape.Type.SQUARE, Color.YELLOW),
+      new FactoryGoal(30, Shape.Type.SQUARE, Color.CYAN),
       () -> { } /*Application.getInstance().loadScene(new Level7())*/
     );
   }
 
   @Override
   protected int getGridSize() {
-    return 11;
+    return 9;
   }
 }
