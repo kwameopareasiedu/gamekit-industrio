@@ -123,7 +123,7 @@ public final class Menu extends Scene {
   }
 
   private void startCampaignMode() {
-    Application.getInstance().loadScene(new Level7());
+    Application.getInstance().loadScene(new Level8());
   }
 
   private void exitApplication() {

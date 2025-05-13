@@ -9,10 +9,10 @@ import game.resources.Source;
 
 import java.awt.*;
 
-public class Level7 extends FactoryController {
-  public Level7() {
+public class Level10 extends FactoryController {
+  public Level10() {
     super(
-      7,
+      10,
       new Machine.Info[]{
         Extractor.INFO,
         Belt.INFO,
@@ -26,13 +26,13 @@ public class Level7 extends FactoryController {
         Source.create(0, 10, Color.BLACK),
         Source.create(10, 10, Color.RED),
       },
-      new FactoryGoal(30, Shape.Type.SQUARE, Color.CYAN),
-      () -> Application.getInstance().loadScene(new Level8())
+      new FactoryGoal(40, Shape.Type.SQUARE, Color.BLACK),
+      () -> Application.getInstance().loadScene(new Level10())
     );
   }
 
   @Override
   protected int getGridSize() {
-    return 9;
+    return 11;
   }
 }
