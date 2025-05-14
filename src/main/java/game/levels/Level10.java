@@ -19,12 +19,14 @@ public class Level10 extends FactoryController {
         Mixer.INFO,
         Reshaper.INFO,
         HueShifter.INFO,
-        Splitter.INFO
+        Splitter.INFO,
+        Bridge.INFO,
       },
       new Source[]{
         Source.create(0, 0, Color.WHITE),
-        Source.create(0, 10, Color.BLACK),
-        Source.create(10, 10, Color.RED),
+        Source.create(0, 12, Color.BLACK),
+        Source.create(12, 12, Color.RED),
+        Source.create(12, 6, Color.WHITE),
       },
       new FactoryGoal(40, Shape.Type.SQUARE, Color.BLACK),
       () -> Application.getInstance().loadScene(new Credits())
@@ -33,6 +35,6 @@ public class Level10 extends FactoryController {
 
   @Override
   protected int getGridSize() {
-    return 11;
+    return 13;
   }
 }

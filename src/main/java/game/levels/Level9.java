@@ -19,14 +19,15 @@ public class Level9 extends FactoryController {
         Mixer.INFO,
         Reshaper.INFO,
         HueShifter.INFO,
-        Splitter.INFO
+        Splitter.INFO,
+        Bridge.INFO,
       },
       new Source[]{
         Source.create(0, 0, Color.WHITE),
         Source.create(0, 10, Color.BLACK),
         Source.create(10, 10, Color.RED),
       },
-      new FactoryGoal(40, Shape.Type.SQUARE, Color.YELLOW),
+      new FactoryGoal(40, Shape.Type.SQUARE, Color.WHITE),
       () -> Application.getInstance().loadScene(new Level10())
     );
   }

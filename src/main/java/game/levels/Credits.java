@@ -95,7 +95,7 @@ public final class Credits extends Scene {
                   .crossAxisAlignment(CrossAxisAlignment.CENTER),
                 Text.create(
                   Text.options().fontSize(36).alignment(Alignment.CENTER),
-                  "This game is built entirely using a free and open source"
+                  "This game is built entirely using the free and open source"
                 ),
                 Text.create(
                   Text.options().color(Color.CYAN).fontSize(36).alignment(Alignment.CENTER),

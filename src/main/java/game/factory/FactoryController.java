@@ -328,6 +328,8 @@ public abstract class FactoryController extends Scene {
               ? new HueShifterHelpPanel()
               : hoverMachineInfo == Splitter.INFO
               ? new SplitterHelpPanel()
+              : hoverMachineInfo == Bridge.INFO
+              ? new BridgeHelpPanel()
               : Empty.create(),
 
             // Machine select panel
@@ -342,7 +344,7 @@ public abstract class FactoryController extends Scene {
                     "Machines"
                   ),
                   Column.create(
-                    Column.options().gapSize(32).crossAxisAlignment(CrossAxisAlignment.STRETCH),
+                    Column.options().gapSize(12).crossAxisAlignment(CrossAxisAlignment.STRETCH),
                     Arrays.stream(machineInfos).map(info ->
                       MachineButton.create(info, (e) -> {
                         if (goal.isCompleted())
