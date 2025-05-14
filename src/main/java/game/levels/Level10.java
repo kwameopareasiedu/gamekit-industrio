@@ -26,7 +26,6 @@ public class Level10 extends FactoryController {
         Source.create(0, 0, Color.WHITE),
         Source.create(0, 12, Color.BLACK),
         Source.create(12, 12, Color.RED),
-        Source.create(12, 6, Color.WHITE),
       },
       new FactoryGoal(40, Shape.Type.SQUARE, Color.BLACK),
       () -> Application.getInstance().loadScene(new Credits())
