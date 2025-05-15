@@ -39,25 +39,22 @@
   <build>
     <plugins>
       <plugin>
-        <groupId>org.panteleyev</groupId>
-        <artifactId>jpackage-maven-plugin</artifactId>
-        <version>1.6.4</version>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-shade-plugin</artifactId>
+        <version>3.6.0</version>
 
         <executions>
           <execution>
             <phase>package</phase>
             <goals>
-              <goal>jpackage</goal>
+              <goal>shade</goal>
             </goals>
             <configuration>
-              <name>Industrio</name>
-              <input>target/</input>
-              <mainJar>industrio-1.0-SNAPSHOT.jar</mainJar>
-              <mainClass>game.Industrio</mainClass>
-              <destination>${project.build.directory}/build</destination>
-              <description>
-                A color factory management game, inspired by Shapez and Color Fractory
-              </description>
+              <transformers>
+                <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+                  <mainClass>game.Industrio</mainClass>
+                </transformer>
+              </transformers>
             </configuration>
           </execution>
         </executions>
