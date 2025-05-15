@@ -3,11 +3,10 @@ package game.levels;
 import dev.gamekit.core.Application;
 import game.factory.FactoryController;
 import game.factory.FactoryGoal;
+import game.items.PastelColor;
+import game.items.Shape;
+import game.items.Source;
 import game.machines.*;
-import game.resources.Shape;
-import game.resources.Source;
-
-import java.awt.*;
 
 public class Level10 extends FactoryController {
   public Level10() {
@@ -23,11 +22,11 @@ public class Level10 extends FactoryController {
         Bridge.INFO,
       },
       new Source[]{
-        Source.create(0, 0, Color.WHITE),
-        Source.create(0, 12, Color.BLACK),
-        Source.create(12, 12, Color.RED),
+        Source.create(0, 0, PastelColor.WHITE),
+        Source.create(0, 12, PastelColor.BLACK),
+        Source.create(12, 12, PastelColor.RED),
       },
-      new FactoryGoal(40, Shape.Type.SQUARE, Color.BLACK),
+      new FactoryGoal(40, Shape.Type.SQUARE, PastelColor.BLACK),
       () -> Application.getInstance().loadScene(new Credits())
     );
   }

@@ -4,11 +4,10 @@ import dev.gamekit.core.IO;
 import dev.gamekit.ui.enums.Alignment;
 import dev.gamekit.ui.enums.CrossAxisAlignment;
 import dev.gamekit.ui.enums.MainAxisAlignment;
-import dev.gamekit.ui.widgets.Image;
 import dev.gamekit.ui.widgets.*;
+import game.items.PastelColor;
 import game.machines.Extractor;
 
-import java.awt.*;
 import java.awt.image.BufferedImage;
 
 public class ExtractorHelpPanel extends MachineHelpPanel {
@@ -46,7 +45,7 @@ public class ExtractorHelpPanel extends MachineHelpPanel {
               Row.options().crossAxisAlignment(CrossAxisAlignment.CENTER).gapSize(8),
               Sized.create(
                 Sized.options().width(32).height(32),
-                Colored.create(Color.WHITE, 4)
+                Colored.create(PastelColor.WHITE, 4)
               ),
               Sized.create(
                 Sized.options().width(20).height(20),
@@ -54,14 +53,14 @@ public class ExtractorHelpPanel extends MachineHelpPanel {
               ),
               Sized.create(
                 Sized.options().width(32).height(32),
-                Colored.create(Color.WHITE, 32)
+                Colored.create(PastelColor.WHITE, 32)
               )
             ),
             Row.create(
               Row.options().crossAxisAlignment(CrossAxisAlignment.CENTER).gapSize(8),
               Sized.create(
                 Sized.options().width(32).height(32),
-                Colored.create(Color.GREEN, 4)
+                Colored.create(PastelColor.GREEN, 4)
               ),
               Sized.create(
                 Sized.options().width(20).height(20),
@@ -69,7 +68,7 @@ public class ExtractorHelpPanel extends MachineHelpPanel {
               ),
               Sized.create(
                 Sized.options().width(32).height(32),
-                Colored.create(Color.GREEN, 32)
+                Colored.create(PastelColor.GREEN, 32)
               )
             )
           )

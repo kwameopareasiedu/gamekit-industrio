@@ -3,7 +3,7 @@ package game.machines;
 import dev.gamekit.utils.Bounds;
 import dev.gamekit.utils.Vector;
 import game.factory.Factory;
-import game.resources.Shape;
+import game.items.Shape;
 
 public class Port {
   public static final int TOP = 0;

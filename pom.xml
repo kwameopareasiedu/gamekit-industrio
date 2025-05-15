@@ -35,4 +35,33 @@
       <classifier>javadoc</classifier>
     </dependency>
   </dependencies>
+
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.panteleyev</groupId>
+        <artifactId>jpackage-maven-plugin</artifactId>
+        <version>1.6.4</version>
+
+        <executions>
+          <execution>
+            <phase>package</phase>
+            <goals>
+              <goal>jpackage</goal>
+            </goals>
+            <configuration>
+              <name>Industrio</name>
+              <input>target/</input>
+              <mainJar>industrio-1.0-SNAPSHOT.jar</mainJar>
+              <mainClass>game.Industrio</mainClass>
+              <destination>${project.build.directory}/build</destination>
+              <description>
+                A color factory management game, inspired by Shapez and Color Fractory
+              </description>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
 </project>

@@ -1,4 +1,4 @@
-package game.resources;
+package game.items;
 
 import dev.gamekit.core.Prop;
 import dev.gamekit.core.Renderer;
@@ -15,17 +15,17 @@ public final class Shape extends Prop {
   private static final int SIZE = toInt(0.15 * Factory.CELL_PIXEL_SIZE);
 
   public final Type type;
-  public final Color color;
+  public final PastelColor color;
   public final Vector pos;
 
-  public Shape(Type type, Color color) {
+  public Shape(Type type, PastelColor color) {
     super(type.name());
     this.type = type;
     this.color = color;
     this.pos = new Vector();
   }
 
-  public Shape(Type type, Color color, Vector position) {
+  public Shape(Type type, PastelColor color, Vector position) {
     super(type.name());
     this.type = type;
     this.color = color;

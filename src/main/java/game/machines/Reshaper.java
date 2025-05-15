@@ -2,9 +2,9 @@ package game.machines;
 
 import dev.gamekit.core.IO;
 import game.factory.Factory;
-import game.resources.Shape;
+import game.items.PastelColor;
+import game.items.Shape;
 
-import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 
@@ -66,28 +66,28 @@ public class Reshaper extends Machine {
 
     for (Shape shape : shapes) {
       if (shape.type == Shape.Type.CIRCLE) {
-        if (shape.color == Color.GRAY) hasGrayCircle = true;
-        if (shape.color == Color.RED) hasRedCircle = true;
-        if (shape.color == Color.GREEN) hasGreenCircle = true;
-        if (shape.color == Color.BLUE) hasBlueCircle = true;
-        if (shape.color == Color.CYAN) hasCyanCircle = true;
-        if (shape.color == Color.MAGENTA) hasMagentaCircle = true;
-        if (shape.color == Color.YELLOW) hasYellowCircle = true;
+        if (shape.color == PastelColor.GRAY) hasGrayCircle = true;
+        if (shape.color == PastelColor.RED) hasRedCircle = true;
+        if (shape.color == PastelColor.GREEN) hasGreenCircle = true;
+        if (shape.color == PastelColor.BLUE) hasBlueCircle = true;
+        if (shape.color == PastelColor.CYAN) hasCyanCircle = true;
+        if (shape.color == PastelColor.MAGENTA) hasMagentaCircle = true;
+        if (shape.color == PastelColor.YELLOW) hasYellowCircle = true;
       }
     }
 
     if (hasGrayCircle && hasRedCircle)
-      return new Shape(Shape.Type.SQUARE, Color.RED, position);
+      return new Shape(Shape.Type.SQUARE, PastelColor.RED, position);
     else if (hasGrayCircle && hasGreenCircle)
-      return new Shape(Shape.Type.SQUARE, Color.GREEN, position);
+      return new Shape(Shape.Type.SQUARE, PastelColor.GREEN, position);
     else if (hasGrayCircle && hasBlueCircle)
-      return new Shape(Shape.Type.SQUARE, Color.BLUE, position);
+      return new Shape(Shape.Type.SQUARE, PastelColor.BLUE, position);
     else if (hasGrayCircle && hasCyanCircle)
-      return new Shape(Shape.Type.SQUARE, Color.CYAN, position);
+      return new Shape(Shape.Type.SQUARE, PastelColor.CYAN, position);
     else if (hasGrayCircle && hasMagentaCircle)
-      return new Shape(Shape.Type.SQUARE, Color.MAGENTA, position);
+      return new Shape(Shape.Type.SQUARE, PastelColor.MAGENTA, position);
     else if (hasGrayCircle && hasYellowCircle)
-      return new Shape(Shape.Type.SQUARE, Color.YELLOW, position);
+      return new Shape(Shape.Type.SQUARE, PastelColor.YELLOW, position);
 
     return null;
   }

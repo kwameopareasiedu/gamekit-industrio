@@ -5,8 +5,8 @@ import dev.gamekit.core.Prop;
 import dev.gamekit.core.Renderer;
 import dev.gamekit.utils.Position;
 import game.machines.*;
-import game.resources.Shape;
-import game.resources.Source;
+import game.items.Shape;
+import game.items.Source;
 
 import java.awt.*;
 import java.util.ArrayList;

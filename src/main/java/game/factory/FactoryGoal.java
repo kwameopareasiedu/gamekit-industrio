@@ -1,6 +1,6 @@
 package game.factory;
 
-import game.resources.Shape;
+import game.items.Shape;
 
 import java.awt.*;
 

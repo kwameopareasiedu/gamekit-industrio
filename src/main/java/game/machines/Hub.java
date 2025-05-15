@@ -3,7 +3,7 @@ package game.machines;
 import dev.gamekit.core.IO;
 import dev.gamekit.core.Renderer;
 import game.factory.Factory;
-import game.resources.Shape;
+import game.items.Shape;
 
 import java.awt.image.BufferedImage;
 

@@ -3,11 +3,10 @@ package game.levels;
 import dev.gamekit.core.Application;
 import game.factory.FactoryController;
 import game.factory.FactoryGoal;
+import game.items.PastelColor;
+import game.items.Shape;
+import game.items.Source;
 import game.machines.*;
-import game.resources.Shape;
-import game.resources.Source;
-
-import java.awt.*;
 
 public class Level3 extends FactoryController {
   public Level3() {
@@ -20,11 +19,11 @@ public class Level3 extends FactoryController {
         HueShifter.INFO
       },
       new Source[]{
-        Source.create(0, 0, Color.WHITE),
-        Source.create(0, 6, Color.BLACK),
-        Source.create(6, 5, Color.RED),
+        Source.create(0, 0, PastelColor.WHITE),
+        Source.create(0, 6, PastelColor.BLACK),
+        Source.create(6, 5, PastelColor.RED),
       },
-      new FactoryGoal(15, Shape.Type.CIRCLE, Color.GREEN),
+      new FactoryGoal(15, Shape.Type.CIRCLE, PastelColor.GREEN),
       () -> Application.getInstance().loadScene(new Level4())
     );
   }

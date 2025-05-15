@@ -9,10 +9,11 @@ import dev.gamekit.ui.enums.CrossAxisAlignment;
 import dev.gamekit.ui.enums.MainAxisAlignment;
 import dev.gamekit.ui.widgets.*;
 import game.factory.Factory;
+import game.items.PastelColor;
+import game.items.Source;
 import game.machines.Belt;
 import game.machines.Direction;
 import game.machines.Extractor;
-import game.resources.Source;
 import game.ui.MenuButton;
 import game.ui.StarGlowLetter;
 
@@ -30,8 +31,8 @@ public final class Credits extends Scene {
     this.factory = new Factory(
       11,
       new Source[]{
-        Source.create(1, 0, Color.CYAN),
-        Source.create(6, 7, Color.RED),
+        Source.create(1, 0, PastelColor.CYAN),
+        Source.create(6, 7, PastelColor.RED),
       },
       item -> factory.removeItem(item)
     );

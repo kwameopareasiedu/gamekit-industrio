@@ -2,8 +2,8 @@ package game.machines;
 
 import dev.gamekit.core.IO;
 import game.factory.Factory;
-import game.resources.Shape;
-import game.resources.Source;
+import game.items.Shape;
+import game.items.Source;
 
 import java.awt.image.BufferedImage;
 

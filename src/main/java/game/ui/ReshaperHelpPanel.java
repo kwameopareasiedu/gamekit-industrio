@@ -6,44 +6,44 @@ import dev.gamekit.ui.widgets.Column;
 import dev.gamekit.ui.widgets.Row;
 import dev.gamekit.ui.widgets.Text;
 import dev.gamekit.ui.widgets.Widget;
+import game.items.PastelColor;
+import game.items.Shape;
 import game.machines.Reshaper;
-import game.resources.Shape;
 
-import java.awt.*;
 import java.util.Arrays;
 
 public class ReshaperHelpPanel extends MachineHelpPanel {
   private static final Row[] COMBINATION_WIDGET = Arrays.stream(
     new Shape[][]{
       new Shape[]{
-        new Shape(Shape.Type.CIRCLE, Color.GRAY),
-        new Shape(Shape.Type.CIRCLE, Color.RED),
-        new Shape(Shape.Type.SQUARE, Color.RED)
+        new Shape(Shape.Type.CIRCLE, PastelColor.GRAY),
+        new Shape(Shape.Type.CIRCLE, PastelColor.RED),
+        new Shape(Shape.Type.SQUARE, PastelColor.RED)
       },
       new Shape[]{
-        new Shape(Shape.Type.CIRCLE, Color.GRAY),
-        new Shape(Shape.Type.CIRCLE, Color.GREEN),
-        new Shape(Shape.Type.SQUARE, Color.GREEN)
+        new Shape(Shape.Type.CIRCLE, PastelColor.GRAY),
+        new Shape(Shape.Type.CIRCLE, PastelColor.GREEN),
+        new Shape(Shape.Type.SQUARE, PastelColor.GREEN)
       },
       new Shape[]{
-        new Shape(Shape.Type.CIRCLE, Color.GRAY),
-        new Shape(Shape.Type.CIRCLE, Color.BLUE),
-        new Shape(Shape.Type.SQUARE, Color.BLUE)
+        new Shape(Shape.Type.CIRCLE, PastelColor.GRAY),
+        new Shape(Shape.Type.CIRCLE, PastelColor.BLUE),
+        new Shape(Shape.Type.SQUARE, PastelColor.BLUE)
       },
       new Shape[]{
-        new Shape(Shape.Type.CIRCLE, Color.GRAY),
-        new Shape(Shape.Type.CIRCLE, Color.CYAN),
-        new Shape(Shape.Type.SQUARE, Color.CYAN)
+        new Shape(Shape.Type.CIRCLE, PastelColor.GRAY),
+        new Shape(Shape.Type.CIRCLE, PastelColor.CYAN),
+        new Shape(Shape.Type.SQUARE, PastelColor.CYAN)
       },
       new Shape[]{
-        new Shape(Shape.Type.CIRCLE, Color.GRAY),
-        new Shape(Shape.Type.CIRCLE, Color.MAGENTA),
-        new Shape(Shape.Type.SQUARE, Color.MAGENTA)
+        new Shape(Shape.Type.CIRCLE, PastelColor.GRAY),
+        new Shape(Shape.Type.CIRCLE, PastelColor.MAGENTA),
+        new Shape(Shape.Type.SQUARE, PastelColor.MAGENTA)
       },
       new Shape[]{
-        new Shape(Shape.Type.CIRCLE, Color.GRAY),
-        new Shape(Shape.Type.CIRCLE, Color.YELLOW),
-        new Shape(Shape.Type.SQUARE, Color.YELLOW)
+        new Shape(Shape.Type.CIRCLE, PastelColor.GRAY),
+        new Shape(Shape.Type.CIRCLE, PastelColor.YELLOW),
+        new Shape(Shape.Type.SQUARE, PastelColor.YELLOW)
       },
     }
   ).map(MixerHelpPanel::getShapeComboRow).toArray(Row[]::new);

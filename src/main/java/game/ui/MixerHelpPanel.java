@@ -4,12 +4,11 @@ import dev.gamekit.core.IO;
 import dev.gamekit.ui.enums.Alignment;
 import dev.gamekit.ui.enums.CrossAxisAlignment;
 import dev.gamekit.ui.enums.MainAxisAlignment;
-import dev.gamekit.ui.widgets.Image;
 import dev.gamekit.ui.widgets.*;
+import game.items.PastelColor;
+import game.items.Shape;
 import game.machines.Mixer;
-import game.resources.Shape;
 
-import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -21,45 +20,45 @@ public class MixerHelpPanel extends MachineHelpPanel {
   private static final Row[] COMBINATION_WIDGET = Arrays.stream(
     new Shape[][]{
       new Shape[]{
-        new Shape(Shape.Type.CIRCLE, Color.WHITE),
-        new Shape(Shape.Type.CIRCLE, Color.BLACK),
-        new Shape(Shape.Type.CIRCLE, Color.GRAY)
+        new Shape(Shape.Type.CIRCLE, PastelColor.WHITE),
+        new Shape(Shape.Type.CIRCLE, PastelColor.BLACK),
+        new Shape(Shape.Type.CIRCLE, PastelColor.GRAY)
       },
       new Shape[]{
-        new Shape(Shape.Type.CIRCLE, Color.WHITE),
-        new Shape(Shape.Type.CIRCLE, Color.RED),
-        new Shape(Shape.Type.CIRCLE, Color.GREEN),
-        new Shape(Shape.Type.CIRCLE, Color.YELLOW)
+        new Shape(Shape.Type.CIRCLE, PastelColor.WHITE),
+        new Shape(Shape.Type.CIRCLE, PastelColor.RED),
+        new Shape(Shape.Type.CIRCLE, PastelColor.GREEN),
+        new Shape(Shape.Type.CIRCLE, PastelColor.YELLOW)
       },
       new Shape[]{
-        new Shape(Shape.Type.CIRCLE, Color.WHITE),
-        new Shape(Shape.Type.CIRCLE, Color.RED),
-        new Shape(Shape.Type.CIRCLE, Color.BLUE),
-        new Shape(Shape.Type.CIRCLE, Color.MAGENTA)
+        new Shape(Shape.Type.CIRCLE, PastelColor.WHITE),
+        new Shape(Shape.Type.CIRCLE, PastelColor.RED),
+        new Shape(Shape.Type.CIRCLE, PastelColor.BLUE),
+        new Shape(Shape.Type.CIRCLE, PastelColor.MAGENTA)
       },
       new Shape[]{
-        new Shape(Shape.Type.CIRCLE, Color.WHITE),
-        new Shape(Shape.Type.CIRCLE, Color.GREEN),
-        new Shape(Shape.Type.CIRCLE, Color.BLUE),
-        new Shape(Shape.Type.CIRCLE, Color.CYAN)
+        new Shape(Shape.Type.CIRCLE, PastelColor.WHITE),
+        new Shape(Shape.Type.CIRCLE, PastelColor.GREEN),
+        new Shape(Shape.Type.CIRCLE, PastelColor.BLUE),
+        new Shape(Shape.Type.CIRCLE, PastelColor.CYAN)
       },
 
       new Shape[]{
-        new Shape(Shape.Type.SQUARE, Color.CYAN),
-        new Shape(Shape.Type.SQUARE, Color.MAGENTA),
-        new Shape(Shape.Type.SQUARE, Color.YELLOW),
-        new Shape(Shape.Type.SQUARE, Color.BLACK)
+        new Shape(Shape.Type.SQUARE, PastelColor.CYAN),
+        new Shape(Shape.Type.SQUARE, PastelColor.MAGENTA),
+        new Shape(Shape.Type.SQUARE, PastelColor.YELLOW),
+        new Shape(Shape.Type.SQUARE, PastelColor.BLACK)
       },
       new Shape[]{
-        new Shape(Shape.Type.SQUARE, Color.RED),
-        new Shape(Shape.Type.SQUARE, Color.GREEN),
-        new Shape(Shape.Type.SQUARE, Color.BLUE),
-        new Shape(Shape.Type.SQUARE, Color.WHITE)
+        new Shape(Shape.Type.SQUARE, PastelColor.RED),
+        new Shape(Shape.Type.SQUARE, PastelColor.GREEN),
+        new Shape(Shape.Type.SQUARE, PastelColor.BLUE),
+        new Shape(Shape.Type.SQUARE, PastelColor.WHITE)
       },
       new Shape[]{
-        new Shape(Shape.Type.SQUARE, Color.WHITE),
-        new Shape(Shape.Type.SQUARE, Color.BLACK),
-        new Shape(Shape.Type.SQUARE, Color.GRAY)
+        new Shape(Shape.Type.SQUARE, PastelColor.WHITE),
+        new Shape(Shape.Type.SQUARE, PastelColor.BLACK),
+        new Shape(Shape.Type.SQUARE, PastelColor.GRAY)
       }
     }
   ).map(MixerHelpPanel::getShapeComboRow).toArray(Row[]::new);

@@ -15,8 +15,8 @@ import dev.gamekit.utils.Position;
 import dev.gamekit.utils.Task;
 import game.levels.Menu;
 import game.machines.*;
-import game.resources.Shape;
-import game.resources.Source;
+import game.items.Shape;
+import game.items.Source;
 import game.ui.*;
 
 import java.awt.*;
