@@ -59,6 +59,35 @@
           </execution>
         </executions>
       </plugin>
+
+      <plugin>
+        <groupId>com.github.akman</groupId>
+        <artifactId>jpackage-maven-plugin</artifactId>
+        <version>0.1.5</version>
+
+        <executions>
+          <execution>
+            <phase>package</phase>
+            <goals>
+              <goal>jpackage</goal>
+            </goals>
+            <configuration>
+              <name>Industrio</name>
+              <appversion>${project.version}</appversion>
+              <description>
+                A color factory management game, inspired by Shapez and Color Fractory
+              </description>
+              <vendor>Kwame Opare Asiedu</vendor>
+              <type>PLATFORM</type>
+              <dest>${project.build.directory}/dist</dest>
+              <input>${project.build.directory}</input>
+              <mainjar>industrio-${project.version}.jar</mainjar>
+              <mainclass>game.Industrio</mainclass>
+              <linuxshortcut>true</linuxshortcut>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
     </plugins>
   </build>
 </project>
