@@ -55,6 +55,7 @@
               <version>0.1.5</version>
 
               <configuration>
+                <type>PLATFORM</type>
                 <linuxshortcut>true</linuxshortcut>
               </configuration>
             </plugin>
@@ -81,6 +82,7 @@
               <version>0.1.5</version>
 
               <configuration>
+                <type>msi</type>
                 <winshortcut>true</winshortcut>
                 <winperuserinstall>true</winperuserinstall>
               </configuration>
@@ -134,7 +136,6 @@
                 A color factory management game, inspired by Shapez and Color Fractory
               </description>
               <vendor>Kwame Opare Asiedu</vendor>
-              <type>PLATFORM</type>
               <input>target</input>
               <dest>target/dist</dest>
               <mainjar>industrio-${project.version}.jar</mainjar>
