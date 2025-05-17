@@ -82,9 +82,10 @@
               <version>0.1.5</version>
 
               <configuration>
-                <type>msi</type>
                 <winshortcut>true</winshortcut>
                 <winperuserinstall>true</winperuserinstall>
+                <windirchooser>true</windirchooser>
+                <winmenu>true</winmenu>
               </configuration>
             </plugin>
           </plugins>
