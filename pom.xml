@@ -55,6 +55,7 @@
                   <mainClass>game.Industrio</mainClass>
                 </transformer>
               </transformers>
+              <createDependencyReducedPom>false</createDependencyReducedPom>
             </configuration>
           </execution>
         </executions>
@@ -79,6 +80,7 @@
               </description>
               <vendor>Kwame Opare Asiedu</vendor>
               <type>PLATFORM</type>
+              <resourcedir>res</resourcedir>
               <dest>${project.build.directory}/dist</dest>
               <input>${project.build.directory}</input>
               <mainjar>industrio-${project.version}.jar</mainjar>
