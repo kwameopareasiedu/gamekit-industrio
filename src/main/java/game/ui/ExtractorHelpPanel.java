@@ -21,7 +21,7 @@ public class ExtractorHelpPanel extends MachineHelpPanel {
         Column.options().crossAxisAlignment(CrossAxisAlignment.CENTER),
         Text.create(
           Text.options().alignment(Alignment.CENTER).fontSize(20),
-          "Extractors produce produce the shapes needed by your factory."
+          "Extractors produce the shapes needed by your factory."
         ),
         Text.create(
           Text.options().alignment(Alignment.CENTER).fontSize(20),

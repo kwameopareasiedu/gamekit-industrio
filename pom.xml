@@ -36,6 +36,61 @@
     </dependency>
   </dependencies>
 
+  <profiles>
+    <profile>
+      <id>build-linux</id>
+
+      <activation>
+        <os>
+          <family>unix</family>
+        </os>
+      </activation>
+
+      <build>
+        <pluginManagement>
+          <plugins>
+            <plugin>
+              <groupId>com.github.akman</groupId>
+              <artifactId>jpackage-maven-plugin</artifactId>
+              <version>0.1.5</version>
+
+              <configuration>
+                <linuxshortcut>true</linuxshortcut>
+              </configuration>
+            </plugin>
+          </plugins>
+        </pluginManagement>
+      </build>
+    </profile>
+
+    <profile>
+      <id>build-win</id>
+
+      <activation>
+        <os>
+          <family>windows</family>
+        </os>
+      </activation>
+
+      <build>
+        <pluginManagement>
+          <plugins>
+            <plugin>
+              <groupId>com.github.akman</groupId>
+              <artifactId>jpackage-maven-plugin</artifactId>
+              <version>0.1.5</version>
+
+              <configuration>
+                <winshortcut>true</winshortcut>
+                <winperuserinstall>true</winperuserinstall>
+              </configuration>
+            </plugin>
+          </plugins>
+        </pluginManagement>
+      </build>
+    </profile>
+  </profiles>
+
   <build>
     <plugins>
       <plugin>
@@ -80,12 +135,11 @@
               </description>
               <vendor>Kwame Opare Asiedu</vendor>
               <type>PLATFORM</type>
-              <resourcedir>res</resourcedir>
-              <dest>${project.build.directory}/dist</dest>
-              <input>${project.build.directory}</input>
+              <input>target</input>
+              <dest>target/dist</dest>
               <mainjar>industrio-${project.version}.jar</mainjar>
               <mainclass>game.Industrio</mainclass>
-              <linuxshortcut>true</linuxshortcut>
+              <resourcedir>res</resourcedir>
             </configuration>
           </execution>
         </executions>
