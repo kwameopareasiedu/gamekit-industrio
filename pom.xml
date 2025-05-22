@@ -18,20 +18,20 @@
     <dependency>
       <groupId>dev.gamekit</groupId>
       <artifactId>engine</artifactId>
-      <version>0.4.0-SNAPSHOT-1</version>
+      <version>0.4.0-SNAPSHOT-2</version>
     </dependency>
 
     <dependency>
       <groupId>dev.gamekit</groupId>
       <artifactId>engine</artifactId>
-      <version>0.4.0-SNAPSHOT-1</version>
+      <version>0.4.0-SNAPSHOT-2</version>
       <classifier>sources</classifier>
     </dependency>
 
     <dependency>
       <groupId>dev.gamekit</groupId>
       <artifactId>engine</artifactId>
-      <version>0.4.0-SNAPSHOT-1</version>
+      <version>0.4.0-SNAPSHOT-2</version>
       <classifier>javadoc</classifier>
     </dependency>
   </dependencies>

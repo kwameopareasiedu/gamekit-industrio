@@ -1,6 +1,6 @@
 package game.machines;
 
-import dev.gamekit.core.Prop;
+import dev.gamekit.core.Entity;
 import dev.gamekit.core.Renderer;
 import dev.gamekit.utils.Position;
 import dev.gamekit.utils.Vector;
@@ -10,7 +10,7 @@ import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.List;
 
-public abstract class Machine extends Prop {
+public abstract class Machine extends Entity {
   public final int row;
   public final int col;
   protected final Factory factory;

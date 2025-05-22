@@ -1,6 +1,6 @@
 package game.items;
 
-import dev.gamekit.core.Prop;
+import dev.gamekit.core.Entity;
 import dev.gamekit.core.Renderer;
 import dev.gamekit.utils.Vector;
 import game.factory.Factory;
@@ -9,7 +9,7 @@ import java.awt.*;
 
 import static dev.gamekit.utils.Math.toInt;
 
-public final class Shape extends Prop {
+public final class Shape extends Entity {
   private static final Stroke OUTLINE_STROKE =
     new BasicStroke(2, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND);
   private static final int SIZE = toInt(0.15 * Factory.CELL_PIXEL_SIZE);

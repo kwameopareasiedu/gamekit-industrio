@@ -1,7 +1,7 @@
 package game.factory;
 
 import dev.gamekit.core.Application;
-import dev.gamekit.core.Prop;
+import dev.gamekit.core.Entity;
 import dev.gamekit.core.Renderer;
 import dev.gamekit.utils.Position;
 import game.machines.*;
@@ -14,7 +14,7 @@ import java.util.ArrayList;
 import static dev.gamekit.utils.Math.clamp;
 import static dev.gamekit.utils.Math.toInt;
 
-public class Factory extends Prop {
+public class Factory extends Entity {
   public static final int CELL_PIXEL_SIZE = 120;
   public static final int SOURCE_PIXEL_SIZE = toInt(0.4 * CELL_PIXEL_SIZE);
   private static final Stroke SOURCE_OUTLINE_STROKE =
@@ -24,8 +24,8 @@ public class Factory extends Prop {
 
   private final int gridSize;
   private final int pixelSize;
-  private final Prop machineParent;
-  private final Prop itemParent;
+  private final Entity machineParent;
+  private final Entity itemParent;
   private final Source[] sourceGrid;
   private final Machine[] machineGrid;
   private final Hub hub;
@@ -42,8 +42,8 @@ public class Factory extends Prop {
     machineGrid = new Machine[gridSize * gridSize];
     sourceGrid = new Source[gridSize * gridSize];
     hub = new Hub(gridSize / 2, gridSize / 2, this, Direction.UP, hubNotifier);
-    machineParent = new Prop("Machines") { };
-    itemParent = new Prop("Items") { };
+    machineParent = new Entity("Machines") { };
+    itemParent = new Entity("Items") { };
     machines = new ArrayList<>();
 
     for (Source source : sources) {
